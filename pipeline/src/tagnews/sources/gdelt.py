@@ -9,7 +9,12 @@ from datetime import UTC, datetime
 import httpx
 
 from tagnews.sources.base import RawItem, SourceError, get_with_retry
-from tagnews.textnorm import canonicalize_url, collapse_ws, domain_of
+from tagnews.textnorm import (
+    canonicalize_url,
+    collapse_ws,
+    domain_of,
+    normalize_host,
+)
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +51,7 @@ def parse_response(payload: object, now: datetime) -> list[RawItem]:
         title = collapse_ws(article.get("title") or "")
         if not url or not title:
             continue
-        domain = (article.get("domain") or domain_of(url)).removeprefix("www.")
+        domain = normalize_host(article.get("domain") or domain_of(url))
         items.append(
             RawItem(
                 title=title,

@@ -77,9 +77,20 @@ def canonicalize_url(url: str) -> str:
     return urlunsplit((scheme, host, path, urlencode(query), ""))
 
 
+# Mobile and AMP mirrors of a site are the same publisher ("m.site.com" == "site.com").
+_HOST_PREFIXES = ("www.", "m.", "amp.", "mobile.")
+
+
+def normalize_host(host: str) -> str:
+    host = host.lower().split(":")[0]
+    for prefix in _HOST_PREFIXES:
+        if host.startswith(prefix) and host.count(".") > 1:
+            return host[len(prefix) :]
+    return host
+
+
 def domain_of(url: str) -> str:
-    host = urlsplit(url).netloc.lower().split(":")[0]
-    return host.removeprefix("www.")
+    return normalize_host(urlsplit(url).netloc)
 
 
 def article_id(canonical_url: str) -> str:

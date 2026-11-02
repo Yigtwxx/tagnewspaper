@@ -72,3 +72,19 @@ def test_scrub_non_pii_numbers_are_kept() -> None:
 def test_is_valid_tckn_bad_checksum_is_rejected() -> None:
     assert is_valid_tckn("10000000146")
     assert not is_valid_tckn("10000000147")
+
+
+@pytest.mark.parametrize(
+    ("url", "expected"),
+    [
+        ("https://m.bursadabugun.com/haber/amp-1.html", "bursadabugun.com"),
+        ("https://amp.example.com.tr/a", "example.com.tr"),
+        ("https://mobile.example.com/a", "example.com"),
+        ("https://www.example.com/a", "example.com"),
+        ("https://mersin.example.com/a", "mersin.example.com"),
+    ],
+)
+def test_domain_of_mobile_and_amp_hosts_map_to_the_publisher(
+    url: str, expected: str
+) -> None:
+    assert domain_of(url) == expected, f"{url} -> {domain_of(url)}"

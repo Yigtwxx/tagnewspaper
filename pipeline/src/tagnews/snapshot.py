@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -23,7 +24,7 @@ from tagnews.models import (
     TermCount,
     Totals,
 )
-from tagnews.textnorm import words
+from tagnews.textnorm import normalize_host, tr_lower, words
 
 ISTANBUL = ZoneInfo("Europe/Istanbul")
 LATEST_LIMIT = 24
@@ -39,6 +40,26 @@ CATEGORY_DAYS = 60
 TOP_TERMS = 12
 TERM_MIN_LEN = 4
 TERM_MIN_COUNT = 2
+# A shorter title word absorbs its suffixed forms ("taksiciler" <- "taksicilerden").
+TERM_STEM_MIN_LEN = 5
+TERM_MAX_SUFFIX = 4
+
+SOCIAL_DOMAINS: frozenset[str] = frozenset(
+    {
+        "instagram.com",
+        "x.com",
+        "twitter.com",
+        "facebook.com",
+        "youtube.com",
+        "tiktok.com",
+        "threads.net",
+        "linkedin.com",
+    }
+)
+NO_COMMENT = re.compile(
+    r"(açıklama|yanıt|yorum|savunma|görüş)\w*\s+(?:\S+\s+){0,3}?"
+    r"(bulunmuyor|bulunmadı|yer almıyor|yer almadı|yansımadı|yok|verilmiyor|verilmedi)"
+)
 
 # Words every story shares, Turkish function words and leftover suffix fragments
 # (apostrophes split "Martı'nın" into "martı" + "nın").
@@ -145,6 +166,29 @@ def _visible(articles: list[ArticleDoc]) -> list[ArticleDoc]:
     return [a for a in articles if a.display != "hidden" and a.relevant]
 
 
+def _one_per_outlet(articles: list[ArticleDoc]) -> list[ArticleDoc]:
+    """Keep one copy of a story per outlet (an AMP mirror or a re-post counts once),
+    preferring the summarized copy, then the newest."""
+    kept: dict[tuple[str, str], ArticleDoc] = {}
+    for article in sorted(
+        articles, key=lambda a: (a.display == "full", a.published_at), reverse=True
+    ):
+        kept.setdefault(
+            (article.cluster_id, normalize_host(article.source.domain)), article
+        )
+    return list(kept.values())
+
+
+def is_media(domain: str) -> bool:
+    """Social platforms carry posts, not reporting; they are not counted as outlets."""
+    return not any(domain == d or domain.endswith(f".{d}") for d in SOCIAL_DOMAINS)
+
+
+def is_statement(summary: str) -> bool:
+    """False for lines that only say a party did not comment."""
+    return NO_COMMENT.search(tr_lower(summary)) is None
+
+
 def _newest_first(articles: list[ArticleDoc]) -> list[ArticleDoc]:
     return sorted(articles, key=lambda a: (a.published_at, a.id), reverse=True)
 
@@ -198,6 +242,8 @@ def source_counts(articles: list[ArticleDoc]) -> list[SourceCount]:
     by_domain: Counter[str] = Counter()
     names: dict[str, Counter[str]] = defaultdict(Counter)
     for article in articles:
+        if not is_media(article.source.domain):
+            continue
         by_domain[article.source.domain] += 1
         names[article.source.domain][article.source.name] += 1
     ranked = sorted(by_domain.items(), key=lambda kv: (-kv[1], kv[0]))[:TOP_SOURCES]
@@ -247,6 +293,8 @@ def actor_statements(articles: list[ArticleDoc]) -> list[ActorStatementView]:
         if article.display != "full":
             continue
         for statement in article.actor_statements:
+            if not is_statement(statement.summary):
+                continue
             bucket = per_actor[statement.actor]
             if len(bucket) >= STATEMENTS_PER_ACTOR:
                 continue
@@ -266,18 +314,39 @@ def actor_statements(articles: list[ArticleDoc]) -> list[ActorStatementView]:
 def top_terms(articles: list[ArticleDoc], today: date) -> list[TermCount]:
     """Top title words of the last 30 days; one vote per article.."""
     since = today - timedelta(days=TERM_DAYS - 1)
-    counts: Counter[str] = Counter()
-    for article in articles:
-        if local_date(article.published_at) < since:
-            continue
-        tokens = {
+    per_article = [
+        {
             token
             for token in words(article.title)
             if len(token) >= TERM_MIN_LEN
             and not token.isdigit()
             and token not in TERM_STOPWORDS
         }
-        counts.update(tokens)
+        for article in articles
+        if local_date(article.published_at) >= since
+    ]
+    vocabulary = sorted(set().union(*per_article), key=len)
+
+    def stem(token: str) -> str:
+        for base in vocabulary:
+            if len(base) >= len(token):
+                break
+            if (
+                len(base) >= TERM_STEM_MIN_LEN
+                and token.startswith(base)
+                and len(token) - len(base) <= TERM_MAX_SUFFIX
+            ):
+                return base
+        return token
+
+    def root(token: str) -> str:
+        while (base := stem(token)) != token:
+            token = base
+        return token
+
+    counts: Counter[str] = Counter()
+    for tokens in per_article:
+        counts.update({root(token) for token in tokens})
     ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
     return [
         TermCount(term=term, count=n)
@@ -296,9 +365,9 @@ def build_snapshot(
     """`articles` should cover at least the last 90 days; older ones are ignored."""
     today = local_date(now)
     window_start = today - timedelta(days=DAYS - 1)
-    visible = [
-        a for a in _visible(articles) if local_date(a.published_at) >= window_start
-    ]
+    visible = _one_per_outlet(
+        [a for a in _visible(articles) if local_date(a.published_at) >= window_start]
+    )
     daily = daily_counts(visible, today)
     return Snapshot(
         generated_at=now,
@@ -319,7 +388,9 @@ def build_snapshot(
         actor_statements=actor_statements(visible),
         totals=Totals(
             articles_90d=sum(d.count for d in daily),
-            sources_90d=len({a.source.domain for a in visible}),
+            sources_90d=len(
+                {a.source.domain for a in visible if is_media(a.source.domain)}
+            ),
         ),
         top_terms=top_terms(visible, today),
         category_daily=category_daily(visible, today),

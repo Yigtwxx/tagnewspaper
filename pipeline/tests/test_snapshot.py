@@ -200,3 +200,69 @@ def test_category_daily_last_60_days_zero_filled(now: datetime) -> None:
     assert sum(sum(d.counts.values()) for d in days) == 3, (
         "The 90-day-old story is outside"
     )
+
+
+def test_build_snapshot_same_story_from_one_outlet_appears_once(now: datetime) -> None:
+    articles = [
+        _article(1, "bursadabugun.com", now, "c1"),
+        _article(2, "bursadabugun.com", now, "c1"),
+        _article(3, "t24.com.tr", now - timedelta(hours=1), "c2"),
+    ]
+    snap = build_snapshot(articles, [], [], now, now)
+
+    ids = [a.id for a in snap.latest]
+    assert len(ids) == 2, f"Expected one copy per outlet and story, got {ids}"
+    assert snap.totals.articles_90d == 2, f"Duplicates inflate totals: {snap.totals}"
+
+
+def test_build_snapshot_no_comment_lines_are_not_statements(now: datetime) -> None:
+    statements = [
+        ActorStatement(
+            actor="marti",
+            summary="Habere göre Martı TAG tarafının açıklaması bulunmuyor.",
+        ),
+        ActorStatement(actor="marti", summary="Haberde Martı'nın yanıtı yer almıyor."),
+        ActorStatement(
+            actor="marti", summary="Martı, kararın hukuka uygun olduğunu açıkladı."
+        ),
+    ]
+    snap = build_snapshot(
+        [_article(1, "a.example", now, "c1", statements=statements)], [], [], now, now
+    )
+
+    summaries = [s.summary for s in snap.actor_statements]
+    assert summaries == ["Martı, kararın hukuka uygun olduğunu açıkladı."], summaries
+
+
+def test_build_snapshot_social_platforms_are_not_counted_as_media(
+    now: datetime,
+) -> None:
+    articles = [
+        _article(1, "instagram.com", now, "c1"),
+        _article(2, "t24.com.tr", now, "c2"),
+    ]
+    snap = build_snapshot(articles, [], [], now, now)
+
+    domains = [s.domain for s in snap.source_counts]
+    assert domains == ["t24.com.tr"], f"Social posts listed as media: {domains}"
+    assert snap.totals.sources_90d == 1, f"Expected 1 outlet, got {snap.totals}"
+
+
+def test_top_terms_suffix_variants_count_as_one_word(now: datetime) -> None:
+    titles = [
+        "Taksiciler eylem yaptı",
+        "Taksicilerden sert tepki",
+        "Taksicilere ceza yağdı",
+        "Mahkeme kararı açıklandı",
+    ]
+    articles = [
+        _article(i, f"site{i}.example", now - timedelta(days=i), f"c{i}")
+        for i in range(len(titles))
+    ]
+    for article, title in zip(articles, titles, strict=True):
+        article.title = title
+
+    terms = {t.term: t.count for t in top_terms(articles, now.date())}
+
+    assert terms.get("taksiciler") == 3, f"Expected merged taksiciler=3, got {terms}"
+    assert "taksicilerden" not in terms and "taksicilere" not in terms, terms
