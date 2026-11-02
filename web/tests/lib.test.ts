@@ -5,7 +5,14 @@ import { caseOverview, splitSentences } from '@/lib/case';
 import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
 import { trimLeadingEmpty } from '@/lib/series';
-import { editionStart, formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
+import {
+  coverageSince,
+  editionStart,
+  formatCompact,
+  formatTime,
+  issueNumber,
+  trUpper,
+} from '@/lib/format';
 import type { CaseEventT } from '@/lib/schema';
 
 describe('format', () => {
@@ -161,5 +168,34 @@ describe('case overview', () => {
 
   it('returns nothing for an empty case', () => {
     expect(caseOverview([])).toBeUndefined();
+  });
+});
+
+describe('coverage label', () => {
+  const days = (counts: number[]) =>
+    counts.map((count, i) => ({ date: `2026-10-${String(i + 1).padStart(2, '0')}`, count }));
+
+  it('names the whole window when data starts on its first day', () => {
+    expect(coverageSince(days([1, 0, 2]))).toEqual({ label: 'Son 90 günde', since: '2026-10-01' });
+  });
+
+  it('names the first day with news when collection started later', () => {
+    expect(coverageSince(days([0, 0, 3, 1]))).toEqual({
+      label: "3 Ekim'den bu yana",
+      since: '2026-10-03',
+    });
+  });
+
+  it.each([
+    ['2026-08-05', "5 Ağustos'tan bu yana"],
+    ['2026-09-05', "5 Eylül'den bu yana"],
+    ['2026-07-05', "5 Temmuz'dan bu yana"],
+  ])('uses the right suffix for %s', (date, label) => {
+    expect(
+      coverageSince([
+        { date: '2026-01-01', count: 0 },
+        { date, count: 1 },
+      ]).label,
+    ).toBe(label);
   });
 });

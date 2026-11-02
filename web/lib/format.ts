@@ -94,3 +94,35 @@ export function editionStart(iso: string): string {
     LAUNCH_EDITION_UTC + Math.max(0, Math.floor((t - LAUNCH_EDITION_UTC) / DAY_MS)) * DAY_MS;
   return new Date(start).toISOString();
 }
+
+/** Ablative suffix for each month name, by month index ("Ekim'den", "Ağustos'tan"). */
+const FROM_SUFFIX = [
+  "'tan",
+  "'tan",
+  "'tan",
+  "'dan",
+  "'tan",
+  "'dan",
+  "'dan",
+  "'tan",
+  "'den",
+  "'den",
+  "'dan",
+  "'tan",
+] as const;
+
+/**
+ * How to name the period a set of daily counts covers. Collection started after the 90-day
+ * window opened, so until it fills, totals are labelled from the first day with news.
+ */
+export function coverageSince(daily: { date: string; count: number }[]): {
+  label: string;
+  since: string;
+} {
+  const first = daily.findIndex((d) => d.count > 0);
+  if (first <= 0) return { label: 'Son 90 günde', since: daily[0]?.date ?? '' };
+  const since = daily[first].date;
+  const month = Number(since.slice(5, 7)) - 1;
+  const day = formatCalendarDate(since, { year: false });
+  return { label: `${day}${FROM_SUFFIX[month]} bu yana`, since };
+}

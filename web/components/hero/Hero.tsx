@@ -1,6 +1,13 @@
 import { Fragment } from 'react';
 
-import { editionStart, formatDate, formatNumber, formatTime, issueNumber } from '@/lib/format';
+import {
+  coverageSince,
+  editionStart,
+  formatDate,
+  formatNumber,
+  formatTime,
+  issueNumber,
+} from '@/lib/format';
 import { isEmptySnapshot, type SnapshotT } from '@/lib/schema';
 
 import { EditionCountdown } from './EditionCountdown';
@@ -8,26 +15,21 @@ import { EditionSeal } from './EditionSeal';
 import { SplitFlapMasthead } from './SplitFlapMasthead';
 import { Ticker } from './Ticker';
 
-const WINDOW_MS = 89 * 86_400_000;
-
-/** Case events dated within the same 90-day window as the article and source totals. */
-function recentEvents(snapshot: SnapshotT): number {
-  const cutoff = new Date(Date.parse(snapshot.generated_at) - WINDOW_MS).toISOString().slice(0, 10);
-  return snapshot.events.filter((e) => e.published && e.date >= cutoff).length;
-}
-
 /** Left ear: a double-ruled box that sums up what the paper has covered so far. */
 function TallyEar({ snapshot, empty }: { snapshot: SnapshotT; empty: boolean }) {
+  // Same period for all three rows: the 90-day window, or since collection started.
+  const { label, since } = coverageSince(snapshot.daily_counts);
+  const events = snapshot.events.filter((e) => e.published && e.date >= since).length;
   const rows: [string, string][] = [
     [formatNumber(snapshot.totals.articles_90d), 'haber'],
     [formatNumber(snapshot.totals.sources_90d), 'kaynak'],
-    [formatNumber(recentEvents(snapshot)), 'dava gelişmesi'],
+    [formatNumber(events), 'dava gelişmesi'],
   ];
   return (
     <div className="hidden w-44 shrink-0 lg:block">
       <div className="border border-white/90 p-[3px]">
         <div className="border border-white/35 px-3.5 pt-2.5 pb-3">
-          <p className="font-serif text-[0.95rem] text-white/80 italic">Son 90 günde</p>
+          <p className="font-serif text-[0.95rem] text-white/80 italic">{label}</p>
           {empty ? (
             <p className="meta mt-2 text-white/80">İlk sayı hazırlanıyor</p>
           ) : (

@@ -128,7 +128,7 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
         viewBox={`0 0 ${width} ${height}`}
         className="block h-auto max-w-full overflow-visible"
         role="img"
-        aria-label="Son 90 günde günlük haber sayısı"
+        aria-label="Günlük haber sayısı"
       >
         <defs>
           <clipPath id={clipId}>

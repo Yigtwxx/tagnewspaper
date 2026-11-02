@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { formatCalendarDate, formatNumber } from '@/lib/format';
+import { coverageSince, formatCalendarDate, formatNumber } from '@/lib/format';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { CATEGORIES, type SnapshotT } from '@/lib/schema';
 import { trimLeadingEmpty } from '@/lib/series';
@@ -53,7 +53,7 @@ export function NewsDensity({
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Ne zaman konuşuldu?</h2>
           <p className="dek">
-            {formatCalendarDate(data[0].date, { year: false })} tarihinden bu yana{' '}
+            {coverageSince(snapshot.daily_counts).label}{' '}
             <span className="hl">{formatNumber(total)} haber</span> çıktı. En yoğun gün{' '}
             <span className="hl">{formatCalendarDate(peak.date)}</span> oldu, {peak.count} haberle.
             Kesikli çizgiler dava gelişmelerini gösteriyor.
@@ -104,7 +104,7 @@ export function SourceSpread({
         <header className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim yazdı?</h2>
           <p className="dek">
-            Son 90 günde{' '}
+            {coverageSince(snapshot.daily_counts).label}{' '}
             <span className="hl">
               {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı
             </span>{' '}
