@@ -3,6 +3,7 @@ import type { StatT } from '@/lib/schema';
 
 import { CityMap } from './CityMap';
 import { DotMatrix, NumbersMotion } from './NumbersClient';
+import { SectionMargins } from '../SectionMargins';
 
 const PER_DOT = 10_000;
 
@@ -40,7 +41,7 @@ function Figure({ stat }: { stat: StatT }) {
   );
 }
 
-export function Numbers({ stats }: { stats: StatT[] }) {
+export function Numbers({ stats, runningHead }: { stats: StatT[]; runningHead: string }) {
   const riders = stats.find((s) => s.key === 'registered_riders');
   const drivers = stats.find((s) => s.key === 'drivers');
   const istanbul = stats.find((s) => s.key === 'drivers_istanbul');
@@ -50,8 +51,9 @@ export function Numbers({ stats }: { stats: StatT[] }) {
       id="rakamlar"
       data-section="numbers"
       data-theme="ink"
-      className="px-4 py-20 sm:px-8 sm:py-24"
+      className="margin-clip relative px-4 py-20 sm:px-8 sm:py-24"
     >
+      <SectionMargins index={2} label="Rakamlar" theme="ink" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kaç kişi kullanıyor?</h2>

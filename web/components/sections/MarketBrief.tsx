@@ -4,19 +4,27 @@ import { formatCalendarDate } from '@/lib/format';
 import type { MarketT } from '@/lib/schema';
 
 import { TradingViewChart } from '../market/TradingViewChart';
+import { SectionMargins } from '../SectionMargins';
 
 const FILINGS = 5;
 
 /** Front-page market section: the MRT chart and the latest SEC filings, with a link to /borsa. */
-export function MarketBrief({ market }: { market: MarketT | undefined }) {
+export function MarketBrief({
+  market,
+  runningHead,
+}: {
+  market: MarketT | undefined;
+  runningHead: string;
+}) {
   const filings = market?.filings.slice(0, FILINGS) ?? [];
   return (
     <section
       id="borsa"
       data-section="market"
       data-theme="paper"
-      className="px-4 py-20 sm:px-8 sm:py-24"
+      className="margin-clip relative px-4 py-20 sm:px-8 sm:py-24"
     >
+      <SectionMargins index={6} label="Borsa" theme="paper" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <header className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Martı hissesi</h2>

@@ -180,7 +180,11 @@ export default async function BorsaPage() {
           </div>
         </section>
       </main>
-      <Colophon lastRunAt={snapshot.last_run_at} hasData={hasData} />
+      <Colophon
+        lastRunAt={snapshot.last_run_at}
+        hasData={hasData}
+        runningHead="BORSA   MARTI (MRT)"
+      />
       <ThemeTriggers />
       <PageEffects />
     </>

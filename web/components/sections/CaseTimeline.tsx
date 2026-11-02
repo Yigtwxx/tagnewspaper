@@ -9,6 +9,7 @@ import { gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/m
 import type { CaseEventT } from '@/lib/schema';
 
 import { FlapCell } from '../hero/FlapCell';
+import { SectionMargins } from '../SectionMargins';
 
 const TYPE_LABEL: Record<CaseEventT['type'], string> = {
   court_decision: 'Mahkeme kararı',
@@ -30,7 +31,13 @@ function monthName(ymd: string): string {
  * pinned on the left and flips to the year of whichever event is in focus; the black track on
  * the right fills as you read down.
  */
-export function CaseTimeline({ events }: { events: CaseEventT[] }) {
+export function CaseTimeline({
+  events,
+  runningHead,
+}: {
+  events: CaseEventT[];
+  runningHead: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
   const [active, setActive] = useState(Math.max(0, events.length - 1));
@@ -95,8 +102,9 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
       id="dava"
       data-section="case"
       data-theme="tag"
-      className="px-4 py-20 sm:px-8 sm:py-24"
+      className="margin-clip relative px-4 py-20 sm:px-8 sm:py-24"
     >
+      <SectionMargins index={3} label="Dava" theme="tag" runningHead={runningHead} />
       <div className="mx-auto grid max-w-[1360px] gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="flex flex-col gap-6 lg:sticky lg:top-20">

@@ -5,13 +5,20 @@ import type { SnapshotT } from '@/lib/schema';
 import { FeedClient } from '../feed/FeedClient';
 import { KEY_TERMS } from '../feed/Highlighted';
 import { LatestBox, LeadBox, NewsBox } from '../feed/NewsBox';
+import { SectionMargins } from '../SectionMargins';
 
 /** Stories placed on the front page grid before the filterable feed starts. */
 const FRONT_STORIES = 6;
 /** Short headline-only list in the right column, continuing after the boxed stories. */
 const BRIEFS = 7;
 
-export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
+export function LeadAndFeed({
+  snapshot,
+  runningHead,
+}: {
+  snapshot: SnapshotT;
+  runningHead: string;
+}) {
   const lead = snapshot.lead;
   const terms = [...snapshot.top_terms.map((t) => t.term), ...KEY_TERMS];
   const others = snapshot.latest.filter((a) => a.id !== lead?.article.id);
@@ -27,8 +34,9 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
       id="haberler"
       data-section="feed"
       data-theme="paper"
-      className="px-4 pt-10 pb-24 sm:px-8"
+      className="margin-clip relative px-4 pt-10 pb-24 sm:px-8"
     >
+      <SectionMargins index={1} label="Gündem" theme="paper" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         {lead ? (
           <div className="rule-grid">

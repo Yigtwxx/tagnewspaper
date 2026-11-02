@@ -1,8 +1,15 @@
 import { formatDate } from '@/lib/format';
 import { ACTOR_LABEL } from '@/lib/labels';
 import { ACTORS, type ActorStatementT } from '@/lib/schema';
+import { SectionMargins } from '../SectionMargins';
 
-export function ActorVoices({ statements }: { statements: ActorStatementT[] }) {
+export function ActorVoices({
+  statements,
+  runningHead,
+}: {
+  statements: ActorStatementT[];
+  runningHead: string;
+}) {
   const byActor = ACTORS.map((actor) => ({
     actor,
     items: statements.filter((s) => s.actor === actor).slice(0, 3),
@@ -13,8 +20,9 @@ export function ActorVoices({ statements }: { statements: ActorStatementT[] }) {
       id="taraflar"
       data-section="actors"
       data-theme="paper"
-      className="px-4 py-20 sm:px-8 sm:py-24"
+      className="margin-clip relative px-4 py-20 sm:px-8 sm:py-24"
     >
+      <SectionMargins index={5} label="Taraflar" theme="paper" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim ne diyor?</h2>

@@ -2,8 +2,17 @@ import { LogoMark, Wordmark } from '@/components/Logo';
 import { contactEmail, publisherName, REPO_URL } from '@/lib/site';
 
 import { StaleNotice } from './StaleNotice';
+import { SectionMargins } from '../SectionMargins';
 
-export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: boolean }) {
+export function Colophon({
+  lastRunAt,
+  hasData,
+  runningHead,
+}: {
+  lastRunAt: string;
+  hasData: boolean;
+  runningHead: string;
+}) {
   const email = contactEmail();
   const publisher = publisherName();
 
@@ -12,8 +21,9 @@ export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: b
       id="kunye"
       data-section="colophon"
       data-theme="ink"
-      className="px-4 pt-20 pb-12 sm:px-8 sm:pt-24"
+      className="margin-clip relative px-4 pt-20 pb-12 sm:px-8 sm:pt-24"
     >
+      <SectionMargins index={7} label="Künye" theme="ink" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12">
           <h2 className="section-title mt-4">Bu gazete hakkında</h2>

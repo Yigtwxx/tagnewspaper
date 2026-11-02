@@ -395,9 +395,10 @@ html.lenis body {
   z-index: 60;
 }
 
-/* Side rails sit over the page margin; they take the section's colors but not its fill. */
-.rail[data-theme] {
-  background-color: transparent;
+/* Each section clips its own fixed margin copy, so margin type splits exactly at section
+   boundaries (see SectionMargins). Fixed descendants are clipped by clip-path, not overflow. */
+.margin-clip {
+  clip-path: inset(0);
 }
 
 /* ---------- Generic helpers ---------- */

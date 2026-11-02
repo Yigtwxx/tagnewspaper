@@ -9,6 +9,7 @@ import { AreaAnnotated } from '../charts/AreaAnnotated';
 import { SourceSpreadViz } from '../charts/SourceSpreadViz';
 import { StreamGraph } from '../charts/StreamGraph';
 import { TopTerms } from '../charts/TopTerms';
+import { SectionMargins } from '../SectionMargins';
 
 function TableToggle({ summary, children }: { summary: string; children: ReactNode }) {
   return (
@@ -26,7 +27,13 @@ function shorten(text: string, max = 30): string {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
 }
 
-export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
+export function NewsDensity({
+  snapshot,
+  runningHead,
+}: {
+  snapshot: SnapshotT;
+  runningHead: string;
+}) {
   // Start the axis where coverage starts instead of drawing weeks of empty baseline.
   const data = trimLeadingEmpty(snapshot.daily_counts, (d) => d.count === 0, 14, 2);
   if (data.length < 2) return null;
@@ -39,8 +46,9 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
       id="veriler"
       data-section="density"
       data-theme="paper"
-      className="px-4 py-16 sm:px-8 sm:py-24"
+      className="margin-clip relative px-4 py-16 sm:px-8 sm:py-24"
     >
+      <SectionMargins index={4} label="Veriler" theme="paper" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Ne zaman konuşuldu?</h2>
@@ -75,12 +83,23 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
   );
 }
 
-export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
+export function SourceSpread({
+  snapshot,
+  runningHead,
+}: {
+  snapshot: SnapshotT;
+  runningHead: string;
+}) {
   const data = snapshot.source_counts;
   if (data.length === 0) return null;
 
   return (
-    <section data-section="sources" data-theme="paper" className="px-4 pb-16 sm:px-8 sm:pb-24">
+    <section
+      data-section="sources"
+      data-theme="paper"
+      className="margin-clip relative px-4 pb-16 sm:px-8 sm:pb-24"
+    >
+      <SectionMargins index={4} label="Veriler" theme="paper" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <header className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim yazdı?</h2>
@@ -99,7 +118,13 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
   );
 }
 
-export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
+export function TopicTrends({
+  snapshot,
+  runningHead,
+}: {
+  snapshot: SnapshotT;
+  runningHead: string;
+}) {
   // Keep the stream, but start one week before coverage begins (at least five weeks wide).
   const data = trimLeadingEmpty(
     snapshot.category_weekly,
@@ -115,7 +140,12 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
   const leader = totals[0];
 
   return (
-    <section data-section="topics" data-theme="ink" className="px-4 py-16 sm:px-8 sm:py-24">
+    <section
+      data-section="topics"
+      data-theme="ink"
+      className="margin-clip relative px-4 py-16 sm:px-8 sm:py-24"
+    >
+      <SectionMargins index={4} label="Veriler" theme="ink" runningHead={runningHead} />
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
