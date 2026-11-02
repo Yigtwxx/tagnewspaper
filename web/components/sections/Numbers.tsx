@@ -55,8 +55,8 @@ export function Numbers({ stats }: { stats: StatT[] }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kaç kişi kullanıyor?</h2>
           <p className="dek">
-            Şirketin açıkladığı son rakamlar. Bunlar canlı veri değildir; yeni bir resmî açıklama
-            geldiğinde güncellenir.
+            Şirketin açıkladığı son rakamlar. Bunlar <span className="hl">canlı veri değildir</span>
+            ; yeni bir resmî açıklama geldiğinde güncellenir.
           </p>
         </div>
 

@@ -1,92 +1,93 @@
 'use client';
 
 import { useGSAP } from '@gsap/react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { formatCalendarDate } from '@/lib/format';
-import { gsap, prefersReducedMotion, registerGsap } from '@/lib/motion';
+import { useReducedMotion } from '@/lib/hooks';
+import { gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/motion';
 import type { CaseEventT } from '@/lib/schema';
+
+import { FlapCell } from '../hero/FlapCell';
 
 const TYPE_LABEL: Record<CaseEventT['type'], string> = {
   court_decision: 'Mahkeme kararı',
-  filing: 'Başvuru',
+  filing: 'Dava ve başvuru',
   regulation: 'Düzenleme',
   statement: 'Açıklama',
   other: 'Gelişme',
 };
 
-function EventCard({ event, index }: { event: CaseEventT; index: number }) {
-  const [y, m, d] = event.date.split('-');
-  return (
-    <li className="tl-card relative flex w-full shrink-0 flex-col gap-4 lg:w-[min(34rem,42vw)]">
-      <div className="flex items-center gap-4">
-        <span className="tl-node relative z-10 inline-block size-5 rounded-full border-[3px] border-black bg-black" />
-        <span className="relative z-10 bg-tag pr-3 font-sans text-sm font-semibold">
-          {String(index + 1).padStart(2, '0')} / {TYPE_LABEL[event.type]}
-        </span>
-      </div>
-      <p className="numeral text-[clamp(2.5rem,4.5vw,4rem)]">
-        <time dateTime={event.date}>
-          {d}.{m}.{y}
-        </time>
-      </p>
-      {event.court && <p className="font-sans text-base font-semibold">{event.court}</p>}
-      <h3 className="headline text-[clamp(1.6rem,2.4vw,2.2rem)]">{event.title}</h3>
-      <p className="max-w-[32rem] text-lg leading-relaxed text-black/80">{event.description}</p>
-      {event.evidence.length > 0 && (
-        <p className="font-sans text-sm">
-          Kaynak:{' '}
-          {event.evidence.map((ev, i) => (
-            <span key={ev.url}>
-              {i > 0 && ', '}
-              <a href={ev.url} target="_blank" rel="noopener noreferrer" className="link-underline">
-                {ev.source_name}
-              </a>
-            </span>
-          ))}
-        </p>
-      )}
-    </li>
-  );
+const MONTHS = new Intl.DateTimeFormat('tr-TR', { month: 'long', timeZone: 'UTC' });
+
+function monthName(ymd: string): string {
+  const [y, m] = ymd.split('-').map(Number);
+  return MONTHS.format(new Date(Date.UTC(y, m - 1, 1)));
 }
 
+/**
+ * "Dava nerede?": the dispute from the first filing to today. A split-flap year counter stays
+ * pinned on the left and flips to the year of whichever event is in focus; the black track on
+ * the right fills as you read down.
+ */
 export function CaseTimeline({ events }: { events: CaseEventT[] }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLOListElement>(null);
-  const latest = events.at(-1);
+  const listRef = useRef<HTMLOListElement>(null);
+  const [active, setActive] = useState(Math.max(0, events.length - 1));
+  const animateFlaps = !useReducedMotion();
 
   useGSAP(
     () => {
       registerGsap();
-      const section = sectionRef.current;
-      const track = trackRef.current;
-      if (!section || !track || prefersReducedMotion()) return;
+      const list = listRef.current;
+      if (!list || events.length === 0) return;
+      const items = gsap.utils.toArray<HTMLElement>('.tl-event', list);
 
-      const mm = gsap.matchMedia();
-      mm.add('(min-width: 1024px)', () => {
-        const distance = () => Math.max(0, track.scrollWidth - window.innerWidth + 64);
-        if (distance() < 40) return;
-        const bar = section.querySelector<HTMLElement>('.tl-progress');
-        gsap.to(track, {
-          x: () => -distance(),
-          ease: 'none',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.6,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              if (bar) bar.style.transform = `scaleX(${self.progress})`;
-            },
+      items.forEach((item, i) => {
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'top 60%',
+          end: 'bottom 60%',
+          onToggle: (self) => {
+            if (self.isActive) setActive(i);
           },
         });
       });
-      return () => mm.revert();
+
+      if (prefersReducedMotion()) return;
+
+      gsap.fromTo(
+        list.querySelector('.tl-fill'),
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          scrollTrigger: { trigger: list, start: 'top 60%', end: 'bottom 60%', scrub: 0.4 },
+        },
+      );
+      for (const item of gsap.utils.toArray<HTMLElement>('.tl-item', list)) {
+        gsap.from(item.querySelectorAll('.tl-reveal'), {
+          opacity: 0,
+          x: 40,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.08,
+          scrollTrigger: { trigger: item, start: 'top 82%', once: true },
+        });
+        gsap.from(item.querySelector('.tl-node'), {
+          scale: 0,
+          duration: 0.6,
+          ease: 'back.out(3)',
+          scrollTrigger: { trigger: item, start: 'top 70%', once: true },
+        });
+      }
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [events.length] },
   );
+
+  const current = events[active];
+  const year = current ? current.date.slice(0, 4) : '----';
+  const latest = events.at(-1);
 
   return (
     <section
@@ -94,52 +95,126 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
       id="dava"
       data-section="case"
       data-theme="tag"
-      className="overflow-hidden px-4 py-28 sm:px-8 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-20"
+      className="px-4 py-24 sm:px-8 sm:py-32"
     >
-      <div className="section-head mx-auto mb-12 grid w-full max-w-[1360px] gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
-        <h2 className="section-title mt-4">Dava nerede?</h2>
-        {latest ? (
-          <p className="text-[clamp(1.15rem,1.5vw,1.4rem)] leading-relaxed">
-            <span className="font-sans font-semibold">
-              Son durum, {formatCalendarDate(latest.date)}:
-            </span>{' '}
-            {latest.title}
-          </p>
-        ) : (
-          <p className="dek">Doğrulanmış bir dava gelişmesi henüz eklenmedi.</p>
-        )}
-      </div>
+      <div className="mx-auto grid max-w-[1360px] gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <div className="flex flex-col gap-6 lg:sticky lg:top-20">
+            <header className="section-head">
+              <h2 className="section-title mt-4">Dava nerede?</h2>
+            </header>
+            <p className="dek text-black/75">
+              Martı TAG ile taksici odaları arasındaki hukuk mücadelesi, ilk günden bugüne. Okudukça
+              yıl sayacı ilerler.
+            </p>
 
-      {events.length > 0 && (
-        <div className="relative">
-          <div
-            className="absolute top-[10px] right-0 left-0 hidden h-[3px] bg-black/25 lg:block"
-            aria-hidden="true"
-          >
-            <div
-              className="tl-progress h-full origin-left bg-black"
-              style={{ transform: 'scaleX(0)' }}
-            />
+            <div className="flex flex-col gap-3" aria-hidden="true">
+              <div className="flex gap-[5px]">
+                {Array.from(year).map((ch, i) => (
+                  <FlapCell
+                    key={i}
+                    char={ch}
+                    delay={i * 60}
+                    spin={0}
+                    animate={animateFlaps}
+                    size="lg"
+                    tone={i >= 2 ? 'accent' : undefined}
+                  />
+                ))}
+              </div>
+              <p className="font-serif text-2xl italic">{current ? monthName(current.date) : ''}</p>
+              <p className="kicker">
+                {events.length > 0 ? `${active + 1} / ${events.length} gelişme` : ''}
+              </p>
+            </div>
+
+            {latest && (
+              <p className="border-t border-black/30 pt-4 text-[1.05rem] leading-relaxed">
+                <span className="font-sans font-bold">
+                  Son durum, {formatCalendarDate(latest.date)}:
+                </span>{' '}
+                {latest.title}
+              </p>
+            )}
           </div>
-          <ol
-            ref={trackRef}
-            className="flex flex-col gap-16 border-l-[3px] border-black/25 pl-6 will-change-transform lg:flex-row lg:gap-20 lg:border-l-0 lg:pl-[max(0px,calc((100vw-1360px)/2-2rem))]"
-          >
-            {events.map((event, i) => (
-              <EventCard key={event.id} event={event} index={i} />
-            ))}
-            <li className="flex w-full shrink-0 flex-col justify-end gap-4 lg:w-[min(26rem,34vw)] lg:pr-16">
-              <p className="font-serif text-2xl leading-snug">
-                Yeni bir karar çıktığında burada görünecek.
-              </p>
-              <p className="font-sans text-sm leading-relaxed text-black/75">
-                Bir gelişme ancak birbirinden bağımsız en az iki haber kaynağında ya da mahkeme,
-                kurum veya şirketin kendi açıklamasında geçiyorsa eklenir.
-              </p>
-            </li>
-          </ol>
         </div>
-      )}
+
+        <div className="lg:col-span-8">
+          {events.length === 0 ? (
+            <p className="dek text-black/75">Doğrulanmış bir dava gelişmesi henüz eklenmedi.</p>
+          ) : (
+            <ol ref={listRef} className="relative flex flex-col gap-16 pl-10 sm:pl-14">
+              <span
+                className="absolute top-2 bottom-2 left-[9px] w-[3px] bg-black/20"
+                aria-hidden="true"
+              >
+                <span className="tl-fill block h-full w-full origin-top bg-black" />
+              </span>
+              {events.map((event, i) => (
+                <li
+                  key={event.id}
+                  className={`tl-item tl-event relative flex flex-col gap-3 transition-opacity duration-500 ${
+                    i === active ? 'opacity-100' : 'opacity-70'
+                  }`}
+                >
+                  <span
+                    className={`tl-node absolute top-1 -left-10 size-[21px] rounded-full border-[3px] border-black transition-colors duration-500 sm:-left-14 ${
+                      i <= active ? 'bg-black' : 'bg-tag'
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <p className="tl-reveal kicker">
+                    <time dateTime={event.date}>{formatCalendarDate(event.date)}</time>
+                    <span className="mx-2">|</span>
+                    {TYPE_LABEL[event.type]}
+                  </p>
+                  {event.court && (
+                    <p className="tl-reveal font-sans text-sm font-semibold">{event.court}</p>
+                  )}
+                  <h3 className="tl-reveal headline text-[clamp(1.5rem,2.4vw,2.1rem)]">
+                    {event.title}
+                  </h3>
+                  <p className="tl-reveal body-copy max-w-[40rem] text-black/80">
+                    {event.description}
+                  </p>
+                  {event.evidence.length > 0 && (
+                    <p className="tl-reveal font-sans text-sm">
+                      Kaynak:{' '}
+                      {event.evidence.map((ev, j) => (
+                        <span key={ev.url}>
+                          {j > 0 && ', '}
+                          <a
+                            href={ev.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="link-underline"
+                          >
+                            {ev.source_name}
+                          </a>
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                </li>
+              ))}
+              <li className="tl-item relative flex flex-col gap-3">
+                <span
+                  className="tl-node absolute top-1 -left-10 size-[21px] animate-pulse rounded-full border-[3px] border-black bg-white sm:-left-14"
+                  aria-hidden="true"
+                />
+                <p className="tl-reveal kicker">Bugün</p>
+                <p className="tl-reveal font-serif text-2xl leading-snug">
+                  Yeni bir karar çıktığında burada görünecek.
+                </p>
+                <p className="tl-reveal max-w-[36rem] font-sans text-sm leading-relaxed text-black/75">
+                  Bir gelişme ancak birbirinden bağımsız en az iki haber kaynağında ya da mahkeme,
+                  kurum veya şirketin kendi açıklamasında geçiyorsa eklenir.
+                </p>
+              </li>
+            </ol>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

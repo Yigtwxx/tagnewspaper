@@ -124,6 +124,9 @@ export const Snapshot = z.object({
     articles_90d: z.number().int().nonnegative(),
     sources_90d: z.number().int().nonnegative(),
   }),
+  top_terms: z
+    .array(z.object({ term: z.string(), count: z.number().int().nonnegative() }))
+    .default([]),
 });
 
 export const NewsPage = z.object({
@@ -153,8 +156,39 @@ export const EMPTY_SNAPSHOT: SnapshotT = {
   category_weekly: [],
   actor_statements: [],
   totals: { articles_90d: 0, sources_90d: 0 },
+  top_terms: [],
 };
 
 export function isEmptySnapshot(s: SnapshotT): boolean {
   return s.generated_at === EMPTY_SNAPSHOT.generated_at;
 }
+
+export const MarketPrice = z.object({
+  date: z.iso.date(),
+  open: z.number(),
+  high: z.number(),
+  low: z.number(),
+  close: z.number(),
+  volume: z.number().int().nonnegative(),
+});
+
+export const Filing = z.object({
+  form: z.string(),
+  filed: z.iso.date(),
+  title: z.string(),
+  url: z.url(),
+});
+
+export const Market = z.object({
+  symbol: z.string(),
+  exchange: z.string(),
+  currency: z.string(),
+  updated_at: z.iso.datetime({ offset: true }),
+  price_source: z.string().nullable(),
+  prices: z.array(MarketPrice),
+  filings: z.array(Filing),
+});
+
+export type MarketPriceT = z.infer<typeof MarketPrice>;
+export type FilingT = z.infer<typeof Filing>;
+export type MarketT = z.infer<typeof Market>;

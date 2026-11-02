@@ -1,4 +1,5 @@
 import { Hero } from '@/components/hero/Hero';
+import { PageEffects } from '@/components/motion/PageEffects';
 import { ThemeTriggers } from '@/components/motion/ThemeTriggers';
 import { ActorVoices } from '@/components/sections/ActorVoices';
 import { CaseTimeline } from '@/components/sections/CaseTimeline';
@@ -18,7 +19,7 @@ export default async function Home() {
     <>
       <TopBar lastRunAt={snapshot.last_run_at} hasData={hasData} />
       <main id="top">
-        <Hero />
+        <Hero snapshot={snapshot} />
         <LeadAndFeed snapshot={snapshot} />
         <Numbers stats={snapshot.stats} />
         <CaseTimeline events={snapshot.events} />
@@ -29,6 +30,7 @@ export default async function Home() {
       </main>
       <Colophon lastRunAt={snapshot.last_run_at} hasData={hasData} />
       <ThemeTriggers />
+      <PageEffects />
     </>
   );
 }

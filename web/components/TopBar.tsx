@@ -1,21 +1,33 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { relativeTime } from '@/lib/format';
 import { useNow, useScrolledPast } from '@/lib/hooks';
 
 const NAV = [
-  { href: '#haberler', id: 'feed', label: 'Haberler' },
-  { href: '#rakamlar', id: 'numbers', label: 'Rakamlar' },
-  { href: '#dava', id: 'case', label: 'Dava' },
-  { href: '#veriler', id: 'density', label: 'Veriler' },
-  { href: '#taraflar', id: 'actors', label: 'Taraflar' },
-  { href: '#kunye', id: 'colophon', label: 'Künye' },
-];
+  { href: '/', label: 'Gazete', page: '/' },
+  { href: '/#dava', label: 'Dava', page: undefined },
+  { href: '/#veriler', label: 'Veriler', page: undefined },
+  { href: '/borsa', label: 'Borsa', page: '/borsa' },
+  { href: '/#kunye', label: 'Künye', page: undefined },
+] as const;
 
-/** Fixed bar that appears after the hero; ThemeTriggers re-themes it per section. */
-export function TopBar({ lastRunAt, hasData }: { lastRunAt: string; hasData: boolean }) {
-  const shown = useScrolledPast(0.42);
+/** Site bar with tabs. On the front page it slides in after the nameplate; elsewhere it stays. */
+export function TopBar({
+  lastRunAt,
+  hasData,
+  alwaysShown = false,
+}: {
+  lastRunAt: string;
+  hasData: boolean;
+  alwaysShown?: boolean;
+}) {
+  const scrolled = useScrolledPast(0.42);
+  const shown = alwaysShown || scrolled;
   const now = useNow();
+  const pathname = usePathname();
 
   return (
     <div
@@ -25,21 +37,32 @@ export function TopBar({ lastRunAt, hasData }: { lastRunAt: string; hasData: boo
       inert={!shown}
     >
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-8">
-        <a href="#top" className="font-serif text-lg font-bold">
+        <Link href="/" className="shrink-0 font-serif text-lg font-bold">
           <span className="text-(--accent-text)">TAG</span>NEWSPAPER
-        </a>
-        <nav aria-label="Bölümler" className="hidden md:block">
-          <ul className="flex gap-6 font-sans text-sm">
-            {NAV.map((item) => (
-              <li key={item.id}>
-                <a href={item.href} className="opacity-80 transition-opacity hover:opacity-100">
-                  {item.label}
-                </a>
-              </li>
-            ))}
+        </Link>
+        <nav aria-label="Sekmeler" className="no-scrollbar min-w-0 overflow-x-auto">
+          <ul className="flex gap-4 font-sans text-sm whitespace-nowrap sm:gap-6">
+            {NAV.map((item) => {
+              const current = item.page !== undefined && pathname === item.page;
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={current ? 'page' : undefined}
+                    className={`border-b-2 pb-0.5 transition-opacity ${
+                      current
+                        ? 'border-(--accent-text) font-semibold'
+                        : 'border-transparent opacity-75 hover:opacity-100'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-        <p className="meta whitespace-nowrap">
+        <p className="meta hidden whitespace-nowrap lg:block">
           {hasData && now !== undefined ? `Güncellendi: ${relativeTime(lastRunAt, now)}` : ''}
         </p>
       </div>

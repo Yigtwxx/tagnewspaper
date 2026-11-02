@@ -7,6 +7,7 @@ import { CATEGORIES, type SnapshotT } from '@/lib/schema';
 import { AreaAnnotated } from '../charts/AreaAnnotated';
 import { BubblePack } from '../charts/BubblePack';
 import { StreamGraph } from '../charts/StreamGraph';
+import { TopTerms } from '../charts/TopTerms';
 
 function TableToggle({ summary, children }: { summary: string; children: ReactNode }) {
   return (
@@ -41,9 +42,10 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Ne zaman konuşuldu?</h2>
           <p className="dek">
-            Son 90 günde {formatNumber(snapshot.totals.articles_90d)} haber çıktı. En yoğun gün{' '}
-            {formatCalendarDate(peak.date)} oldu, {peak.count} haberle. Kesikli çizgiler dava
-            gelişmelerini gösteriyor.
+            Son 90 günde{' '}
+            <span className="hl">{formatNumber(snapshot.totals.articles_90d)} haber</span> çıktı. En
+            yoğun gün <span className="hl">{formatCalendarDate(peak.date)}</span> oldu, {peak.count}{' '}
+            haberle. Kesikli çizgiler dava gelişmelerini gösteriyor.
           </p>
         </div>
         <AreaAnnotated data={data} markers={markers} />
@@ -82,8 +84,11 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
         <div className="flex flex-col gap-8 lg:col-span-5">
           <h2 className="section-title mt-4">Kim yazdı?</h2>
           <p className="dek">
-            Son 90 günde {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı Martı TAG
-            hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber.
+            Son 90 günde{' '}
+            <span className="hl">
+              {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı
+            </span>{' '}
+            Martı TAG hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber.
           </p>
           <ol className="flex flex-col gap-3 font-sans">
             {top.map((s, i) => (
@@ -126,10 +131,11 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
           <p className="dek">
             Son {data.length} haftada haberlerin konulara dağılımı. En çok yer bulan konu{' '}
-            {CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')} oldu.
+            <span className="hl">{CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')}</span> oldu.
           </p>
         </div>
         <StreamGraph data={data} />
+        <TopTerms terms={snapshot.top_terms} />
         <TableToggle summary="Haftalık sayıları tablo olarak göster">
           <table className="w-full">
             <thead>

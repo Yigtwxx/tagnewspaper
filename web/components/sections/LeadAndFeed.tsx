@@ -1,6 +1,5 @@
 import { encodeCursor } from '@/lib/cursor';
-import { formatDate, formatTime, issueNumber } from '@/lib/format';
-import { isEmptySnapshot, type SnapshotT } from '@/lib/schema';
+import type { SnapshotT } from '@/lib/schema';
 
 import { FeedClient } from '../feed/FeedClient';
 import { LatestBox, LeadBox, NewsBox } from '../feed/NewsBox';
@@ -9,25 +8,6 @@ import { LatestBox, LeadBox, NewsBox } from '../feed/NewsBox';
 const FRONT_STORIES = 6;
 /** Short headline-only list in the right column, continuing after the boxed stories. */
 const BRIEFS = 7;
-
-function Dateline({ snapshot }: { snapshot: SnapshotT }) {
-  const empty = isEmptySnapshot(snapshot);
-  return (
-    <div className="mb-8 border-y border-(--fg) py-2">
-      <div className="meta grid grid-cols-2 items-center gap-2 text-(--fg) sm:grid-cols-3">
-        <span>
-          {empty ? 'İlk sayı hazırlanıyor' : `Sayı ${issueNumber(snapshot.generated_at)}`}
-        </span>
-        <span className="hidden text-center font-semibold sm:block">
-          {empty ? '' : formatDate(snapshot.generated_at, { weekday: true })}
-        </span>
-        <span className="text-right">
-          {empty ? 'Bağımsız ve reklamsız' : `Son güncelleme ${formatTime(snapshot.last_run_at)}`}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
   const lead = snapshot.lead;
@@ -47,8 +27,6 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
       className="px-4 pt-10 pb-24 sm:px-8"
     >
       <div className="mx-auto max-w-[1360px]">
-        <Dateline snapshot={snapshot} />
-
         {lead ? (
           <div className="rule-grid">
             <div className="rule-grid__inner grid-flow-row-dense grid-cols-1 sm:auto-rows-[23rem] sm:grid-cols-2 lg:grid-cols-4">

@@ -19,8 +19,9 @@ export function ActorVoices({ statements }: { statements: ActorStatementT[] }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim ne diyor?</h2>
           <p className="dek">
-            Tarafların haberlere yansıyan son açıklamaları. Bunlar birebir alıntı değildir; haberi
-            yazan yayın organının aktardığı şekliyle özetlenmiştir.
+            Tarafların haberlere yansıyan son açıklamaları. Bunlar{' '}
+            <span className="hl">birebir alıntı değildir</span>; haberi yazan yayın organının
+            aktardığı şekliyle özetlenmiştir.
           </p>
         </div>
 

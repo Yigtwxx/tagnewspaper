@@ -72,7 +72,7 @@ export interface FlapCellProps {
   /** Extra drum steps on first appearance, so the board visibly "spins up". */
   spin: number;
   animate: boolean;
-  size?: 'xl';
+  size?: 'xl' | 'lg';
   tone?: 'accent' | 'dim';
 }
 
@@ -121,7 +121,11 @@ export const FlapCell = memo(function FlapCell({
     };
   }, [char, delay, spin, animate]);
 
-  const cls = ['flap', size === 'xl' ? 'flap--xl' : '', tone ? `flap--${tone}` : '']
+  const cls = [
+    'flap',
+    size === 'xl' ? 'flap--xl' : size === 'lg' ? 'flap--lg' : '',
+    tone ? `flap--${tone}` : '',
+  ]
     .filter(Boolean)
     .join(' ');
 

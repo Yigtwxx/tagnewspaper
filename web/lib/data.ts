@@ -12,6 +12,8 @@ import {
   type ArticleViewT,
   type CategoryT,
   EMPTY_SNAPSHOT,
+  Market,
+  type MarketT,
   type NewsPageT,
   Snapshot,
   type SnapshotT,
@@ -148,5 +150,39 @@ export async function getNewsPage(
   } catch (err) {
     console.error('[data] news page read failed', err instanceof Error ? err.name : 'unknown');
     return { items: [], next_cursor: null };
+  }
+}
+
+async function readDemoMarket(): Promise<MarketT | undefined> {
+  const file = path.join(process.cwd(), '..', 'shared', 'fixtures', 'market.sample.json');
+  try {
+    return Market.parse(JSON.parse(await readFile(file, 'utf-8')));
+  } catch {
+    return undefined;
+  }
+}
+
+/** The MRT market document written once a day by the pipeline; undefined until it exists. */
+export async function getMarket(): Promise<MarketT | undefined> {
+  'use cache';
+  cacheTag(NEWS_TAG);
+  cacheLife('news');
+
+  if (demoEnabled()) return readDemoMarket();
+
+  const db = getDb();
+  if (!db) return undefined;
+  try {
+    const doc = await db.collection<{ _id: string }>('market').findOne({ _id: 'MRT' });
+    if (!doc) return undefined;
+    const parsed = Market.safeParse(doc);
+    if (!parsed.success) {
+      console.error('[data] market failed validation', parsed.error.issues.slice(0, 5));
+      return undefined;
+    }
+    return parsed.data;
+  } catch (err) {
+    console.error('[data] market read failed', err instanceof Error ? err.name : 'unknown');
+    return undefined;
   }
 }
