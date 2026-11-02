@@ -93,6 +93,14 @@ def domain_of(url: str) -> str:
     return normalize_host(urlsplit(url).netloc)
 
 
+def clean_source_name(name: str) -> str:
+    """Feeds sometimes give a site's URL as its name; show the bare host instead."""
+    name = collapse_ws(name)
+    if name.lower().startswith(("http://", "https://")):
+        return domain_of(name)
+    return name
+
+
 def article_id(canonical_url: str) -> str:
     return hashlib.sha1(canonical_url.encode("utf-8")).hexdigest()[:16]
 

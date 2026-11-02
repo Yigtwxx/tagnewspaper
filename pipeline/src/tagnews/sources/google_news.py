@@ -11,7 +11,11 @@ import feedparser
 import httpx
 
 from tagnews.sources.base import RawItem, SourceError, get_with_retry, struct_to_utc
-from tagnews.textnorm import collapse_ws, domain_of, strip_source_suffix
+from tagnews.textnorm import (
+    clean_source_name,
+    domain_of,
+    strip_source_suffix,
+)
 
 log = logging.getLogger(__name__)
 
@@ -36,7 +40,7 @@ def parse_feed(content: bytes, now: datetime) -> list[RawItem]:
         if not link or not title:
             continue
         source = entry.get("source") or {}
-        source_name = collapse_ws(source.get("title") or "")
+        source_name = clean_source_name(source.get("title") or "")
         source_href = source.get("href") or ""
         source_domain = domain_of(source_href) if source_href else ""
         if not source_name or not source_domain:

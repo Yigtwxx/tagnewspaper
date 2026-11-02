@@ -5,6 +5,7 @@ import pytest
 from tagnews.pii import contains_pii, is_valid_tckn, scrub
 from tagnews.textnorm import (
     canonicalize_url,
+    clean_source_name,
     domain_of,
     jaccard,
     normalize_for_match,
@@ -88,3 +89,18 @@ def test_domain_of_mobile_and_amp_hosts_map_to_the_publisher(
     url: str, expected: str
 ) -> None:
     assert domain_of(url) == expected, f"{url} -> {domain_of(url)}"
+
+
+@pytest.mark.parametrize(
+    ("name", "expected"),
+    [
+        ("https://www.babaocagi.com/", "babaocagi.com"),
+        ("http://m.tekha.com.tr", "tekha.com.tr"),
+        ("Ajans32.com", "Ajans32.com"),
+        ("  T24 ", "T24"),
+    ],
+)
+def test_clean_source_name_url_names_become_the_host(name: str, expected: str) -> None:
+    assert clean_source_name(name) == expected, (
+        f"{name!r} -> {clean_source_name(name)!r}"
+    )
