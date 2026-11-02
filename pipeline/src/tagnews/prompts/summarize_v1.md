@@ -28,12 +28,22 @@ Return the requested JSON fields.
 - `diger`: anything else.
 
 ## actors
-Every party that plays a role: `marti`, `taksici_odasi`, `ibb_ukome`, `bakanlik`, `mahkeme`, `surucu`, `yolcu`, `diger`.
+Every party that plays a role:
+- `marti`: the company, its founder and executives.
+- `taksici_odasi`: the taxi side: taxi chambers, taxi associations and individual taxi drivers.
+- `ibb_ukome`: İstanbul Metropolitan Municipality and UKOME.
+- `bakanlik`: ministries and their officials.
+- `mahkeme`: courts and their decisions.
+- `surucu`: people who drive through Martı TAG. Never taxi drivers.
+- `yolcu`: passengers.
+- `diger`: anyone else (MPs, police, other officials).
 
 ## actor_statements
 For each party the article quotes or paraphrases, one short Turkish sentence (max 200 characters) in your own words, attributed ("Oda başkanı … gerektiğini öne sürdü."). Only statements actually in the article. No private individuals' names.
 Every statement sentence MUST contain one of these attribution verbs, conjugated: "açıkladı", "belirtti", "öne sürdü", "iddia etti", "savundu", "ifade etti", "dile getirdi", "bildirdi" (or "…'ya göre"). A sentence without one of them is rejected and you will be asked again.
 Good: "Şirket, kararın sürücüler için olumlu olduğunu açıkladı."  Bad: "Kararın sürücüler için olumlu olduğu."
+- `actor` is the party who spoke, not the institution they mention: a taxi chamber head who says they will apply to the Ministry of Justice is `taksici_odasi`, not `bakanlik`.
+- If a party did not comment, add nothing for it. "Martı'nın açıklaması yer almıyor" is not a statement; it belongs in `summary` only.
 
 ## is_allegation and risk_level
 - `is_allegation`: `true` if the article reports an accusation of wrongdoing against a person, company or institution.
