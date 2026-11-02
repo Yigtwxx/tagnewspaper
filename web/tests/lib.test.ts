@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DRUM, drumPath } from '@/components/hero/FlapCell';
 import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
+import { trimLeadingEmpty } from '@/lib/series';
 import { editionStart, formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
 
 describe('format', () => {
@@ -86,5 +87,28 @@ describe('split-flap drum', () => {
 
   it('includes Turkish letters on the drum', () => {
     for (const ch of 'ÇĞİÖŞÜ') expect(DRUM).toContain(ch);
+  });
+});
+
+describe('trimLeadingEmpty', () => {
+  const rows = [0, 0, 0, 0, 0, 3, 0, 5, 2].map((count, i) => ({ i, count }));
+  const empty = (r: { count: number }) => r.count === 0;
+
+  it('starts at the first non-empty point, keeping the lead-in pad', () => {
+    expect(trimLeadingEmpty(rows, empty, 2, 1).map((r) => r.i)).toEqual([4, 5, 6, 7, 8]);
+  });
+
+  it('keeps at least minLen points', () => {
+    expect(trimLeadingEmpty(rows, empty, 7, 0)).toHaveLength(7);
+  });
+
+  it('falls back to the tail when everything is empty', () => {
+    expect(
+      trimLeadingEmpty(
+        rows.map((r) => ({ ...r, count: 0 })),
+        empty,
+        3,
+      ),
+    ).toHaveLength(3);
   });
 });

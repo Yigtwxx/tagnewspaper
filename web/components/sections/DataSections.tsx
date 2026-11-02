@@ -3,9 +3,11 @@ import type { ReactNode } from 'react';
 import { formatCalendarDate, formatNumber } from '@/lib/format';
 import { CATEGORY_LABEL } from '@/lib/labels';
 import { CATEGORIES, type SnapshotT } from '@/lib/schema';
+import { trimLeadingEmpty } from '@/lib/series';
 
 import { AreaAnnotated } from '../charts/AreaAnnotated';
 import { SourceSpreadViz } from '../charts/SourceSpreadViz';
+import { ShareBar } from '../charts/ShareBar';
 import { StreamGraph } from '../charts/StreamGraph';
 import { TopTerms } from '../charts/TopTerms';
 
@@ -26,9 +28,11 @@ function shorten(text: string, max = 30): string {
 }
 
 export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
-  const data = snapshot.daily_counts;
+  // Start the axis where coverage starts instead of drawing weeks of empty baseline.
+  const data = trimLeadingEmpty(snapshot.daily_counts, (d) => d.count === 0, 14, 2);
   if (data.length < 2) return null;
   const peak = data.reduce((a, b) => (b.count > a.count ? b : a), data[0]);
+  const total = data.reduce((n, d) => n + d.count, 0);
   const markers = snapshot.events.map((e) => ({ date: e.date, label: shorten(e.title) }));
 
   return (
@@ -42,10 +46,10 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Ne zaman konuşuldu?</h2>
           <p className="dek">
-            Son 90 günde{' '}
-            <span className="hl">{formatNumber(snapshot.totals.articles_90d)} haber</span> çıktı. En
-            yoğun gün <span className="hl">{formatCalendarDate(peak.date)}</span> oldu, {peak.count}{' '}
-            haberle. Kesikli çizgiler dava gelişmelerini gösteriyor.
+            {formatCalendarDate(data[0].date, { year: false })} tarihinden bu yana{' '}
+            <span className="hl">{formatNumber(total)} haber</span> çıktı. En yoğun gün{' '}
+            <span className="hl">{formatCalendarDate(peak.date)}</span> oldu, {peak.count} haberle.
+            Kesikli çizgiler dava gelişmelerini gösteriyor.
           </p>
         </div>
         <AreaAnnotated data={data} markers={markers} />
@@ -86,7 +90,7 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
             <span className="hl">
               {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı
             </span>{' '}
-            Martı TAG hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber; bir yayına
+            Martı TAG hakkında haber yaptı. Adı ne kadar büyükse o kadar çok haber; bir yayına
             gelince iki tarafta da vurgulanır.
           </p>
         </header>
@@ -97,8 +101,14 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
 }
 
 export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
-  const data = snapshot.category_weekly;
-  if (data.length < 2) return null;
+  const data = trimLeadingEmpty(
+    snapshot.category_weekly,
+    (w) => CATEGORIES.every((c) => !w.counts[c]),
+    1,
+  );
+  if (data.length === 0) return null;
+  // A stream needs a few weeks to mean anything; until then show each topic's share.
+  const sparse = data.length < 4;
   const totals = CATEGORIES.map((c) => ({
     c,
     n: data.reduce((sum, w) => sum + (w.counts[c] ?? 0), 0),
@@ -111,11 +121,12 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
           <p className="dek">
-            Son {data.length} haftada haberlerin konulara dağılımı. En çok yer bulan konu{' '}
+            {sparse ? 'Takibin başından bu yana' : `Son ${data.length} haftada`} haberlerin konulara
+            dağılımı. En çok yer bulan konu{' '}
             <span className="hl">{CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')}</span> oldu.
           </p>
         </div>
-        <StreamGraph data={data} />
+        {sparse ? <ShareBar totals={totals} /> : <StreamGraph data={data} />}
         <TopTerms terms={snapshot.top_terms} />
         <TableToggle summary="Haftalık sayıları tablo olarak göster">
           <table className="w-full">

@@ -50,6 +50,8 @@ const TAG = PROVINCES.filter(
 );
 const HUB = TAG.find((p) => p.code === 34) ?? TAG[0];
 const BASE_FILL = '#141615';
+/** Large enough to cover any province from its centroid. */
+const SPREAD_R = 160;
 
 function arc(x: number, y: number): string {
   const mx = (HUB.x + x) / 2;
@@ -80,7 +82,7 @@ export function CityMap() {
 
       gsap.set(outline, { strokeDasharray: len, strokeDashoffset: len });
       gsap.set(borders, { opacity: 0 });
-      gsap.set(root.querySelectorAll('.prov-tag'), { fill: BASE_FILL });
+      gsap.set(root.querySelectorAll('.spread'), { attr: { r: 0 } });
       gsap.set(root.querySelectorAll('.city-arc'), { opacity: 0 });
       setCount(0);
       setWave(0);
@@ -100,7 +102,6 @@ export function CityMap() {
         }, start);
         members.forEach((p, k) => {
           const a = root.querySelector<SVGPathElement>(`.city-arc[data-code="${p.code}"]`);
-          const shape = root.querySelector(`.prov-tag[data-code="${p.code}"]`);
           const at = start + k * 0.05;
           if (a) {
             const l = a.getTotalLength();
@@ -111,13 +112,19 @@ export function CityMap() {
               at,
             );
           }
-          // The province lights up the moment its route arrives.
-          if (shape) {
+          // Green spreads out from where the route touches the province, slowly, to its edges.
+          const spread = root.querySelector(`.spread[data-code="${p.code}"]`);
+          if (spread) {
             tl.fromTo(
-              shape,
-              { fill: '#e9fff2' },
-              { fill: w.color, duration: 0.5, ease: 'power1.out', immediateRender: false },
-              at + 0.75,
+              spread,
+              { attr: { r: 0 } },
+              {
+                attr: { r: SPREAD_R },
+                duration: 2.4,
+                ease: 'power1.inOut',
+                immediateRender: false,
+              },
+              at + 0.7,
             );
           }
         });
@@ -196,16 +203,33 @@ export function CityMap() {
             role="img"
             aria-label="TAG'ın hizmet verdiği 40 şehrin Türkiye haritası"
           >
+            <defs>
+              {TAG.map((p) => (
+                <clipPath key={p.code} id={`spread-${p.code}`}>
+                  <circle className="spread" data-code={p.code} cx={p.x} cy={p.y} r={SPREAD_R} />
+                </clipPath>
+              ))}
+            </defs>
             <g className="tr-borders">
               {PROVINCES.map((p) => (
+                <path key={p.code} d={p.d} fill={BASE_FILL} />
+              ))}
+              {TAG.map((p) => (
                 <path
-                  key={p.code}
-                  className={p.wave ? 'prov-tag cursor-default' : undefined}
-                  data-code={p.code}
+                  key={`fill-${p.code}`}
                   d={p.d}
-                  fill={p.wave ? WAVES[p.wave - 1].color : BASE_FILL}
+                  fill={WAVES[p.wave - 1].color}
+                  clipPath={`url(#spread-${p.code})`}
+                />
+              ))}
+              {PROVINCES.map((p) => (
+                <path
+                  key={`edge-${p.code}`}
+                  className={p.name ? 'cursor-default' : 'pointer-events-none'}
+                  d={p.d}
+                  fill="transparent"
                   stroke="#ffffff"
-                  strokeOpacity={hover === p.name && p.name ? 0.95 : 0.28}
+                  strokeOpacity={hover === p.name && p.name ? 0.95 : 0.3}
                   strokeWidth={hover === p.name && p.name ? 1.6 : 0.6}
                   strokeLinejoin="round"
                   onPointerEnter={p.name ? () => setHover(p.name) : undefined}

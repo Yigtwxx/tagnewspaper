@@ -389,6 +389,11 @@ html.lenis body {
   z-index: 60;
 }
 
+/* Side rails sit over the page margin; they take the section's colors but not its fill. */
+.rail[data-theme] {
+  background-color: transparent;
+}
+
 /* ---------- Generic helpers ---------- */
 .no-scrollbar {
   scrollbar-width: none;

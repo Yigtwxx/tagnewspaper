@@ -7,8 +7,10 @@ import { Colophon } from '@/components/sections/Colophon';
 import { NewsDensity, SourceSpread, TopicTrends } from '@/components/sections/DataSections';
 import { LeadAndFeed } from '@/components/sections/LeadAndFeed';
 import { Numbers } from '@/components/sections/Numbers';
+import { SideRails } from '@/components/SideRails';
 import { TopBar } from '@/components/TopBar';
 import { getSnapshot } from '@/lib/data';
+import { editionStart, formatDate, issueNumber } from '@/lib/format';
 import { isEmptySnapshot } from '@/lib/schema';
 
 export default async function Home() {
@@ -18,6 +20,13 @@ export default async function Home() {
   return (
     <>
       <TopBar lastRunAt={snapshot.last_run_at} hasData={hasData} />
+      <SideRails
+        runningHead={
+          hasData
+            ? `SAYI ${issueNumber(snapshot.generated_at)}   ${formatDate(editionStart(snapshot.generated_at), { weekday: true }).toLocaleUpperCase('tr-TR')}`
+            : 'İLK SAYI HAZIRLANIYOR'
+        }
+      />
       <main id="top">
         <Hero snapshot={snapshot} />
         <LeadAndFeed snapshot={snapshot} />

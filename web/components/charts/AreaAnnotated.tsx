@@ -36,13 +36,38 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
   const [hover, setHover] = useState<number | undefined>(undefined);
 
   const height = width < 640 ? 260 : 340;
-  const m = { top: 56, right: 12, bottom: 32, left: 36 };
-  const innerW = Math.max(10, width - m.left - m.right);
-  const innerH = height - m.top - m.bottom;
+  const ROW_H = 18;
+  const LABEL_CHAR = 6.4;
+  const left = 36;
+  const right = 12;
+  const innerW = Math.max(10, width - left - right);
 
   const x = scaleUtc()
     .domain([utcDay(data[0].date), utcDay(data[data.length - 1].date)])
     .range([0, innerW]);
+
+  const inRange = markers.filter((mk) => {
+    const t = utcDay(mk.date).getTime();
+    return t >= utcDay(data[0].date).getTime() && t <= utcDay(data[data.length - 1].date).getTime();
+  });
+
+  // Stack marker labels into rows so neighbouring labels never collide.
+  const rowEnds: number[] = [];
+  const placed = [...inRange]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((mk) => {
+      const mx = x(utcDay(mk.date));
+      const w = (mk.label.length + 8) * LABEL_CHAR;
+      let row = 0;
+      while (row < 3 && (rowEnds[row] ?? -Infinity) > mx - 8) row += 1;
+      rowEnds[row] = mx + w;
+      return { mk, row };
+    });
+  const labelRows = placed.reduce((n, p) => Math.max(n, p.row + 1), 0);
+
+  const m = { top: 30 + labelRows * ROW_H, right, bottom: 32, left };
+  const innerH = height - m.top - m.bottom;
+
   const yMax = Math.max(4, (max(data, (d) => d.count) ?? 0) * 1.12);
   const y = scaleLinear().domain([0, yMax]).nice(4).range([innerH, 0]);
 
@@ -55,11 +80,6 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
     .x((d) => x(utcDay(d.date)))
     .y((d) => y(d.count))
     .curve(curveMonotoneX)(data);
-
-  const inRange = markers.filter((mk) => {
-    const t = utcDay(mk.date).getTime();
-    return t >= utcDay(data[0].date).getTime() && t <= utcDay(data[data.length - 1].date).getTime();
-  });
 
   useGSAP(
     () => {
@@ -152,22 +172,22 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
             )}
           </g>
 
-          {inRange.map((mk, i) => {
+          {placed.map(({ mk, row }) => {
             const mx = x(utcDay(mk.date));
-            const row = i % 2;
+            const flip = mx > innerW * 0.7;
             return (
-              <g key={`${mk.date}-${i}`} transform={`translate(${mx},0)`}>
+              <g key={`${mk.date}-${mk.label}`} transform={`translate(${mx},0)`}>
                 <line
-                  y1={-m.top + 14 + row * 18}
+                  y1={-m.top + 14 + row * ROW_H}
                   y2={innerH}
                   stroke="currentColor"
                   strokeWidth={1}
                   strokeDasharray="3 3"
                 />
                 <text
-                  x={mx > innerW * 0.7 ? -6 : 6}
-                  y={-m.top + 22 + row * 18}
-                  textAnchor={mx > innerW * 0.7 ? 'end' : 'start'}
+                  x={flip ? -6 : 6}
+                  y={-m.top + 22 + row * ROW_H}
+                  textAnchor={flip ? 'end' : 'start'}
                   className="fill-(--fg) font-sans text-[12px] font-semibold"
                 >
                   {formatCalendarDate(mk.date, { year: false, short: true })}: {mk.label}
