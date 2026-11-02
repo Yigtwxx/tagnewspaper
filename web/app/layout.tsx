@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next';
 import type { Metadata, Viewport } from 'next';
 import { Archivo, Libre_Caslon_Text, Libre_Franklin, UnifrakturMaguntia } from 'next/font/google';
 
@@ -80,6 +81,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         </a>
         <SmoothScroll />
         {children}
+        {/* Cookieless page-view counts; no-op outside Vercel deployments. */}
+        <Analytics />
       </body>
     </html>
   );
