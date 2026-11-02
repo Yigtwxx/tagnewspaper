@@ -1,0 +1,54 @@
+[project]
+name = "tagnews"
+version = "0.1.0"
+description = "Ingestion pipeline for tagnewspaper: collects, summarizes and publishes Martı TAG news."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Yiğit Erdoğan" }]
+dependencies = [
+  "anthropic>=2.3,<3",
+  "feedparser>=6.0.14",
+  "googlenewsdecoder>=0.2.2",
+  "httpx>=0.28.1",
+  "pydantic>=2.14",
+  "pymongo>=4.19",
+  "python-dotenv>=1.2",
+  "rapidfuzz>=3.14",
+  "tenacity>=9.2",
+  "trafilatura>=2.3",
+]
+
+[project.scripts]
+tagnews = "tagnews.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=9.2", "respx>=0.23", "ruff>=0.17"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tagnews"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "RUF", "ANN", "C4", "PTH"]
+# Turkish text legitimately contains dotless/dotted i.
+allowed-confusables = ["ı", "İ", "’", "–"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN401"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff.lint.isort]
+known-first-party = ["tagnews"]
+known-local-folder = ["conftest"]
