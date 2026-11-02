@@ -1,21 +1,44 @@
-import type { ReactNode } from 'react';
+import { Fragment } from 'react';
 
-import { editionStart, formatDate, formatTime, issueNumber } from '@/lib/format';
+import { editionStart, formatDate, formatNumber, formatTime, issueNumber } from '@/lib/format';
 import { isEmptySnapshot, type SnapshotT } from '@/lib/schema';
 
 import { EditionCountdown } from './EditionCountdown';
+import { EditionSeal } from './EditionSeal';
 import { SplitFlapMasthead } from './SplitFlapMasthead';
 import { Ticker } from './Ticker';
 
-/** Newspaper "ear": a ruled box beside the nameplate (thick rule over a hairline). */
-function Ear({ children, align }: { children: ReactNode; align: 'left' | 'right' }) {
+/** Left ear: a double-ruled box that sums up what the paper has covered so far. */
+function TallyEar({ snapshot, empty }: { snapshot: SnapshotT; empty: boolean }) {
+  const rows: [string, string][] = [
+    [formatNumber(snapshot.totals.articles_90d), 'haber'],
+    [formatNumber(snapshot.totals.sources_90d), 'kaynak'],
+    [formatNumber(snapshot.events.filter((e) => e.published).length), 'dava gelişmesi'],
+  ];
   return (
-    <div
-      className={`hidden w-44 shrink-0 border-t-[3px] border-white pt-[3px] lg:block ${
-        align === 'right' ? 'text-right' : ''
-      }`}
-    >
-      <div className="flex flex-col gap-1.5 border-t border-white/70 pt-3">{children}</div>
+    <div className="hidden w-44 shrink-0 lg:block">
+      <div className="border border-white/90 p-[3px]">
+        <div className="border border-white/35 px-3.5 pt-2.5 pb-3">
+          <p className="font-serif text-[0.95rem] text-white/80 italic">Son 90 günde</p>
+          {empty ? (
+            <p className="meta mt-2 text-white/80">İlk sayı hazırlanıyor</p>
+          ) : (
+            <div className="mt-1.5 grid grid-cols-[auto_1fr] items-baseline gap-x-2.5 gap-y-1">
+              {rows.map(([value, label]) => (
+                <Fragment key={label}>
+                  <span className="text-right font-serif text-[1.6rem] leading-none font-bold tabular-nums">
+                    {value}
+                  </span>
+                  <span className="font-sans text-[12px] text-white/75">{label}</span>
+                </Fragment>
+              ))}
+            </div>
+          )}
+          <p className="mt-3 border-t border-white/35 pt-2 font-sans text-[11px] leading-snug text-white/65">
+            Her haber kendi kaynağına bağlanır.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -28,29 +51,23 @@ export function Hero({ snapshot }: { snapshot: SnapshotT }) {
       <h1 className="sr-only">TAGNEWSPAPER: Martı TAG haberleri, dava takibi ve veriler</h1>
       <div className="mx-auto max-w-[1360px]">
         <div className="hero-in flex items-center justify-between gap-6">
-          <Ear align="left">
-            <p className="font-serif text-[1.15rem] leading-snug italic">
-              “Bütün haberler, kaynağıyla.”
-            </p>
-            <p className="meta text-white/70">Her haber kendi kaynağına bağlanır</p>
-          </Ear>
-          <div className="flex min-w-0 flex-1 justify-center">
+          <TallyEar snapshot={snapshot} empty={empty} />
+          <div className="masthead-slot flex min-w-0 flex-1 justify-center">
             <SplitFlapMasthead />
           </div>
-          <Ear align="right">
-            <p className="font-sans text-[11px] tracking-[0.2em] text-white/70">SAYI</p>
-            <p className="font-serif text-[3.25rem] leading-none font-bold">
-              {empty ? '1' : issueNumber(snapshot.generated_at)}
-            </p>
-            <p className="meta text-white/80">
-              {empty
-                ? 'İlk sayı hazırlanıyor'
-                : `${formatDate(editionStart(snapshot.generated_at), { year: false })} baskısı, 11.00`}
-            </p>
-            <p className="meta font-semibold text-tag">
+          <div className="hidden w-44 shrink-0 flex-col items-center gap-2.5 lg:flex">
+            <EditionSeal
+              issue={empty ? 1 : issueNumber(snapshot.generated_at)}
+              date={
+                empty
+                  ? 'Hazırlanıyor'
+                  : formatDate(editionStart(snapshot.generated_at), { year: false })
+              }
+            />
+            <p className="meta text-center font-semibold text-tag">
               <EditionCountdown />
             </p>
-          </Ear>
+          </div>
         </div>
 
         <p className="hero-in mx-auto mt-6 max-w-2xl text-center font-serif text-[clamp(1rem,1.5vw,1.2rem)] text-white/85 italic">
