@@ -1,0 +1,83 @@
+name: health
+
+# Every six hours, check that the site is still being fed. If news collection has not run
+# for 24 hours, or recent stories stopped getting summaries (e.g. the Anthropic balance ran
+# out or the model was retired), open an issue so the owner gets an e-mail. Close it again
+# once things recover.
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SITE: https://tagnewspaper.vercel.app
+    steps:
+      - name: Evaluate freshness
+        id: eval
+        run: |
+          curl -fsS "$SITE/api/health" -o health.json || echo '{"has_data": false, "error": "unreachable"}' > health.json
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+
+          h = json.load(open("health.json"))
+          now = datetime.now(timezone.utc)
+          problems = []
+          if h.get("error"):
+              problems.append("Site ya da /api/health uç noktası yanıt vermiyor.")
+          else:
+              last = datetime.fromisoformat(h["last_run_at"].replace("Z", "+00:00"))
+              hours = (now - last).total_seconds() / 3600
+              if hours > 24:
+                  problems.append(
+                      f"Haber toplama {hours:.0f} saattir başarıyla çalışmadı (son çalışma: {h['last_run_at']}). "
+                      "Actions sekmesinde `ingest` iş akışına bakın."
+                  )
+              recent = [
+                  r for r in h.get("recent", [])
+                  if (now - datetime.fromisoformat(r["published_at"].replace("Z", "+00:00"))).total_seconds() < 86400
+              ]
+              summarized = sum(1 for r in recent if r["display"] == "full")
+              if len(recent) >= 4 and summarized == 0:
+                  problems.append(
+                      f"Son 24 saatteki {len(recent)} haberin hiçbiri özetlenemedi. "
+                      "Anthropic bakiyesini ve `ANTHROPIC_MODEL` model adını kontrol edin."
+                  )
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write(f"healthy={'false' if problems else 'true'}\n")
+          with open("problems.md", "w") as f:
+              f.write("\n".join(f"- {p}" for p in problems))
+          print("\n".join(problems) or "healthy")
+          PY
+
+      - name: Open or update the health issue
+        if: steps.eval.outputs.healthy == 'false'
+        run: |
+          gh label create health --repo "$GITHUB_REPOSITORY" --color B60205 --description "Otomatik sağlık kontrolü" --force
+          body="$(printf 'Otomatik sağlık kontrolü bir sorun buldu:\n\n%s\n\nSorun giderildiğinde bu issue kendiliğinden kapanır.' "$(cat problems.md)")"
+          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "Sağlık kontrolü: site güncellenmiyor" --label health --body "$body"
+          fi
+
+      - name: Close the health issue after recovery
+        if: steps.eval.outputs.healthy == 'true'
+        run: |
+          for n in $(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --repo "$GITHUB_REPOSITORY" --comment "Sağlık kontrolü yeniden temiz; kapatılıyor."
+          done

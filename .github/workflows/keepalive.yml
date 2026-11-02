@@ -20,7 +20,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for wf in ingest.yml keepalive.yml; do
+          for wf in ingest.yml keepalive.yml health.yml; do
             gh api -X PUT "repos/${{ github.repository }}/actions/workflows/${wf}/enable"
             echo "enabled ${wf}"
           done
