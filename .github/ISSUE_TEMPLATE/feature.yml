@@ -1,0 +1,17 @@
+name: Öneri
+description: Yeni bir bölüm, grafik ya da veri kaynağı önerin.
+title: '[Öneri] '
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Öneri
+      description: Ne eklensin ve TAG kullanıcılarına nasıl yardımcı olur?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Veri kaynağı (varsa)
+      description: Önerdiğiniz verinin herkese açık kaynağı.

@@ -1,0 +1,25 @@
+name: Hata bildirimi
+description: Sitede ya da haber toplama sürecinde çalışmayan bir şey bildirin.
+title: '[Hata] '
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Ne oldu?
+      description: Gördüğünüz davranış ve beklediğiniz davranış.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Nasıl tekrar edilir?
+      placeholder: |
+        1. Sayfayı telefonda aç
+        2. "Daha fazla haber yükle"ye bas
+        3. ...
+  - type: input
+    id: env
+    attributes:
+      label: Cihaz ve tarayıcı
+      placeholder: iPhone 15, Safari 26

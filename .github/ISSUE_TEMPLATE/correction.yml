@@ -1,0 +1,37 @@
+name: Düzeltme veya kaldırma talebi
+description: Sitede hatalı, eksik ya da kaldırılması gereken bir içerik bildirin.
+title: '[Düzeltme] '
+labels: [correction]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Teşekkürler. Talepler en kısa sürede incelenir. Lütfen bu forma kişisel veri (telefon, kimlik numarası, adres) yazmayın.
+        Kişisel bir talebiniz varsa sitedeki künye bölümündeki e-posta adresini kullanın.
+  - type: input
+    id: link
+    attributes:
+      label: İçeriğin bağlantısı ya da başlığı
+      description: Sitedeki haber başlığı veya kaynak haberin adresi.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Talep türü
+      options:
+        - Özet hatalı ya da yanıltıcı
+        - Yanlış tarih, rakam veya mahkeme bilgisi
+        - Kişisel veri içeriyor
+        - Haber konuyla ilgisiz
+        - İçeriğin kaldırılmasını istiyorum
+        - Diğer
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Açıklama
+      description: Neyin yanlış olduğunu ve doğrusunu, varsa kaynağıyla birlikte yazın.
+    validations:
+      required: true
