@@ -7,7 +7,6 @@ import { trimLeadingEmpty } from '@/lib/series';
 
 import { AreaAnnotated } from '../charts/AreaAnnotated';
 import { SourceSpreadViz } from '../charts/SourceSpreadViz';
-import { ShareBar } from '../charts/ShareBar';
 import { StreamGraph } from '../charts/StreamGraph';
 import { TopTerms } from '../charts/TopTerms';
 
@@ -101,14 +100,14 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
 }
 
 export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
+  // Keep the stream, but start one week before coverage begins (at least five weeks wide).
   const data = trimLeadingEmpty(
     snapshot.category_weekly,
     (w) => CATEGORIES.every((c) => !w.counts[c]),
+    5,
     1,
   );
-  if (data.length === 0) return null;
-  // A stream needs a few weeks to mean anything; until then show each topic's share.
-  const sparse = data.length < 4;
+  if (data.length < 2) return null;
   const totals = CATEGORIES.map((c) => ({
     c,
     n: data.reduce((sum, w) => sum + (w.counts[c] ?? 0), 0),
@@ -121,12 +120,11 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
           <p className="dek">
-            {sparse ? 'Takibin başından bu yana' : `Son ${data.length} haftada`} haberlerin konulara
-            dağılımı. En çok yer bulan konu{' '}
+            Son {data.length} haftada haberlerin konulara dağılımı. En çok yer bulan konu{' '}
             <span className="hl">{CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')}</span> oldu.
           </p>
         </div>
-        {sparse ? <ShareBar totals={totals} /> : <StreamGraph data={data} />}
+        <StreamGraph data={data} />
         <TopTerms terms={snapshot.top_terms} />
         <TableToggle summary="Haftalık sayıları tablo olarak göster">
           <table className="w-full">

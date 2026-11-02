@@ -3,38 +3,27 @@ import { join } from 'node:path';
 
 import { ImageResponse } from 'next/og';
 
-import { getSnapshot } from '@/lib/data';
-import { editionStart, formatDate, formatNumber } from '@/lib/format';
 import { LOGO_DOT_X, LOGO_T_PATH } from '@/lib/logo';
 
-export const alt = 'The TAG Newspaper: Martı TAG haberleri, dava takibi ve veriler';
+export const alt = 'The TAG Newspaper: Martı TAG için bağımsız haber, dava takibi ve veri gazetesi';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 const TAG_GREEN = '#01b251';
-const TAG_INK = '#007a37';
 
-/**
- * Social card: today's lead headline set like a newspaper front page. It is rebuilt
- * whenever the pipeline revalidates the `news` tag, so shared links always show the
- * current lead.
- */
+const OFFERS = [
+  'Her gün 11.00’de yeni sayı: kaynaklı, tarafsız haber özetleri',
+  'Davanın 2023’ten bugüne zaman çizelgesi',
+  '40 şehir, kullanıcı rakamları ve medya verileri',
+];
+
+/** Social card: says what the site is, not what today's headline is. */
 export default async function Image() {
-  const [snapshot, caslon, franklin, gothic] = await Promise.all([
-    getSnapshot(),
+  const [caslon, franklin, gothic] = await Promise.all([
     readFile(join(process.cwd(), 'assets/fonts/LibreCaslonText-Bold.ttf')),
     readFile(join(process.cwd(), 'assets/fonts/LibreFranklin-SemiBold.ttf')),
     readFile(join(process.cwd(), 'assets/fonts/UnifrakturMaguntia-Book.ttf')),
   ]);
-
-  const lead = snapshot.lead?.article ?? snapshot.latest[0];
-  const headline = lead?.title ?? 'Martı TAG hakkında çıkan haberler, dava süreci ve rakamlar';
-  const source = lead ? `${lead.source.name}` : 'Bağımsız ve reklamsız';
-  const drivers = snapshot.stats.find((s) => s.key === 'drivers');
-  const edition = snapshot.latest.length
-    ? `${formatDate(editionStart(snapshot.generated_at), { weekday: true })}`
-    : 'İlk sayı hazırlanıyor';
-  const headlineSize = headline.length > 90 ? 58 : headline.length > 60 ? 66 : 76;
 
   return new ImageResponse(
     <div
@@ -43,63 +32,60 @@ export default async function Image() {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        background: '#ffffff',
-        color: '#000000',
-        padding: '48px 64px',
+        background: '#000000',
+        color: '#ffffff',
+        padding: '56px 72px',
         fontFamily: 'Franklin',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <svg width="64" height="64" viewBox="0 0 64 64">
-            <rect width="64" height="64" rx="12" fill="#000000" />
-            <path d={LOGO_T_PATH} fill="#ffffff" />
-            <circle cx={LOGO_DOT_X} cy={50} r={5} fill={TAG_GREEN} />
-          </svg>
-          <div style={{ display: 'flex', fontFamily: 'Gothic', fontSize: 46 }}>
-            The&nbsp;<span style={{ color: TAG_INK }}>TAG</span>&nbsp;Newspaper
-          </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 26 }}>
+        <svg width="112" height="112" viewBox="0 0 64 64">
+          <path d={LOGO_T_PATH} fill="#ffffff" />
+          <circle cx={LOGO_DOT_X} cy={50} r={5} fill={TAG_GREEN} />
+        </svg>
+        <div style={{ display: 'flex', fontFamily: 'Gothic', fontSize: 84 }}>
+          The&nbsp;<span style={{ color: TAG_GREEN }}>TAG</span>&nbsp;Newspaper
         </div>
-        <div style={{ display: 'flex', fontSize: 24, color: '#5c5c5c' }}>{edition}</div>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', marginTop: 22 }}>
-        <div style={{ height: 5, background: '#000000' }} />
-        <div style={{ height: 2, background: '#000000', marginTop: 4 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', marginTop: 26 }}>
+        <div style={{ height: 4, background: '#ffffff' }} />
+        <div style={{ height: 1.5, background: '#ffffff', marginTop: 4 }} />
       </div>
 
       <div
         style={{
           display: 'flex',
-          flex: 1,
-          alignItems: 'center',
+          marginTop: 34,
           fontFamily: 'Caslon',
-          fontSize: headlineSize,
-          lineHeight: 1.12,
-          letterSpacing: -0.5,
+          fontSize: 50,
+          lineHeight: 1.15,
+          maxWidth: 1000,
         }}
       >
-        {headline}
+        Martı TAG için bağımsız haber, dava takibi ve veri gazetesi.
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 30 }}>
+        {OFFERS.map((line) => (
+          <div key={line} style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 28 }}>
+            <div style={{ width: 12, height: 12, borderRadius: 6, background: TAG_GREEN }} />
+            <span style={{ color: '#e6e6e6' }}>{line}</span>
+          </div>
+        ))}
       </div>
 
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
+          marginTop: 'auto',
           justifyContent: 'space-between',
-          borderTop: '2px solid #000000',
-          paddingTop: 18,
-          fontSize: 26,
+          fontSize: 24,
+          color: '#9a9a9a',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 7, background: TAG_GREEN }} />
-          <span>{source}</span>
-        </div>
-        <div style={{ display: 'flex', color: TAG_INK }}>
-          40 şehir
-          {drivers ? ` · ${formatNumber(drivers.value)} sürücü` : ''}
-        </div>
+        <span>tagnewspaper.vercel.app</span>
+        <span>Bağımsız, reklamsız ve açık kaynak</span>
       </div>
     </div>,
     {
