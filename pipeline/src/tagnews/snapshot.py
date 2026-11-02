@@ -24,7 +24,7 @@ from tagnews.models import (
     TermCount,
     Totals,
 )
-from tagnews.textnorm import normalize_host, tr_lower, words
+from tagnews.textnorm import normalize_for_match, normalize_host, tr_lower, words
 
 ISTANBUL = ZoneInfo("Europe/Istanbul")
 LATEST_LIMIT = 24
@@ -178,15 +178,18 @@ def _visible(articles: list[ArticleDoc]) -> list[ArticleDoc]:
 
 
 def _one_per_outlet(articles: list[ArticleDoc]) -> list[ArticleDoc]:
-    """Keep one copy of a story per outlet (an AMP mirror or a re-post counts once),
-    preferring the summarized copy, then the newest."""
+    """Keep one copy of each article per outlet: an AMP mirror or a re-post of the same
+    headline counts once, while a follow-up on the same story stays. Prefers the
+    summarized copy, then the newest."""
     kept: dict[tuple[str, str], ArticleDoc] = {}
     for article in sorted(
         articles, key=lambda a: (a.display == "full", a.published_at), reverse=True
     ):
-        kept.setdefault(
-            (article.cluster_id, normalize_host(article.source.domain)), article
+        key = (
+            normalize_host(article.source.domain),
+            normalize_for_match(article.title),
         )
+        kept.setdefault(key, article)
     return list(kept.values())
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ import pytest
 from tagnews.llm import ArticleInput, Enrichment, LlmResult
 from tagnews.models import Filing, MarketDoc, PriceBar
 from tagnews.sources import base
+from tagnews.stories import MatchResult, StoryRef
 
 TESTS_DIR = Path(__file__).resolve().parent
 FIXTURES = TESTS_DIR / "fixtures"
@@ -183,3 +185,23 @@ def alpha_vantage_payload(days: list[str], close: float = 2.0) -> dict[str, Any]
 def no_retry_wait(monkeypatch: pytest.MonkeyPatch) -> None:
     """Skip tenacity's backoff sleeps in `get_with_retry` (retries still happen)."""
     monkeypatch.setattr(base._get.retry, "sleep", lambda _seconds: None)
+
+
+class FakeMatcher:
+    """Puts every article in one fixed story; records the stories it was offered."""
+
+    model = "claude-haiku-5-5"
+
+    def __init__(self, cluster_id: str | None) -> None:
+        self.cluster_id = cluster_id
+        self.offered: list[list[str]] = []
+
+    def match(
+        self,
+        headline: str,
+        summary: str | None,
+        published_at: datetime,
+        stories: Sequence[StoryRef],
+    ) -> MatchResult:
+        self.offered.append([s.cluster_id for s in stories])
+        return MatchResult(self.cluster_id, 20, 2)

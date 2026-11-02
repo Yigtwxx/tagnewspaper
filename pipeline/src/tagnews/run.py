@@ -44,6 +44,7 @@ from tagnews.snapshot import local_date
 from tagnews.sources.base import RawItem
 from tagnews.sources.chain import collect
 from tagnews.store import Store
+from tagnews.stories import StoryMatcher, recent_stories
 from tagnews.textnorm import article_id, canonicalize_url, shingle_fingerprint
 
 log = logging.getLogger(__name__)
@@ -66,6 +67,8 @@ class Deps:
     gdelt_sleep: bool = True
     # Refresh the daily `market` document after the snapshot (off in news-only tests).
     market: bool = True
+    # Groups articles that report the same story in different words (None: titles only).
+    matcher: StoryMatcher | None = None
 
 
 @dataclass(frozen=True)
@@ -381,11 +384,12 @@ def run_pipeline(
     limit = max_items or deps.settings.max_items_per_run
     fresh = _new_candidates(deps, chain.items, run, limit)
 
+    recent = store.articles_since(started - CLUSTER_LOOKBACK)
     existing = [
         ClusterItem(
             id=a.id, title=a.title, published_at=a.published_at, cluster_id=a.cluster_id
         )
-        for a in store.articles_since(started - CLUSTER_LOOKBACK)
+        for a in recent
     ]
     clusters = assign_clusters(
         [
@@ -402,9 +406,31 @@ def run_pipeline(
 
     processed: set[str] = set()
 
+    def match_story(article: ArticleDoc) -> None:
+        """Join the article to an earlier story it reports, if the matcher finds it."""
+        nonlocal tokens_in, tokens_out, recent
+        recent = [a for a in recent if a.id != article.id]
+        if (
+            deps.matcher is not None
+            and article.relevant
+            and article.display != "hidden"
+        ):
+            result = deps.matcher.match(
+                article.title,
+                article.summary,
+                article.published_at,
+                recent_stories(recent, article.published_at),
+            )
+            tokens_in += result.input_tokens
+            tokens_out += result.output_tokens
+            if result.cluster_id:
+                article.cluster_id = result.cluster_id
+        recent.append(article)
+
     def handle(outcome: ItemOutcome) -> None:
         nonlocal tokens_in, tokens_out
         processed.add(outcome.article.id)
+        match_story(outcome.article)
         store.save_article(outcome.article)
         _count(run, outcome.article)
         tokens_in += outcome.input_tokens

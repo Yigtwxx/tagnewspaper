@@ -7,20 +7,27 @@ import json
 import logging
 import sys
 from collections.abc import Sequence
+from datetime import timedelta
 from pathlib import Path
 
 import httpx
 
 from tagnews import revalidate
-from tagnews.config import Settings, configure_logging, load_settings
+from tagnews.config import (
+    Settings,
+    configure_logging,
+    estimate_cost_usd,
+    load_settings,
+)
 from tagnews.decode import default_batch_decoder
 from tagnews.extract import TextExtractor
 from tagnews.llm import AnthropicSummarizer, Summarizer
 from tagnews.market import MarketRefresh, refresh_market
-from tagnews.models import EventDoc, StatDoc, utc_now
+from tagnews.models import ArticleDoc, EventDoc, StatDoc, utc_now
 from tagnews.promote import is_primary_stat
 from tagnews.run import Deps, rebuild_snapshot, run_pipeline
 from tagnews.store import MemoryStore, MongoStore
+from tagnews.stories import AnthropicStoryMatcher, StoryMatcher, recent_stories
 
 log = logging.getLogger("tagnews")
 
@@ -57,12 +64,16 @@ def cmd_run(settings: Settings, dry_run: bool, max_items: int | None) -> int:
         if dry_run:
             store = MemoryStore()
             summarizer: Summarizer | None = None
+            matcher: StoryMatcher | None = None
             limit = max_items or 5
         else:
             if not settings.anthropic_api_key:
                 sys.exit("ANTHROPIC_API_KEY is not set (see pipeline/.env.example)")
             store = _mongo(settings)
             summarizer = AnthropicSummarizer(
+                settings.anthropic_api_key, settings.anthropic_model
+            )
+            matcher = AnthropicStoryMatcher(
                 settings.anthropic_api_key, settings.anthropic_model
             )
             limit = max_items or settings.max_items_per_run
@@ -73,6 +84,7 @@ def cmd_run(settings: Settings, dry_run: bool, max_items: int | None) -> int:
             summarizer=summarizer,
             extractor=TextExtractor(http) if settings.fetch_fulltext else None,
             batch_decoder=default_batch_decoder(),
+            matcher=matcher,
         )
         run = run_pipeline(deps, dry_run=dry_run, max_items=limit)
         if isinstance(store, MongoStore):
@@ -184,6 +196,49 @@ def cmd_seed(settings: Settings, seed_dir: Path) -> int:
     return 0
 
 
+def cmd_recluster(settings: Settings, hours: int) -> int:
+    """Re-group recent articles into stories with the matcher, oldest first, so each
+    article is compared with the stories that existed when it was published."""
+    if not settings.anthropic_api_key:
+        sys.exit("ANTHROPIC_API_KEY is not set (see pipeline/.env.example)")
+    store = _mongo(settings)
+    matcher = AnthropicStoryMatcher(
+        settings.anthropic_api_key, settings.anthropic_model
+    )
+    now = utc_now()
+    articles = sorted(
+        store.articles_since(now - timedelta(hours=hours)),
+        key=lambda a: (a.published_at, a.id),
+    )
+    seen: list[ArticleDoc] = []
+    moved = tokens_in = tokens_out = 0
+    for article in articles:
+        if article.relevant and article.display != "hidden":
+            result = matcher.match(
+                article.title,
+                article.summary,
+                article.published_at,
+                recent_stories(seen, article.published_at),
+            )
+            tokens_in += result.input_tokens
+            tokens_out += result.output_tokens
+            if result.cluster_id and result.cluster_id != article.cluster_id:
+                article.cluster_id = result.cluster_id
+                store.save_article(article)
+                moved += 1
+        seen.append(article)
+    rebuild_snapshot(store, now, store.last_run_at() or now)
+    with _http_client(settings) as http:
+        revalidate.trigger(http, settings.revalidate_url, settings.revalidate_secret)
+    store.close()
+    cost = estimate_cost_usd(settings.anthropic_model, tokens_in, tokens_out)
+    print(
+        f"reclustered {moved} of {len(articles)} articles; "
+        f"tokens {tokens_in}/{tokens_out}, cost ~${cost}"
+    )
+    return 0
+
+
 def cmd_init_db(settings: Settings) -> int:
     store = _mongo(settings)
     for name in store.ensure_indexes():
@@ -218,6 +273,10 @@ def build_parser() -> argparse.ArgumentParser:
     hide.add_argument("article_id")
     seed = sub.add_parser("seed", help="load curated events/stats from seed/")
     seed.add_argument("--dir", type=Path, default=SEED_DIR)
+    recluster = sub.add_parser(
+        "recluster", help="re-group recent articles into stories with the matcher"
+    )
+    recluster.add_argument("--hours", type=int, default=72)
     sub.add_parser("init-db", help="create indexes and print the user setup")
     return parser
 
@@ -234,4 +293,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         return cmd_hide(settings, args.article_id)
     if args.command == "seed":
         return cmd_seed(settings, args.dir)
+    if args.command == "recluster":
+        return cmd_recluster(settings, args.hours)
     return cmd_init_db(settings)

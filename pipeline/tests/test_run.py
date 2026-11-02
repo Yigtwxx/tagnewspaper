@@ -20,6 +20,7 @@ from conftest import (
     FIXTURES,
     SOURCE_TEXT,
     FakeExtractor,
+    FakeMatcher,
     FakeSummarizer,
     alpha_vantage_payload,
     load_json,
@@ -50,6 +51,7 @@ def _deps(
     now: datetime,
     market: bool = False,
     alphavantage_api_key: str | None = None,
+    matcher: FakeMatcher | None = None,
 ) -> Deps:
     settings = Settings(
         google_news_base_url=BASE,
@@ -69,6 +71,7 @@ def _deps(
         now=lambda: now,
         gdelt_sleep=False,
         market=market,
+        matcher=matcher,
     )
 
 
@@ -298,3 +301,28 @@ def test_run_pipeline_market_crash_is_logged_not_raised(
     assert run.ok
     assert run.errors == ["market: RuntimeError"]
     assert store.runs[-1].ok, "the run log is still written"
+
+
+@respx.mock
+def test_run_pipeline_story_matcher_groups_articles_and_counts_tokens(
+    now: datetime,
+) -> None:
+    _mock_google()
+    respx.post("https://site.test/api/revalidate").mock(
+        return_value=httpx.Response(200)
+    )
+    matcher = FakeMatcher("c-story")
+    store = MemoryStore()
+    with httpx.Client() as client:
+        run = run_pipeline(
+            _deps(store, client, FakeSummarizer([]), SOURCE_TEXT, now, matcher=matcher),
+            max_items=3,
+        )
+
+    clusters = {a.cluster_id for a in store.articles.values()}
+    assert clusters == {"c-story"}, (
+        f"matched articles should share the story: {clusters}"
+    )
+    assert run.tokens.input == 3 * 100 + 3 * 20, f"matcher tokens missing: {run.tokens}"
+    assert matcher.offered[0] == [], "the first article has no earlier story to join"
+    assert "c-story" in matcher.offered[-1], "later articles see stories saved this run"

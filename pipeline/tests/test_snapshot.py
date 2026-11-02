@@ -202,17 +202,22 @@ def test_category_daily_last_60_days_zero_filled(now: datetime) -> None:
     )
 
 
-def test_build_snapshot_same_story_from_one_outlet_appears_once(now: datetime) -> None:
+def test_build_snapshot_same_article_from_one_outlet_appears_once(
+    now: datetime,
+) -> None:
     articles = [
         _article(1, "bursadabugun.com", now, "c1"),
         _article(2, "bursadabugun.com", now, "c1"),
         _article(3, "t24.com.tr", now - timedelta(hours=1), "c2"),
+        _article(4, "t24.com.tr", now - timedelta(hours=2), "c2"),
     ]
+    articles[1].title = articles[0].title  # an AMP mirror of the same article
+    articles[3].title = "Aynı olayın ertesi günkü takibi"
     snap = build_snapshot(articles, [], [], now, now)
 
     ids = [a.id for a in snap.latest]
-    assert len(ids) == 2, f"Expected one copy per outlet and story, got {ids}"
-    assert snap.totals.articles_90d == 2, f"Duplicates inflate totals: {snap.totals}"
+    assert len(ids) == 3, f"Mirror dropped, follow-up kept; got {ids}"
+    assert snap.totals.articles_90d == 3, f"Duplicates inflate totals: {snap.totals}"
 
 
 def test_build_snapshot_no_comment_lines_are_not_statements(now: datetime) -> None:
