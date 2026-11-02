@@ -2,6 +2,7 @@ import { encodeCursor } from '@/lib/cursor';
 import type { SnapshotT } from '@/lib/schema';
 
 import { FeedClient } from '../feed/FeedClient';
+import { KEY_TERMS } from '../feed/Highlighted';
 import { LatestBox, LeadBox, NewsBox } from '../feed/NewsBox';
 
 /** Stories placed on the front page grid before the filterable feed starts. */
@@ -11,6 +12,7 @@ const BRIEFS = 7;
 
 export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
   const lead = snapshot.lead;
+  const terms = [...snapshot.top_terms.map((t) => t.term), ...KEY_TERMS];
   const others = snapshot.latest.filter((a) => a.id !== lead?.article.id);
   const front = others.slice(0, FRONT_STORIES);
   const briefs = others.slice(FRONT_STORIES, FRONT_STORIES + BRIEFS);
@@ -34,6 +36,7 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
                 <LeadBox
                   article={lead.article}
                   sources={lead.sources.map((s) => ({ name: s.name, url: s.url }))}
+                  terms={terms}
                 />
               </div>
               <div className="rule-cell sm:row-span-2 lg:col-start-4 lg:row-start-1">
@@ -41,7 +44,7 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
               </div>
               {front.map((article) => (
                 <div key={article.id} className="rule-cell">
-                  <NewsBox article={article} />
+                  <NewsBox article={article} terms={terms} />
                 </div>
               ))}
             </div>
@@ -61,7 +64,7 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
                 sitenin kendisine açılır.
               </p>
             </header>
-            <FeedClient initial={rest} initialCursor={cursor} />
+            <FeedClient initial={rest} initialCursor={cursor} terms={terms} />
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { formatDate, formatTime, issueNumber } from '@/lib/format';
+import { editionStart, formatDate, formatTime, issueNumber } from '@/lib/format';
 import { isEmptySnapshot, type SnapshotT } from '@/lib/schema';
 
 import { SplitFlapMasthead } from './SplitFlapMasthead';
@@ -37,7 +37,9 @@ export function Hero({ snapshot }: { snapshot: SnapshotT }) {
               {empty ? 'İlk sayı' : `Sayı ${issueNumber(snapshot.generated_at)}`}
             </p>
             <p className="meta text-white/80">
-              {empty ? 'hazırlanıyor' : `Güncelleme ${formatTime(snapshot.last_run_at)}`}
+              {empty
+                ? 'hazırlanıyor'
+                : `Baskı ${formatDate(editionStart(snapshot.generated_at), { year: false })}, 11.00`}
             </p>
           </Ear>
         </div>
@@ -56,7 +58,7 @@ export function Hero({ snapshot }: { snapshot: SnapshotT }) {
             {empty ? 'İlk sayı hazırlanıyor' : formatDate(snapshot.generated_at, { weekday: true })}
           </span>
           <span className="hidden sm:inline">Martı ile bağlantısı olmayan gönüllü bir yayın</span>
-          <span>tagnewspaper.vercel.app</span>
+          <span>{empty ? '' : `Son güncelleme ${formatTime(snapshot.last_run_at)}`}</span>
         </div>
         <Ticker articles={snapshot.latest} />
       </div>

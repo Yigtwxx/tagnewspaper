@@ -15,9 +15,11 @@ const PAGE = 12;
 export function FeedClient({
   initial,
   initialCursor,
+  terms,
 }: {
   initial: ArticleViewT[];
   initialCursor: string | undefined;
+  terms: readonly string[];
 }) {
   const [items, setItems] = useState(initial);
   const [filter, setFilter] = useState<Filter>('all');
@@ -113,7 +115,7 @@ export function FeedClient({
         >
           {visible.map((article) => (
             <div key={article.id} className="rule-cell" data-flip-id={article.id}>
-              <NewsBox article={article} />
+              <NewsBox article={article} terms={terms} />
             </div>
           ))}
         </div>

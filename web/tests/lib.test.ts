@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DRUM, drumPath } from '@/components/hero/FlapCell';
 import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
-import { formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
+import { editionStart, formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
 
 describe('format', () => {
   it('uppercases Turkish correctly', () => {
@@ -19,9 +19,16 @@ describe('format', () => {
     expect(formatCompact(584_000)).toEqual({ value: '584', unit: 'bin' });
   });
 
-  it('counts issues from launch day', () => {
+  it('starts a new issue every day at 11:00 Istanbul', () => {
     expect(issueNumber('2026-11-02T09:00:00Z')).toBe(1);
+    expect(issueNumber('2026-11-03T07:59:00Z')).toBe(1);
+    expect(issueNumber('2026-11-03T08:00:00Z')).toBe(2);
     expect(issueNumber('2026-11-12T09:00:00Z')).toBe(11);
+  });
+
+  it('dates an edition by its 11:00 start', () => {
+    expect(editionStart('2026-11-03T07:00:00Z')).toBe('2026-11-02T08:00:00.000Z');
+    expect(editionStart('2026-11-03T15:00:00Z')).toBe('2026-11-03T08:00:00.000Z');
   });
 });
 

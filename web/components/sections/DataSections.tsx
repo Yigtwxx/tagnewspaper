@@ -5,7 +5,7 @@ import { CATEGORY_LABEL } from '@/lib/labels';
 import { CATEGORIES, type SnapshotT } from '@/lib/schema';
 
 import { AreaAnnotated } from '../charts/AreaAnnotated';
-import { BubblePack } from '../charts/BubblePack';
+import { SourceSpreadViz } from '../charts/SourceSpreadViz';
 import { StreamGraph } from '../charts/StreamGraph';
 import { TopTerms } from '../charts/TopTerms';
 
@@ -75,41 +75,22 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
 export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
   const data = snapshot.source_counts;
   if (data.length === 0) return null;
-  const top = data.slice(0, 8);
-  const maxCount = top[0]?.count ?? 1;
 
   return (
     <section data-section="sources" data-theme="paper" className="px-4 pb-28 sm:px-8 sm:pb-36">
-      <div className="mx-auto grid max-w-[1360px] gap-16 section-head pt-12 lg:grid-cols-12">
-        <div className="flex flex-col gap-8 lg:col-span-5">
+      <div className="mx-auto max-w-[1360px]">
+        <header className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim yazdı?</h2>
           <p className="dek">
             Son 90 günde{' '}
             <span className="hl">
               {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı
             </span>{' '}
-            Martı TAG hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber.
+            Martı TAG hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber; bir yayına
+            gelince iki tarafta da vurgulanır.
           </p>
-          <ol className="flex flex-col gap-3 font-sans">
-            {top.map((s, i) => (
-              <li key={s.domain} className="grid grid-cols-[1.5rem_1fr_auto] items-center gap-3">
-                <span className="text-sm text-(--mute) tabular-nums">{i + 1}</span>
-                <span className="relative">
-                  <span className="relative z-10">{s.name}</span>
-                  <span
-                    className="absolute bottom-[-4px] left-0 h-[3px] bg-tag"
-                    style={{ width: `${(s.count / maxCount) * 100}%` }}
-                    aria-hidden="true"
-                  />
-                </span>
-                <span className="text-sm tabular-nums">{s.count}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div className="lg:col-span-7">
-          <BubblePack data={data} />
-        </div>
+        </header>
+        <SourceSpreadViz data={data} />
       </div>
     </section>
   );

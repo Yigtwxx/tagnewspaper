@@ -74,10 +74,23 @@ export function relativeTime(iso: string, now: number): string {
   return formatDate(iso);
 }
 
-/** Issue number counted in days since launch (2 Nov 2026 = issue 1). */
-export const LAUNCH_DATE_UTC = Date.UTC(2026, 10, 2);
+/**
+ * Daily edition. A new issue goes out every day at 11:00 Istanbul time (08:00 UTC; Turkey
+ * has no daylight saving). Issue 1 is the edition of 2 Nov 2026, 11:00.
+ */
+export const EDITION_HOUR_UTC = 8;
+export const LAUNCH_EDITION_UTC = Date.UTC(2026, 10, 2, EDITION_HOUR_UTC);
+const DAY_MS = 86_400_000;
 
 export function issueNumber(iso: string): number {
-  const days = Math.floor((new Date(iso).getTime() - LAUNCH_DATE_UTC) / 86_400_000);
-  return Math.max(1, days + 1);
+  const elapsed = new Date(iso).getTime() - LAUNCH_EDITION_UTC;
+  return Math.max(1, Math.floor(elapsed / DAY_MS) + 1);
+}
+
+/** Start of the edition that `iso` belongs to (the latest 11:00 Istanbul at or before it). */
+export function editionStart(iso: string): string {
+  const t = new Date(iso).getTime();
+  const start =
+    LAUNCH_EDITION_UTC + Math.max(0, Math.floor((t - LAUNCH_EDITION_UTC) / DAY_MS)) * DAY_MS;
+  return new Date(start).toISOString();
 }

@@ -5,6 +5,7 @@ import { CATEGORY_LABEL } from '@/lib/labels';
 import type { ArticleViewT } from '@/lib/schema';
 
 import { GenerativeCover } from './GenerativeCover';
+import { Highlighted, KEY_TERMS } from './Highlighted';
 
 export function AllegationBadge() {
   return (
@@ -54,7 +55,13 @@ function StoryLink({ article, children }: { article: ArticleViewT; children: Rea
 }
 
 /** A fixed-size ruled box on the front page grid. Text is clamped so every box keeps its size. */
-export function NewsBox({ article }: { article: ArticleViewT }) {
+export function NewsBox({
+  article,
+  terms = KEY_TERMS,
+}: {
+  article: ArticleViewT;
+  terms?: readonly string[];
+}) {
   const summary = article.display === 'full' ? article.summary : null;
   return (
     <article className="group relative flex h-full flex-col gap-3 overflow-hidden p-5">
@@ -63,7 +70,9 @@ export function NewsBox({ article }: { article: ArticleViewT }) {
         <StoryLink article={article}>{article.title}</StoryLink>
       </h3>
       {summary ? (
-        <p className="body-copy line-clamp-6 text-[0.98rem] text-(--fg)/85">{summary}</p>
+        <p className="body-copy line-clamp-6 text-[0.98rem] text-(--fg)/85">
+          <Highlighted text={summary} terms={terms} />
+        </p>
       ) : (
         <p className="meta italic">Özet yok; haberi kaynağında okuyun.</p>
       )}
@@ -78,9 +87,11 @@ export function NewsBox({ article }: { article: ArticleViewT }) {
 export function LeadBox({
   article,
   sources,
+  terms = KEY_TERMS,
 }: {
   article: ArticleViewT;
   sources: Array<{ name: string; url: string }>;
+  terms?: readonly string[];
 }) {
   const summary = article.display === 'full' ? article.summary : null;
   return (
@@ -97,7 +108,11 @@ export function LeadBox({
         </a>
       </h3>
       <GenerativeCover id={article.id} className="aspect-[21/9] w-full" />
-      {summary && <p className="body-copy line-clamp-4 text-[1.08rem]">{summary}</p>}
+      {summary && (
+        <p className="body-copy line-clamp-4 text-[1.08rem]">
+          <Highlighted text={summary} terms={terms} />
+        </p>
+      )}
       <div className="mt-auto flex flex-col gap-2">
         <Byline article={article} />
         {sources.length > 1 && (
