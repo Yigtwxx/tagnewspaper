@@ -1,0 +1,925 @@
+{
+  "_id": "current",
+  "generated_at": "2026-11-02T09:00:00Z",
+  "last_run_at": "2026-11-02T09:00:00Z",
+  "lead": {
+    "article": {
+      "id": "0000000000000001",
+      "url": "https://ornek-gazete.example/haber/0000000000000001",
+      "title": "İstinaf mahkemesi, ilk derece mahkemesinin TAG kararını kaldırdı",
+      "source": {
+        "name": "Örnek Gazete",
+        "domain": "ornek-gazete.example"
+      },
+      "published_at": "2026-11-02T08:00:00Z",
+      "display": "full",
+      "summary": "Örnek Gazete'nin aktardığına göre bölge adliye mahkemesi, ilk derece mahkemesinin verdiği kararı kaldırdı. Habere göre karar gerekçesinde mevzuat boşluğuna dikkat çekildi. Taraflardan henüz yeni bir açıklama gelmedi.",
+      "category": "dava",
+      "actors": [
+        "mahkeme",
+        "marti"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0001",
+      "origin": "google_news"
+    },
+    "sources": [
+      {
+        "name": "Örnek Gazete",
+        "domain": "ornek-gazete.example",
+        "url": "https://ornek-gazete.example/haber/0000000000000001"
+      },
+      {
+        "name": "Kent Haber",
+        "domain": "kent-haber.example",
+        "url": "https://kent-haber.example/haber/0000000000000001"
+      },
+      {
+        "name": "Ekonomi Bülteni",
+        "domain": "ekonomi-bulteni.example",
+        "url": "https://ekonomi-bulteni.example/haber/0000000000000001"
+      },
+      {
+        "name": "Hukuk Ajansı",
+        "domain": "hukuk-ajansi.example",
+        "url": "https://hukuk-ajansi.example/haber/0000000000000001"
+      }
+    ]
+  },
+  "latest": [
+    {
+      "id": "0000000000000001",
+      "url": "https://ornek-gazete.example/haber/0000000000000001",
+      "title": "İstinaf mahkemesi, ilk derece mahkemesinin TAG kararını kaldırdı",
+      "source": {
+        "name": "Örnek Gazete",
+        "domain": "ornek-gazete.example"
+      },
+      "published_at": "2026-11-02T08:00:00Z",
+      "display": "full",
+      "summary": "Örnek Gazete'nin aktardığına göre bölge adliye mahkemesi, ilk derece mahkemesinin verdiği kararı kaldırdı. Habere göre karar gerekçesinde mevzuat boşluğuna dikkat çekildi. Taraflardan henüz yeni bir açıklama gelmedi.",
+      "category": "dava",
+      "actors": [
+        "mahkeme",
+        "marti"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0001",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000002",
+      "url": "https://kent-haber.example/haber/0000000000000002",
+      "title": "Taksici odası, TAG uygulaması için yeni inceleme talep etti",
+      "source": {
+        "name": "Kent Haber",
+        "domain": "kent-haber.example"
+      },
+      "published_at": "2026-11-02T05:00:00Z",
+      "display": "full",
+      "summary": "Kent Haber'e göre taksici odası yöneticileri, uygulamanın faturalandırma yöntemine ilişkin iddialarla resmi kurumlardan inceleme talep etti. Martı tarafının iddialara yanıtı haberde yer almıyor.",
+      "category": "taksici_odasi",
+      "actors": [
+        "taksici_odasi"
+      ],
+      "is_allegation": true,
+      "risk_level": "medium",
+      "cluster_id": "c0002",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000003",
+      "url": "https://ekonomi-bulteni.example/haber/0000000000000003",
+      "title": "UKOME toplantısında paylaşımlı yolculuk gündeme geldi",
+      "source": {
+        "name": "Ekonomi Bülteni",
+        "domain": "ekonomi-bulteni.example"
+      },
+      "published_at": "2026-11-02T02:00:00Z",
+      "display": "full",
+      "summary": "Gündem 24'ün haberine göre UKOME toplantısında paylaşımlı yolculuk uygulamalarına ilişkin düzenleme ihtiyacı konuşuldu. Somut bir karar alınmadı.",
+      "category": "regulasyon",
+      "actors": [
+        "ibb_ukome"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0003",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000004",
+      "url": "https://hukuk-ajansi.example/haber/0000000000000004",
+      "title": "Martı, üçüncü çeyrek sonuçlarını açıkladı",
+      "source": {
+        "name": "Hukuk Ajansı",
+        "domain": "hukuk-ajansi.example"
+      },
+      "published_at": "2026-11-01T23:00:00Z",
+      "display": "full",
+      "summary": "Ekonomi Bülteni'nin aktardığına göre şirket, çeyreklik sonuçlarında TAG hizmetindeki büyümeyi öne çıkardı. Rakamların ayrıntısı şirketin yatırımcı sunumunda yer alıyor.",
+      "category": "sirket",
+      "actors": [
+        "marti"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0004",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000005",
+      "url": "https://gundem24.example/haber/0000000000000005",
+      "title": "Sürücüler yeni komisyon düzenlemesini değerlendirdi",
+      "source": {
+        "name": "Gündem 24",
+        "domain": "gundem24.example"
+      },
+      "published_at": "2026-11-01T20:00:00Z",
+      "display": "headline_only",
+      "summary": null,
+      "category": "surucu_yolcu",
+      "actors": [
+        "surucu"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0005",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000006",
+      "url": "https://mobilite.example/haber/0000000000000006",
+      "title": "Bakanlık kaynakları: düzenleme taslağı üzerinde çalışılıyor",
+      "source": {
+        "name": "Mobilite Dergisi",
+        "domain": "mobilite.example"
+      },
+      "published_at": "2026-11-01T17:00:00Z",
+      "display": "full",
+      "summary": "Hukuk Ajansı'na konuşan bakanlık kaynaklarına göre paylaşımlı yolculuk için bir düzenleme taslağı hazırlanıyor. Taslağın ne zaman Meclis'e geleceği belirsiz.",
+      "category": "regulasyon",
+      "actors": [
+        "bakanlik"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0006",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000007",
+      "url": "https://ornek-gazete.example/haber/0000000000000007",
+      "title": "Havalimanı çıkışında denetim yapıldı",
+      "source": {
+        "name": "Örnek Gazete",
+        "domain": "ornek-gazete.example"
+      },
+      "published_at": "2026-11-01T14:00:00Z",
+      "display": "headline_only",
+      "summary": null,
+      "category": "saha",
+      "actors": [
+        "diger"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0007",
+      "origin": "google_news"
+    },
+    {
+      "id": "0000000000000008",
+      "url": "https://kent-haber.example/haber/0000000000000008",
+      "title": "Mobilite pazarında yatırım iştahı artıyor",
+      "source": {
+        "name": "Kent Haber",
+        "domain": "kent-haber.example"
+      },
+      "published_at": "2026-11-01T11:00:00Z",
+      "display": "full",
+      "summary": "Mobilite Dergisi'nin analizine göre paylaşımlı ulaşım girişimlerine yönelik yatırımlar bu yıl arttı. Analizde TAG örnek olarak gösteriliyor.",
+      "category": "ekonomi",
+      "actors": [
+        "diger"
+      ],
+      "is_allegation": false,
+      "risk_level": "low",
+      "cluster_id": "c0008",
+      "origin": "google_news"
+    }
+  ],
+  "events": [
+    {
+      "id": "ev-0001",
+      "date": "2026-06-24",
+      "type": "court_decision",
+      "title": "İlk derece mahkemesi kararı (örnek)",
+      "description": "Örnek olay: ilk derece mahkemesi haksız rekabet iddiasıyla ilgili karar verdi.",
+      "court": "Asliye Ticaret Mahkemesi",
+      "evidence": [
+        {
+          "url": "https://hukuk-ajansi.example/haber/ev-0001",
+          "source_name": "Hukuk Ajansı",
+          "domain": "hukuk-ajansi.example"
+        }
+      ],
+      "published": true,
+      "is_seed": true
+    },
+    {
+      "id": "ev-0002",
+      "date": "2026-10-23",
+      "type": "court_decision",
+      "title": "İstinaf kararı kaldırdı (örnek)",
+      "description": "Örnek olay: bölge adliye mahkemesi ilk derece kararını kaldırdı.",
+      "court": "Bölge Adliye Mahkemesi",
+      "evidence": [
+        {
+          "url": "https://ornek-gazete.example/haber/ev-0002",
+          "source_name": "Örnek Gazete",
+          "domain": "ornek-gazete.example"
+        },
+        {
+          "url": "https://kent-haber.example/haber/ev-0002",
+          "source_name": "Kent Haber",
+          "domain": "kent-haber.example"
+        }
+      ],
+      "published": true,
+      "is_seed": false
+    }
+  ],
+  "stats": [
+    {
+      "key": "registered_riders",
+      "label": "Kayıtlı yolcu",
+      "value": 4900000,
+      "as_of": "2026-09-02",
+      "scope": "Türkiye",
+      "source_name": "Martı basın bülteni",
+      "source_url": "https://example.com/basin-bulteni"
+    },
+    {
+      "key": "drivers",
+      "label": "Kayıtlı sürücü",
+      "value": 584000,
+      "as_of": "2026-09-02",
+      "scope": "Türkiye",
+      "source_name": "Martı basın bülteni",
+      "source_url": "https://example.com/basin-bulteni"
+    },
+    {
+      "key": "drivers_istanbul",
+      "label": "İstanbul'daki sürücü",
+      "value": 351000,
+      "as_of": "2026-06-15",
+      "scope": "İstanbul",
+      "source_name": "Martı açıklaması",
+      "source_url": "https://example.com/aciklama"
+    }
+  ],
+  "daily_counts": [
+    {
+      "date": "2026-08-05",
+      "count": 6
+    },
+    {
+      "date": "2026-08-06",
+      "count": 6
+    },
+    {
+      "date": "2026-08-07",
+      "count": 6
+    },
+    {
+      "date": "2026-08-08",
+      "count": 6
+    },
+    {
+      "date": "2026-08-09",
+      "count": 6
+    },
+    {
+      "date": "2026-08-10",
+      "count": 6
+    },
+    {
+      "date": "2026-08-11",
+      "count": 6
+    },
+    {
+      "date": "2026-08-12",
+      "count": 6
+    },
+    {
+      "date": "2026-08-13",
+      "count": 6
+    },
+    {
+      "date": "2026-08-14",
+      "count": 6
+    },
+    {
+      "date": "2026-08-15",
+      "count": 5
+    },
+    {
+      "date": "2026-08-16",
+      "count": 5
+    },
+    {
+      "date": "2026-08-17",
+      "count": 4
+    },
+    {
+      "date": "2026-08-18",
+      "count": 4
+    },
+    {
+      "date": "2026-08-19",
+      "count": 3
+    },
+    {
+      "date": "2026-08-20",
+      "count": 3
+    },
+    {
+      "date": "2026-08-21",
+      "count": 2
+    },
+    {
+      "date": "2026-08-22",
+      "count": 2
+    },
+    {
+      "date": "2026-08-23",
+      "count": 1
+    },
+    {
+      "date": "2026-08-24",
+      "count": 1
+    },
+    {
+      "date": "2026-08-25",
+      "count": 1
+    },
+    {
+      "date": "2026-08-26",
+      "count": 1
+    },
+    {
+      "date": "2026-08-27",
+      "count": 1
+    },
+    {
+      "date": "2026-08-28",
+      "count": 1
+    },
+    {
+      "date": "2026-08-29",
+      "count": 1
+    },
+    {
+      "date": "2026-08-30",
+      "count": 1
+    },
+    {
+      "date": "2026-08-31",
+      "count": 1
+    },
+    {
+      "date": "2026-09-01",
+      "count": 1
+    },
+    {
+      "date": "2026-09-02",
+      "count": 1
+    },
+    {
+      "date": "2026-09-03",
+      "count": 2
+    },
+    {
+      "date": "2026-09-04",
+      "count": 2
+    },
+    {
+      "date": "2026-09-05",
+      "count": 3
+    },
+    {
+      "date": "2026-09-06",
+      "count": 3
+    },
+    {
+      "date": "2026-09-07",
+      "count": 4
+    },
+    {
+      "date": "2026-09-08",
+      "count": 4
+    },
+    {
+      "date": "2026-09-09",
+      "count": 5
+    },
+    {
+      "date": "2026-09-10",
+      "count": 5
+    },
+    {
+      "date": "2026-09-11",
+      "count": 6
+    },
+    {
+      "date": "2026-09-12",
+      "count": 6
+    },
+    {
+      "date": "2026-09-13",
+      "count": 6
+    },
+    {
+      "date": "2026-09-14",
+      "count": 6
+    },
+    {
+      "date": "2026-09-15",
+      "count": 6
+    },
+    {
+      "date": "2026-09-16",
+      "count": 6
+    },
+    {
+      "date": "2026-09-17",
+      "count": 6
+    },
+    {
+      "date": "2026-09-18",
+      "count": 6
+    },
+    {
+      "date": "2026-09-19",
+      "count": 6
+    },
+    {
+      "date": "2026-09-20",
+      "count": 6
+    },
+    {
+      "date": "2026-09-21",
+      "count": 5
+    },
+    {
+      "date": "2026-09-22",
+      "count": 5
+    },
+    {
+      "date": "2026-09-23",
+      "count": 5
+    },
+    {
+      "date": "2026-09-24",
+      "count": 4
+    },
+    {
+      "date": "2026-09-25",
+      "count": 4
+    },
+    {
+      "date": "2026-09-26",
+      "count": 3
+    },
+    {
+      "date": "2026-09-27",
+      "count": 3
+    },
+    {
+      "date": "2026-09-28",
+      "count": 2
+    },
+    {
+      "date": "2026-09-29",
+      "count": 2
+    },
+    {
+      "date": "2026-09-30",
+      "count": 1
+    },
+    {
+      "date": "2026-10-01",
+      "count": 1
+    },
+    {
+      "date": "2026-10-02",
+      "count": 1
+    },
+    {
+      "date": "2026-10-03",
+      "count": 1
+    },
+    {
+      "date": "2026-10-04",
+      "count": 1
+    },
+    {
+      "date": "2026-10-05",
+      "count": 1
+    },
+    {
+      "date": "2026-10-06",
+      "count": 1
+    },
+    {
+      "date": "2026-10-07",
+      "count": 1
+    },
+    {
+      "date": "2026-10-08",
+      "count": 1
+    },
+    {
+      "date": "2026-10-09",
+      "count": 1
+    },
+    {
+      "date": "2026-10-10",
+      "count": 2
+    },
+    {
+      "date": "2026-10-11",
+      "count": 2
+    },
+    {
+      "date": "2026-10-12",
+      "count": 2
+    },
+    {
+      "date": "2026-10-13",
+      "count": 3
+    },
+    {
+      "date": "2026-10-14",
+      "count": 3
+    },
+    {
+      "date": "2026-10-15",
+      "count": 4
+    },
+    {
+      "date": "2026-10-16",
+      "count": 4
+    },
+    {
+      "date": "2026-10-17",
+      "count": 5
+    },
+    {
+      "date": "2026-10-18",
+      "count": 5
+    },
+    {
+      "date": "2026-10-19",
+      "count": 6
+    },
+    {
+      "date": "2026-10-20",
+      "count": 6
+    },
+    {
+      "date": "2026-10-21",
+      "count": 6
+    },
+    {
+      "date": "2026-10-22",
+      "count": 24
+    },
+    {
+      "date": "2026-10-23",
+      "count": 24
+    },
+    {
+      "date": "2026-10-24",
+      "count": 6
+    },
+    {
+      "date": "2026-10-25",
+      "count": 6
+    },
+    {
+      "date": "2026-10-26",
+      "count": 6
+    },
+    {
+      "date": "2026-10-27",
+      "count": 6
+    },
+    {
+      "date": "2026-10-28",
+      "count": 6
+    },
+    {
+      "date": "2026-10-29",
+      "count": 5
+    },
+    {
+      "date": "2026-10-30",
+      "count": 5
+    },
+    {
+      "date": "2026-10-31",
+      "count": 4
+    },
+    {
+      "date": "2026-11-01",
+      "count": 4
+    },
+    {
+      "date": "2026-11-02",
+      "count": 4
+    }
+  ],
+  "source_counts": [
+    {
+      "name": "Örnek Gazete",
+      "domain": "ornek-gazete.example",
+      "count": 30
+    },
+    {
+      "name": "Kent Haber",
+      "domain": "kent-haber.example",
+      "count": 26
+    },
+    {
+      "name": "Ekonomi Bülteni",
+      "domain": "ekonomi-bulteni.example",
+      "count": 22
+    },
+    {
+      "name": "Hukuk Ajansı",
+      "domain": "hukuk-ajansi.example",
+      "count": 18
+    },
+    {
+      "name": "Gündem 24",
+      "domain": "gundem24.example",
+      "count": 14
+    },
+    {
+      "name": "Mobilite Dergisi",
+      "domain": "mobilite.example",
+      "count": 10
+    }
+  ],
+  "category_weekly": [
+    {
+      "week_start": "2026-07-20",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 3,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 1,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-07-27",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 3,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-08-03",
+      "counts": {
+        "dava": 3,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 4,
+        "saha": 3,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-08-10",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 3,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 4,
+        "saha": 4,
+        "ekonomi": 3,
+        "diger": 2
+      }
+    },
+    {
+      "week_start": "2026-08-17",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 3,
+        "sirket": 4,
+        "surucu_yolcu": 4,
+        "saha": 4,
+        "ekonomi": 4,
+        "diger": 3
+      }
+    },
+    {
+      "week_start": "2026-08-24",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 3,
+        "surucu_yolcu": 4,
+        "saha": 4,
+        "ekonomi": 4,
+        "diger": 4
+      }
+    },
+    {
+      "week_start": "2026-08-31",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 1,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 3,
+        "saha": 4,
+        "ekonomi": 4,
+        "diger": 4
+      }
+    },
+    {
+      "week_start": "2026-09-07",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 1,
+        "taksici_odasi": 1,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 3,
+        "ekonomi": 4,
+        "diger": 4
+      }
+    },
+    {
+      "week_start": "2026-09-14",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 1,
+        "taksici_odasi": 1,
+        "sirket": 1,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 3,
+        "diger": 4
+      }
+    },
+    {
+      "week_start": "2026-09-21",
+      "counts": {
+        "dava": 3,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 1,
+        "surucu_yolcu": 1,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 3
+      }
+    },
+    {
+      "week_start": "2026-09-28",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 3,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 1,
+        "saha": 1,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "week_start": "2026-10-05",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 4,
+        "taksici_odasi": 3,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 1,
+        "ekonomi": 1,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-10-12",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 3,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 1,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-10-19",
+      "counts": {
+        "dava": 10,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 3,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-10-26",
+      "counts": {
+        "dava": 9,
+        "regulasyon": 4,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 4,
+        "saha": 3,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "week_start": "2026-11-02",
+      "counts": {
+        "dava": 9,
+        "regulasyon": 3,
+        "taksici_odasi": 4,
+        "sirket": 4,
+        "surucu_yolcu": 4,
+        "saha": 4,
+        "ekonomi": 3,
+        "diger": 2
+      }
+    }
+  ],
+  "actor_statements": [
+    {
+      "actor": "marti",
+      "summary": "Şirket, kararın sürücüler için olumlu olduğunu açıkladı.",
+      "date": "2026-10-24T09:00:00Z",
+      "article_id": "0000000000000004",
+      "source_name": "Ekonomi Bülteni",
+      "url": "https://hukuk-ajansi.example/haber/0000000000000004"
+    },
+    {
+      "actor": "taksici_odasi",
+      "summary": "Oda başkanı, uygulamanın denetlenmesi gerektiğini öne sürdü.",
+      "date": "2026-11-02T05:00:00Z",
+      "article_id": "0000000000000002",
+      "source_name": "Kent Haber",
+      "url": "https://kent-haber.example/haber/0000000000000002"
+    },
+    {
+      "actor": "ibb_ukome",
+      "summary": "UKOME gündeminde paylaşımlı yolculuğun düzenlenmesi konuşuldu.",
+      "date": "2026-11-02T02:00:00Z",
+      "article_id": "0000000000000003",
+      "source_name": "Gündem 24",
+      "url": "https://ekonomi-bulteni.example/haber/0000000000000003"
+    },
+    {
+      "actor": "mahkeme",
+      "summary": "Mahkeme gerekçesinde mevzuat boşluğuna dikkat çekti.",
+      "date": "2026-11-02T08:00:00Z",
+      "article_id": "0000000000000001",
+      "source_name": "Örnek Gazete",
+      "url": "https://ornek-gazete.example/haber/0000000000000001"
+    }
+  ],
+  "totals": {
+    "articles_90d": 378,
+    "sources_90d": 6
+  }
+}

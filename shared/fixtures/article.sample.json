@@ -1,0 +1,29 @@
+{
+  "_id": "0000000000000002",
+  "url": "https://kent-haber.example/haber/0000000000000002",
+  "title": "Taksici odası, TAG uygulaması için yeni inceleme talep etti",
+  "source": {
+    "name": "Kent Haber",
+    "domain": "kent-haber.example"
+  },
+  "published_at": "2026-11-02T05:00:00Z",
+  "display": "full",
+  "summary": "Kent Haber'e göre taksici odası yöneticileri, uygulamanın faturalandırma yöntemine ilişkin iddialarla resmi kurumlardan inceleme talep etti. Martı tarafının iddialara yanıtı haberde yer almıyor.",
+  "category": "taksici_odasi",
+  "actors": [
+    "taksici_odasi"
+  ],
+  "is_allegation": true,
+  "risk_level": "medium",
+  "cluster_id": "c0002",
+  "origin": "google_news",
+  "fetched_at": "2026-11-02T09:00:00Z",
+  "actor_statements": [
+    {
+      "actor": "taksici_odasi",
+      "summary": "Oda başkanı, uygulamanın denetlenmesi gerektiğini öne sürdü."
+    }
+  ],
+  "model": "claude-haiku-5-5",
+  "prompt_version": "summarize_v1"
+}
