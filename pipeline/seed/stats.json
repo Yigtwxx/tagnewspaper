@@ -1,0 +1,29 @@
+[
+  {
+    "key": "registered_riders",
+    "label": "TAG yolcusu",
+    "value": 4900000,
+    "as_of": "2026-09-02",
+    "scope": "Türkiye",
+    "source_name": "Martı basın bülteni (3 Eylül 2026)",
+    "source_url": "https://ir.marti.tech/news-events/press-releases/detail/117/martis-ride-hailing-service-reaches-4-90-million-riders"
+  },
+  {
+    "key": "drivers",
+    "label": "Kayıtlı sürücü",
+    "value": 584000,
+    "as_of": "2026-09-02",
+    "scope": "Türkiye",
+    "source_name": "Martı basın bülteni (3 Eylül 2026)",
+    "source_url": "https://ir.marti.tech/news-events/press-releases/detail/117/martis-ride-hailing-service-reaches-4-90-million-riders"
+  },
+  {
+    "key": "drivers_istanbul",
+    "label": "İstanbul'daki kayıtlı sürücü",
+    "value": 351000,
+    "as_of": "2026-06-11",
+    "scope": "İstanbul",
+    "source_name": "Martı basın bülteni (12 Haziran 2026)",
+    "source_url": "https://ir.marti.tech/news-events/press-releases/detail/110/martis-ride-hailing-service-reaches-4-30-million-riders"
+  }
+]

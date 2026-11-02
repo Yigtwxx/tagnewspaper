@@ -1,0 +1,42 @@
+[
+  {
+    "_id": "ev-seed-2026-06-24",
+    "date": "2026-06-24",
+    "type": "court_decision",
+    "title": "İlk derece mahkemesi Martı TAG için haksız rekabet kararı verdi",
+    "description": "Haberlere göre İstanbul 14. Asliye Ticaret Mahkemesi, taksici esnaf odasının açtığı davada TAG hizmetinin haksız rekabet oluşturduğuna ve önlenmesine hükmetti; uygulamaya erişim engeli talebini ise reddetti. Kararın kesinleşmediği ve istinaf yolunun açık olduğu bildirildi.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.cumhuriyet.com.tr/turkiye/marti-tag-davasi-mahkeme-kararini-acikladi-istinaf-yolu-acik-2514988",
+        "source_name": "Cumhuriyet",
+        "domain": "cumhuriyet.com.tr"
+      },
+      {
+        "url": "https://www.bloomberght.com/marti-tag-davasinda-karar-3781088",
+        "source_name": "Bloomberg HT",
+        "domain": "bloomberght.com"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2026-10-23",
+    "date": "2026-10-23",
+    "type": "court_decision",
+    "title": "İstinaf mahkemesi ilk derece kararını kaldırdı",
+    "description": "Haberlere göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, Martı'nın istinaf başvurusunu kabul ederek ilk derece kararını kaldırdı ve davaları reddetti. Kararda, yasa koyucunun yasaklamadığı bir ticari faaliyetin mahkeme kararıyla yasaklanamayacağı ve yeni mevzuata ihtiyaç olduğu belirtildi. Kararın kesinleşme durumu haberlerde doğrulanmadı.",
+    "court": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi",
+    "evidence": [
+      {
+        "url": "https://www.cumhuriyet.com.tr/ekonomi/marti-tag-davasinda-dort-yil-suren-karar-cikti-2549662",
+        "source_name": "Cumhuriyet (İHA)",
+        "domain": "cumhuriyet.com.tr"
+      },
+      {
+        "url": "https://www.internethaber.com/marti-tag-turkiyede-yasal-mi-mahkemeden-karar-cikti-2465503h.htm",
+        "source_name": "İnternet Haber",
+        "domain": "internethaber.com"
+      }
+    ]
+  }
+]
