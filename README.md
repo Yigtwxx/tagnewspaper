@@ -1,5 +1,7 @@
 # TAGNEWSPAPER
 
+![The TAG Newspaper sosyal kartı](.github/social-preview.png)
+
 **Martı TAG kullanıcıları için bağımsız haber, dava takibi ve veri gazetesi.**
 Girişsiz, reklamsız, tek sayfalık bir "yeni nesil gazete": TAG hakkında çıkan haberleri toplar,
 yapay zekâ ile kısa ve tarafsız özetlere dönüştürür, dava sürecini ve açıklanan rakamları
