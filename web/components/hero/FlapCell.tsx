@@ -72,7 +72,7 @@ export interface FlapCellProps {
   /** Extra drum steps on first appearance, so the board visibly "spins up". */
   spin: number;
   animate: boolean;
-  size?: 'xl' | 'lg';
+  size?: 'xl' | 'lg' | 'sm';
   tone?: 'accent' | 'dim';
 }
 
@@ -92,6 +92,8 @@ export const FlapCell = memo(function FlapCell({
   const [initial] = useState(char);
   const shown = useRef(char);
   const first = useRef(true);
+  /** The flip currently running on this cell; new work waits for it so flips never overlap. */
+  const busy = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     const cell = ref.current;
@@ -105,16 +107,19 @@ export const FlapCell = memo(function FlapCell({
       return;
     }
 
-    const path = drumPath(shown.current, char, extra);
-    if (path.length === 0) return;
     let cancelled = false;
-    const timer = window.setTimeout(async () => {
-      for (const next of path) {
+    const run = async () => {
+      // Let any in-flight flip land first, then plan the path from what is really showing.
+      await busy.current;
+      for (const next of drumPath(shown.current, char, extra)) {
         if (cancelled || !cell.isConnected) return;
-        await flipOnce(cell, shown.current, next);
+        const step = flipOnce(cell, shown.current, next);
+        busy.current = step;
+        await step;
         shown.current = next;
       }
-    }, delay);
+    };
+    const timer = window.setTimeout(() => void run(), delay);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
@@ -123,7 +128,7 @@ export const FlapCell = memo(function FlapCell({
 
   const cls = [
     'flap',
-    size === 'xl' ? 'flap--xl' : size === 'lg' ? 'flap--lg' : '',
+    size === 'xl' ? 'flap--xl' : size === 'lg' ? 'flap--lg' : size === 'sm' ? 'flap--sm' : '',
     tone ? `flap--${tone}` : '',
   ]
     .filter(Boolean)
