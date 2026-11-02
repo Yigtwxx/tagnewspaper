@@ -24,7 +24,7 @@
     "date": "2023-03-06",
     "type": "court_decision",
     "title": "Mahkeme, ihtiyati tedbir olarak Martı TAG ve Martı Motosiklet'e erişim engeli getirdi",
-    "description": "İstanbul 14. Asliye Ticaret Mahkemesi, davacı odanın ihtiyati tedbir talebini kabul ederek Martı uygulaması ve internet sitesi üzerinden sunulan Martı TAG ve Martı Motosiklet hizmetlerine erişim engeli getirilmesine hükmetti. Martı'nın SEC raporlarında kararın tarihi 6 Mart 2023 olarak belirtiliyor; karar 8 Mart'ta haberlere yansıdı ve şirket karara itiraz edeceğini açıkladı.",
+    "description": "İstanbul 14. Asliye Ticaret Mahkemesi, davacı odanın ihtiyati tedbir talebini kabul ederek Martı uygulaması ve internet sitesi üzerinden sunulan Martı TAG ve Martı Motosiklet hizmetlerine erişim engeli getirilmesine hükmetti. Martı'nın SEC raporlarında kararın tarihi 6 Mart 2023 olarak belirtiliyor; karar 8 Mart'ta haberlere yansıdı ve şirket karara itiraz edeceğini açıkladı. Martı'nın SEC raporlarına göre tedbir yalnızca TAG hizmetini kapsıyordu.",
     "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
     "evidence": [
       {
@@ -79,7 +79,7 @@
       },
       {
         "url": "https://www.bloomberght.com/marti-tag-kurucusundan-paylasimli-yolculuk-aciklamasi-2356712",
-        "source_name": "Bloomberg HT (AA)",
+        "source_name": "Bloomberg HT",
         "domain": "bloomberght.com"
       }
     ]
@@ -112,9 +112,9 @@
   {
     "_id": "ev-seed-2024-08-08",
     "date": "2024-08-08",
-    "type": "regulation",
+    "type": "statement",
     "title": "Martı: Gelir İdaresi, paylaşımlı yolculuk kazancının vergilendirileceğini bildirdi",
-    "description": "Martı'nın açıklamasına göre Gelir İdaresi Başkanlığı, kendisine yapılan bir başvuruya verdiği yanıtta paylaşımlı yolculuk platformu üzerinden yapılan şehir içi taşımacılıktan elde edilen kazancın ticari kazanç olarak vergilendirilmesi gerektiğini, şartlar sağlanırsa basit usulün uygulanabileceğini belirtti. Martı, sürücüleri vergi mükellefi olmaya teşvik edeceğini açıkladı.",
+    "description": "Martı'nın 8 Ağustos 2024'teki açıklamasına göre Gelir İdaresi Başkanlığı, şirkete verdiği 7 Ağustos 2024 tarihli özelgede, paylaşımlı yolculuk kazancının devamlılık taşıdığı ölçüde ticari kazanç sayılacağını ve şartları taşıyanlara basit usulün uygulanabileceğini belirtti. Martı, sürücüleri vergi mükellefi olmaya teşvik edeceğini açıkladı.",
     "court": null,
     "evidence": [
       {
@@ -126,6 +126,11 @@
         "url": "https://www.cumhuriyet.com.tr/ekonomi/paylasimli-yolculuga-vergi-duzenlemesi-2235775",
         "source_name": "Cumhuriyet (İHA)",
         "domain": "cumhuriyet.com.tr"
+      },
+      {
+        "url": "https://www.ozgunlaw.com/haberler/07082024-tarihli-ozelge-ile-paylasimli-yolculugun-vergilendirilmesine-karar-verildi-4332",
+        "source_name": "Özgün Hukuk Bürosu",
+        "domain": "ozgunlaw.com"
       }
     ]
   },
@@ -133,7 +138,7 @@
     "_id": "ev-seed-2024-10-17",
     "date": "2024-10-17",
     "type": "court_decision",
-    "title": "İdare mahkemesi, Martı'nın e-ulaşım lisansı başvurusunun reddine ilişkin işlemi durdurdu",
+    "title": "İdare mahkemesi, Martı'nın e-ulaşım lisansı başvurusunun zımnen reddine ilişkin işlemin yürütmesini durdurdu",
     "description": "Yeni Şafak'ın aktardığı karar metnine göre İstanbul 7. İdare Mahkemesi, Martı'nın elektronik ulaşım yönetim lisansı başvurusunun İBB tarafından zımnen reddedilmesine ilişkin işlemin yürütmesini 17 Ekim 2024'te oybirliğiyle durdurdu; karara karşı Bölge İdare Mahkemesi'ne itiraz yolu açık bırakıldı. Karar 1 Kasım 2024'te Martı kurucusu tarafından duyuruldu; kurucu, TAG'ın artık lisanslı hizmet vereceğini savundu.",
     "court": "İstanbul 7. İdare Mahkemesi",
     "evidence": [
@@ -151,10 +156,10 @@
   },
   {
     "_id": "ev-seed-2024-11-22",
-    "date": "2024-11-22",
+    "date": "2024-11-21",
     "type": "court_decision",
     "title": "İstinaf, 2024 tarihli ilk derece kararını kaldırıp dosyayı yeniden yargılamaya gönderdi",
-    "description": "Martı'nın 22 Kasım 2024'te duyurduğuna göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, şirketin istinaf başvurusunu kabul ederek 19 Temmuz 2024 tarihli kararı kaldırdı; dairenin karar tarihi incelenen kaynaklarda yer almıyor. Şirketin SEC raporuna göre daire, bilirkişi raporlarının yetersiz olduğu ve savunmaların yeterince incelenmediği gerekçesiyle dosyayı ilk derece mahkemesine geri gönderdi ve yeniden yargılama 27 Kasım 2024'te başladı.",
+    "description": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, 21 Kasım 2024'te HMK 353/1-a-6 uyarınca, esasa ilişkin istinaf nedenlerini incelemeden 19 Temmuz 2024 tarihli ilk derece kararını kaldırdı, dosyayı yeniden yargılama için geri gönderdi ve davacının ihtiyati tedbir talebini reddetti. Karar oybirliğiyle ve kesin olarak verildi; Martı 22 Kasım'da duyurdu. Şirketin SEC raporuna göre gerekçe, bilirkişi raporlarının yetersizliği ve savunmaların yeterince incelenmemesiydi; yeniden yargılama 27 Kasım 2024'te başladı.",
     "court": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi",
     "evidence": [
       {
@@ -226,6 +231,11 @@
         "url": "https://www.dha.com.tr/gundem/istinaf-karari-bozmustu-marti-taga-yeniden-haksiz-rekabet-davasi-2567734",
         "source_name": "Demirören Haber Ajansı (DHA)",
         "domain": "dha.com.tr"
+      },
+      {
+        "url": "https://www.bloomberght.com/marti-tag-davasinda-karar-3781088",
+        "source_name": "Bloomberg HT",
+        "domain": "bloomberght.com"
       }
     ]
   },
@@ -246,6 +256,11 @@
         "url": "https://www.bloomberght.com/marti-tag-davasinda-karar-3781088",
         "source_name": "Bloomberg HT",
         "domain": "bloomberght.com"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026072263/ea0296073-6k_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 6-K (26 Haziran 2026)",
+        "domain": "sec.gov"
       }
     ]
   },
