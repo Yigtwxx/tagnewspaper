@@ -46,7 +46,7 @@ jobs:
           REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
           # Daily market page; both optional (no key = filings only).
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
-          SEC_USER_AGENT: ${{ vars.SEC_USER_AGENT }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
           MAX_ITEMS: ${{ inputs.max_items }}
         run: |
           if [ -n "$MAX_ITEMS" ]; then
