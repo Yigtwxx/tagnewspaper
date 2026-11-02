@@ -27,6 +27,7 @@
   --accent-text: #01b251;
   --line: rgb(255 255 255 / 0.2);
   --rule: rgb(255 255 255 / 0.4);
+  --alert: #ff7a7a;
   --surface: #141414;
   color-scheme: dark;
 }
@@ -38,6 +39,7 @@
   --accent-text: #007a37;
   --line: rgb(0 0 0 / 0.16);
   --rule: rgb(0 0 0 / 0.42);
+  --alert: #c62828;
   --surface: #f2f2f2;
   color-scheme: light;
 }
@@ -49,6 +51,7 @@
   --accent-text: #000000;
   --line: rgb(0 0 0 / 0.28);
   --surface: #04a74b;
+  --alert: #7a0c0c;
   color-scheme: light;
 }
 [data-theme] {

@@ -11,7 +11,7 @@ import { Highlighted, KEY_TERMS } from './Highlighted';
 export function AllegationBadge() {
   return (
     <span
-      className="inline-flex items-center border border-current px-1.5 font-sans text-[11px] leading-[18px] font-semibold"
+      className="inline-flex items-center border border-(--alert) px-1.5 font-sans text-[11px] leading-[18px] font-bold text-(--alert)"
       title="Bu haber iddia içeriyor. İddialar doğrulanmış bilgi değildir; kaynağına bakın."
     >
       İddia
