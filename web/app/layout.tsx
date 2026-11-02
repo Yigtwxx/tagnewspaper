@@ -1,16 +1,24 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo, Newsreader } from 'next/font/google';
+import { Archivo, Libre_Caslon_Text, Libre_Franklin } from 'next/font/google';
 
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { siteUrl } from '@/lib/site';
 
 import './globals.css';
 
-const newsreader = Newsreader({
-  variable: '--font-newsreader',
+// Newspaper type: Caslon for headlines and body (in the spirit of NYT Cheltenham/Imperial),
+// Franklin for labels and data. Archivo is only used by the split-flap masthead cells.
+const caslon = Libre_Caslon_Text({
+  variable: '--font-caslon',
   subsets: ['latin', 'latin-ext'],
-  axes: ['opsz'],
+  weight: ['400', '700'],
   style: ['normal', 'italic'],
+  display: 'swap',
+});
+
+const franklin = Libre_Franklin({
+  variable: '--font-franklin',
+  subsets: ['latin', 'latin-ext'],
   display: 'swap',
 });
 
@@ -52,7 +60,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="tr" className={`${newsreader.variable} ${archivo.variable} antialiased`}>
+    <html
+      lang="tr"
+      className={`${caslon.variable} ${franklin.variable} ${archivo.variable} antialiased`}
+    >
       <body>
         <a
           href="#haberler"

@@ -25,7 +25,7 @@ function EventCard({ event, index }: { event: CaseEventT; index: number }) {
           {String(index + 1).padStart(2, '0')} / {TYPE_LABEL[event.type]}
         </span>
       </div>
-      <p className="numeral text-[clamp(3rem,6vw,5.5rem)]">
+      <p className="numeral text-[clamp(2.5rem,4.5vw,4rem)]">
         <time dateTime={event.date}>
           {d}.{m}.{y}
         </time>
@@ -96,8 +96,8 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
       data-theme="tag"
       className="overflow-hidden px-4 py-28 sm:px-8 lg:flex lg:min-h-[100svh] lg:flex-col lg:justify-center lg:py-20"
     >
-      <div className="mx-auto mb-14 grid w-full max-w-[1360px] gap-6 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
-        <h2 className="section-title">Dava nerede?</h2>
+      <div className="section-head mx-auto mb-12 grid w-full max-w-[1360px] gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
+        <h2 className="section-title mt-4">Dava nerede?</h2>
         {latest ? (
           <p className="text-[clamp(1.15rem,1.5vw,1.4rem)] leading-relaxed">
             <span className="font-sans font-semibold">

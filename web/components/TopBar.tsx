@@ -14,7 +14,7 @@ const NAV = [
 
 /** Fixed bar that appears after the hero; ThemeTriggers re-themes it per section. */
 export function TopBar({ lastRunAt, hasData }: { lastRunAt: string; hasData: boolean }) {
-  const shown = useScrolledPast(0.85);
+  const shown = useScrolledPast(0.42);
   const now = useNow();
 
   return (
@@ -25,10 +25,7 @@ export function TopBar({ lastRunAt, hasData }: { lastRunAt: string; hasData: boo
       inert={!shown}
     >
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-8">
-        <a
-          href="#top"
-          className="font-sans text-lg font-extrabold tracking-tight [font-stretch:75%]"
-        >
+        <a href="#top" className="font-serif text-lg font-bold">
           <span className="text-(--accent-text)">TAG</span>NEWSPAPER
         </a>
         <nav aria-label="Bölümler" className="hidden md:block">

@@ -35,12 +35,11 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
       id="veriler"
       data-section="density"
       data-theme="paper"
-      data-wipe
       className="px-4 py-28 sm:px-8 sm:py-36"
     >
       <div className="mx-auto max-w-[1360px]">
-        <div className="mb-14 grid gap-6 lg:grid-cols-[1fr_minmax(0,28rem)] lg:items-end">
-          <h2 className="section-title">Ne zaman konuşuldu?</h2>
+        <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
+          <h2 className="section-title mt-4">Ne zaman konuşuldu?</h2>
           <p className="dek">
             Son 90 günde {formatNumber(snapshot.totals.articles_90d)} haber çıktı. En yoğun gün{' '}
             {formatCalendarDate(peak.date)} oldu, {peak.count} haberle. Kesikli çizgiler dava
@@ -79,9 +78,9 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
 
   return (
     <section data-section="sources" data-theme="paper" className="px-4 pb-28 sm:px-8 sm:pb-36">
-      <div className="mx-auto grid max-w-[1360px] gap-16 border-t-2 border-(--fg) pt-16 lg:grid-cols-12">
+      <div className="mx-auto grid max-w-[1360px] gap-16 section-head pt-12 lg:grid-cols-12">
         <div className="flex flex-col gap-8 lg:col-span-5">
-          <h2 className="section-title">Kim yazdı?</h2>
+          <h2 className="section-title mt-4">Kim yazdı?</h2>
           <p className="dek">
             Son 90 günde {formatNumber(snapshot.totals.sources_90d)} farklı yayın organı Martı TAG
             hakkında haber yaptı. Daire ne kadar büyükse o kadar çok haber.
@@ -121,15 +120,10 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
   const leader = totals[0];
 
   return (
-    <section
-      data-section="topics"
-      data-theme="ink"
-      data-wipe
-      className="px-4 py-28 sm:px-8 sm:py-36"
-    >
+    <section data-section="topics" data-theme="ink" className="px-4 py-28 sm:px-8 sm:py-36">
       <div className="mx-auto max-w-[1360px]">
-        <div className="mb-14 grid gap-6 lg:grid-cols-[1fr_minmax(0,28rem)] lg:items-end">
-          <h2 className="section-title">Hangi konu öne çıktı?</h2>
+        <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
+          <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
           <p className="dek">
             Son {data.length} haftada haberlerin konulara dağılımı. En çok yer bulan konu{' '}
             {CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')} oldu.

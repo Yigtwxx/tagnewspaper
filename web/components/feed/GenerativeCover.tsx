@@ -1,31 +1,21 @@
 import type { ReactNode } from 'react';
 
 import { coverSpec } from '@/lib/cover';
-import { CATEGORY_COLOR } from '@/lib/labels';
-import type { CategoryT } from '@/lib/schema';
 
 /**
- * Abstract print-inspired artwork per article. Never a publisher photo (copyright).
- * Purely decorative, so it is hidden from assistive tech.
+ * Abstract black-and-white print artwork per article (halftone dots, bands, routes).
+ * Never a publisher photo (copyright). Purely decorative, hidden from assistive tech.
  */
-export function GenerativeCover({
-  id,
-  category,
-  className = '',
-}: {
-  id: string;
-  category: CategoryT;
-  className?: string;
-}) {
+export function GenerativeCover({ id, className = '' }: { id: string; className?: string }) {
   const spec = coverSpec(id);
-  const color = CATEGORY_COLOR[category].light;
+  const color = '#111111';
   const pid = `c${id}`;
 
   return (
     <svg
       viewBox="0 0 100 56"
       preserveAspectRatio="xMidYMid slice"
-      className={`block w-full bg-black ${className}`}
+      className={`block w-full bg-[#e8e6e1] ${className}`}
       aria-hidden="true"
       focusable="false"
     >
@@ -91,7 +81,7 @@ export function GenerativeCover({
               cx={x}
               cy={y}
               r={i === 0 || i === spec.points.length - 1 ? 2.6 : 1.3}
-              fill={i === spec.points.length - 1 ? '#fff' : '#000'}
+              fill={i === spec.points.length - 1 ? '#01b251' : '#e8e6e1'}
               stroke={color}
               strokeWidth="1"
             />

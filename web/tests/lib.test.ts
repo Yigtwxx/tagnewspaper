@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { DRUM, drumPath } from '@/components/hero/FlapCell';
 import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
-import { fitCells, formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
+import { formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
 
 describe('format', () => {
   it('uppercases Turkish correctly', () => {
@@ -17,11 +17,6 @@ describe('format', () => {
   it('formats compact Turkish figures', () => {
     expect(formatCompact(4_900_000)).toEqual({ value: '4,9', unit: 'milyon' });
     expect(formatCompact(584_000)).toEqual({ value: '584', unit: 'bin' });
-  });
-
-  it('fits split-flap rows to an exact width', () => {
-    expect(fitCells('kısa', 6)).toBe('KISA  ');
-    expect(fitCells('çok uzun bir başlık', 8)).toBe('ÇOK UZUN');
   });
 
   it('counts issues from launch day', () => {

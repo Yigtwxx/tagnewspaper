@@ -6,7 +6,7 @@ import { CATEGORY_LABEL } from '@/lib/labels';
 import { Flip, gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/motion';
 import { type ArticleViewT, CATEGORIES, type CategoryT, NewsPage } from '@/lib/schema';
 
-import { ArticleCard } from './ArticleCard';
+import { NewsBox } from './NewsBox';
 
 type Filter = CategoryT | 'all';
 
@@ -81,7 +81,11 @@ export function FeedClient({
 
   return (
     <div>
-      <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Konuya göre süz">
+      <div
+        className="mb-6 flex flex-wrap gap-x-6 gap-y-2"
+        role="group"
+        aria-label="Konuya göre süz"
+      >
         {chips.map((c) => {
           const active = filter === c;
           return (
@@ -90,10 +94,10 @@ export function FeedClient({
               type="button"
               aria-pressed={active}
               onClick={() => animateLayout(() => setFilter(c))}
-              className={`rounded-full border px-4 py-1.5 font-sans text-sm transition-colors ${
+              className={`border-b-2 pb-1 font-sans text-sm transition-colors ${
                 active
-                  ? 'border-(--fg) bg-(--fg) text-(--bg)'
-                  : 'border-(--line) hover:border-(--fg)'
+                  ? 'border-(--fg) font-semibold text-(--fg)'
+                  : 'border-transparent text-(--mute) hover:text-(--fg)'
               }`}
             >
               {c === 'all' ? 'Tümü' : CATEGORY_LABEL[c]}
@@ -102,10 +106,17 @@ export function FeedClient({
         })}
       </div>
 
-      <div ref={gridRef} className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((article) => (
-          <ArticleCard key={article.id} article={article} />
-        ))}
+      <div className="rule-grid">
+        <div
+          ref={gridRef}
+          className="rule-grid__inner grid-cols-1 sm:auto-rows-[23rem] sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {visible.map((article) => (
+            <div key={article.id} className="rule-cell" data-flip-id={article.id}>
+              <NewsBox article={article} />
+            </div>
+          ))}
+        </div>
       </div>
 
       {visible.length === 0 && (
@@ -120,7 +131,7 @@ export function FeedClient({
             type="button"
             onClick={loadMore}
             disabled={loading}
-            className="rounded-full bg-(--fg) px-7 py-3 font-sans text-sm font-semibold text-(--bg) transition-opacity disabled:opacity-60"
+            className="border border-(--fg) px-7 py-3 font-sans text-sm font-semibold transition-colors hover:bg-(--fg) hover:text-(--bg) disabled:opacity-60"
           >
             {loading ? 'Yükleniyor' : 'Daha fazla haber yükle'}
           </button>

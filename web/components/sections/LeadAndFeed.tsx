@@ -1,13 +1,40 @@
 import { encodeCursor } from '@/lib/cursor';
-import type { SnapshotT } from '@/lib/schema';
+import { formatDate, formatTime, issueNumber } from '@/lib/format';
+import { isEmptySnapshot, type SnapshotT } from '@/lib/schema';
 
-import { AllegationBadge, ArticleMeta, CategoryTag } from '../feed/ArticleCard';
 import { FeedClient } from '../feed/FeedClient';
-import { GenerativeCover } from '../feed/GenerativeCover';
+import { LatestBox, LeadBox, NewsBox } from '../feed/NewsBox';
+
+/** Stories placed on the front page grid before the filterable feed starts. */
+const FRONT_STORIES = 6;
+/** Short headline-only list in the right column, continuing after the boxed stories. */
+const BRIEFS = 7;
+
+function Dateline({ snapshot }: { snapshot: SnapshotT }) {
+  const empty = isEmptySnapshot(snapshot);
+  return (
+    <div className="mb-8 border-y border-(--fg) py-2">
+      <div className="meta grid grid-cols-2 items-center gap-2 text-(--fg) sm:grid-cols-3">
+        <span>
+          {empty ? 'İlk sayı hazırlanıyor' : `Sayı ${issueNumber(snapshot.generated_at)}`}
+        </span>
+        <span className="hidden text-center font-semibold sm:block">
+          {empty ? '' : formatDate(snapshot.generated_at, { weekday: true })}
+        </span>
+        <span className="text-right">
+          {empty ? 'Bağımsız ve reklamsız' : `Son güncelleme ${formatTime(snapshot.last_run_at)}`}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
   const lead = snapshot.lead;
-  const rest = snapshot.latest.filter((a) => a.id !== lead?.article.id);
+  const others = snapshot.latest.filter((a) => a.id !== lead?.article.id);
+  const front = others.slice(0, FRONT_STORIES);
+  const briefs = others.slice(FRONT_STORIES, FRONT_STORIES + BRIEFS);
+  const rest = others.slice(FRONT_STORIES + BRIEFS);
   const last = snapshot.latest.at(-1);
   const cursor =
     snapshot.latest.length >= 24 && last ? encodeCursor(last.published_at, last.id) : undefined;
@@ -17,78 +44,48 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
       id="haberler"
       data-section="feed"
       data-theme="paper"
-      data-wipe
-      className="px-4 pt-24 pb-28 sm:px-8 sm:pt-32"
+      className="px-4 pt-10 pb-24 sm:px-8"
     >
       <div className="mx-auto max-w-[1360px]">
-        <div className="mb-14 grid gap-6 lg:grid-cols-[1fr_minmax(0,28rem)] lg:items-end">
-          <h2 className="section-title">Gündem</h2>
-          <p className="dek">
-            Martı TAG hakkında yayımlanan haberlerin kısa özetleri. Her başlık, haberi yayımlayan
-            sitenin kendisine açılır.
-          </p>
-        </div>
+        <Dateline snapshot={snapshot} />
 
         {lead ? (
-          <article className="relative mb-24 grid gap-8 border-t-2 border-(--fg) pt-8 lg:grid-cols-12 lg:gap-12">
-            <div className="flex flex-col gap-5 lg:col-span-7">
-              <div className="flex flex-wrap items-center gap-2">
-                <CategoryTag article={lead.article} />
-                {lead.article.is_allegation && <AllegationBadge />}
+          <div className="rule-grid">
+            <div className="rule-grid__inner grid-flow-row-dense grid-cols-1 sm:auto-rows-[23rem] sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rule-cell sm:col-span-2 sm:row-span-2">
+                <LeadBox
+                  article={lead.article}
+                  sources={lead.sources.map((s) => ({ name: s.name, url: s.url }))}
+                />
               </div>
-              <h3 className="headline text-[clamp(2.2rem,5.2vw,4.75rem)]">
-                <a
-                  href={lead.article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline hover:decoration-2 hover:underline-offset-8"
-                >
-                  {lead.article.title}
-                </a>
-              </h3>
-              {lead.article.display === 'full' && lead.article.summary && (
-                <p className="max-w-[38rem] text-[clamp(1.15rem,1.4vw,1.35rem)] leading-relaxed">
-                  {lead.article.summary}
-                </p>
-              )}
-              <ArticleMeta article={lead.article} />
-            </div>
-            <div className="flex flex-col gap-5 lg:col-span-5">
-              <GenerativeCover
-                id={lead.article.id}
-                category={lead.article.category}
-                className="aspect-[4/3]"
-              />
-              {lead.sources.length > 1 && (
-                <div>
-                  <p className="meta mb-2">Bu haberi {lead.sources.length} yayın organı yazdı:</p>
-                  <ul className="flex flex-wrap gap-2">
-                    {lead.sources.map((s) => (
-                      <li key={s.url}>
-                        <a
-                          href={s.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block border border-(--line) px-3 py-1 font-sans text-sm hover:border-(--fg)"
-                        >
-                          {s.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+              <div className="rule-cell sm:row-span-2 lg:col-start-4 lg:row-start-1">
+                <LatestBox articles={briefs} />
+              </div>
+              {front.map((article) => (
+                <div key={article.id} className="rule-cell">
+                  <NewsBox article={article} />
                 </div>
-              )}
+              ))}
             </div>
-          </article>
-        ) : (
-          <div className="mb-16 border-t-2 border-(--fg) pt-8">
-            <p className="headline max-w-3xl text-[clamp(1.8rem,3.5vw,3rem)]">
-              İlk haberler toplanıyor. Sayfa her 15 dakikada bir kendiliğinden güncellenir.
-            </p>
           </div>
+        ) : (
+          <p className="headline max-w-3xl py-10 text-[clamp(1.6rem,3vw,2.4rem)]">
+            İlk haberler toplanıyor. Sayfa her 15 dakikada bir kendiliğinden güncellenir.
+          </p>
         )}
 
-        {rest.length > 0 && <FeedClient initial={rest} initialCursor={cursor} />}
+        {rest.length > 0 && (
+          <div className="mt-20">
+            <header className="section-head mb-8">
+              <h2 className="section-title mt-4">Haber akışı</h2>
+              <p className="dek mt-2">
+                Martı TAG hakkındaki bütün haberler, en yeniden eskiye. Başlıklar haberi yayımlayan
+                sitenin kendisine açılır.
+              </p>
+            </header>
+            <FeedClient initial={rest} initialCursor={cursor} />
+          </div>
+        )}
       </div>
     </section>
   );

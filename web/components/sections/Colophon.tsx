@@ -11,11 +11,12 @@ export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: b
       id="kunye"
       data-section="colophon"
       data-theme="ink"
-      data-wipe
       className="px-4 pt-28 pb-12 sm:px-8 sm:pt-36"
     >
       <div className="mx-auto max-w-[1360px]">
-        <h2 className="section-title mb-16">Bu gazete hakkında</h2>
+        <div className="section-head mb-12">
+          <h2 className="section-title mt-4">Bu gazete hakkında</h2>
+        </div>
 
         <div className="grid gap-12 md:grid-cols-3">
           <div className="flex flex-col gap-4">
@@ -65,7 +66,7 @@ export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: b
         </div>
 
         <div className="mt-24 flex flex-col gap-6 border-t border-(--line) pt-8 md:flex-row md:items-end md:justify-between">
-          <p className="font-sans text-[clamp(2.5rem,9vw,8rem)] leading-none font-extrabold tracking-tight [font-stretch:70%]">
+          <p className="font-serif text-[clamp(2.2rem,7vw,6rem)] leading-none font-bold">
             <span className="text-tag">TAG</span>NEWSPAPER
           </p>
           <div className="meta flex flex-col gap-1 md:items-end">

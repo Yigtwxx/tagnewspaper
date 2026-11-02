@@ -13,7 +13,7 @@ function Figure({ stat }: { stat: StatT }) {
     <div className="flex flex-col gap-3">
       <p className="flex items-baseline gap-3 pb-3">
         <span
-          className="numeral text-[clamp(4.5rem,12vw,10.5rem)]"
+          className="numeral text-[clamp(3.75rem,8.5vw,7.5rem)]"
           data-count={numeric}
           data-digits={digits}
         >
@@ -23,7 +23,7 @@ function Figure({ stat }: { stat: StatT }) {
           {compact.unit}
         </span>
       </p>
-      <p className="font-serif text-2xl">{stat.label}</p>
+      <p className="font-serif text-2xl font-bold">{stat.label}</p>
       <p className="meta max-w-sm">
         {stat.scope}, {formatCalendarDate(stat.as_of)} itibarıyla. Kaynak:{' '}
         <a
@@ -49,12 +49,11 @@ export function Numbers({ stats }: { stats: StatT[] }) {
       id="rakamlar"
       data-section="numbers"
       data-theme="ink"
-      data-wipe
       className="px-4 py-28 sm:px-8 sm:py-36"
     >
       <div className="mx-auto max-w-[1360px]">
-        <div className="mb-20 grid gap-6 lg:grid-cols-[1fr_minmax(0,28rem)] lg:items-end">
-          <h2 className="section-title">Kaç kişi kullanıyor?</h2>
+        <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
+          <h2 className="section-title mt-4">Kaç kişi kullanıyor?</h2>
           <p className="dek">
             Şirketin açıkladığı son rakamlar. Bunlar canlı veri değildir; yeni bir resmî açıklama
             geldiğinde güncellenir.

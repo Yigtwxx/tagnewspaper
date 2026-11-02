@@ -18,7 +18,7 @@ export default async function Home() {
     <>
       <TopBar lastRunAt={snapshot.last_run_at} hasData={hasData} />
       <main id="top">
-        <Hero snapshot={snapshot} />
+        <Hero />
         <LeadAndFeed snapshot={snapshot} />
         <Numbers stats={snapshot.stats} />
         <CaseTimeline events={snapshot.events} />

@@ -81,9 +81,3 @@ export function issueNumber(iso: string): number {
   const days = Math.floor((new Date(iso).getTime() - LAUNCH_DATE_UTC) / 86_400_000);
   return Math.max(1, days + 1);
 }
-
-/** Pad or cut text to exactly `width` characters for split-flap rows. */
-export function fitCells(text: string, width: number): string {
-  const clean = trUpper(text).replace(/\s+/g, ' ').trim();
-  return clean.length >= width ? clean.slice(0, width) : clean.padEnd(width, ' ');
-}
