@@ -12,6 +12,7 @@
   --font-serif: var(--font-caslon), Georgia, 'Times New Roman', serif;
   --font-sans: var(--font-franklin), 'Franklin Gothic', Arial, sans-serif;
   --font-flap: var(--font-archivo), system-ui, sans-serif;
+  --font-blackletter: var(--font-unifraktur), 'Old English Text MT', serif;
 
   --breakpoint-xs: 30rem;
 }

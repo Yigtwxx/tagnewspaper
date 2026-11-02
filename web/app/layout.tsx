@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Archivo, Libre_Caslon_Text, Libre_Franklin } from 'next/font/google';
+import { Archivo, Libre_Caslon_Text, Libre_Franklin, UnifrakturMaguntia } from 'next/font/google';
 
 import { SmoothScroll } from '@/components/motion/SmoothScroll';
 import { siteUrl } from '@/lib/site';
@@ -26,6 +26,13 @@ const archivo = Archivo({
   variable: '--font-archivo',
   subsets: ['latin', 'latin-ext'],
   axes: ['wdth'],
+  display: 'swap',
+});
+
+const blackletter = UnifrakturMaguntia({
+  variable: '--font-unifraktur',
+  subsets: ['latin'],
+  weight: '400',
   display: 'swap',
 });
 
@@ -62,7 +69,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html
       lang="tr"
-      className={`${caslon.variable} ${franklin.variable} ${archivo.variable} antialiased`}
+      className={`${caslon.variable} ${franklin.variable} ${archivo.variable} ${blackletter.variable} antialiased`}
     >
       <body>
         <a

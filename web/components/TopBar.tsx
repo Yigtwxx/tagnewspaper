@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { LogoMark, Wordmark } from '@/components/Logo';
 import { relativeTime } from '@/lib/format';
 import { useNow, useScrolledPast } from '@/lib/hooks';
 
@@ -37,8 +38,13 @@ export function TopBar({
       inert={!shown}
     >
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-8">
-        <Link href="/" className="shrink-0 font-serif text-lg font-bold">
-          <span className="text-(--accent-text)">TAG</span>NEWSPAPER
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2"
+          aria-label="The TAG Newspaper, ön sayfa"
+        >
+          <LogoMark className="size-8" />
+          <Wordmark className="hidden text-[1.45rem] sm:inline" />
         </Link>
         <nav
           aria-label="Sekmeler"

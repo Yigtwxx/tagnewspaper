@@ -1,3 +1,4 @@
+import { LogoMark, Wordmark } from '@/components/Logo';
 import { contactEmail, publisherName, REPO_URL } from '@/lib/site';
 
 import { StaleNotice } from './StaleNotice';
@@ -66,8 +67,9 @@ export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: b
         </div>
 
         <div className="mt-24 flex flex-col gap-6 border-t border-(--line) pt-8 md:flex-row md:items-end md:justify-between">
-          <p className="font-serif text-[clamp(2.2rem,7vw,6rem)] leading-none font-bold">
-            <span className="text-tag">TAG</span>NEWSPAPER
+          <p className="flex items-center gap-4" aria-label="The TAG Newspaper">
+            <LogoMark className="size-[clamp(3rem,8vw,6.5rem)]" />
+            <Wordmark className="text-[clamp(2.4rem,7vw,6rem)]" />
           </p>
           <div className="meta flex flex-col gap-1 md:items-end">
             {publisher && <p>Yayıncı: {publisher}</p>}
