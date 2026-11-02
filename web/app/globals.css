@@ -321,6 +321,12 @@ html.lenis body {
   background: color-mix(in srgb, var(--fg) 3%, transparent);
 }
 
+/* SplitText masks each title line; give the mask room for descenders (g, ç, ş, y). */
+.section-title > div {
+  padding-block: 0.08em 0.22em;
+  margin-block: -0.08em -0.22em;
+}
+
 /* ---------- Ticker ---------- */
 .ticker__track {
   animation: ticker 60s linear infinite;

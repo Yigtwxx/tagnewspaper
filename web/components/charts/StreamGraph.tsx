@@ -209,6 +209,9 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
                   }}
                   d={pathAt(s, 1)}
                   fill={CATEGORY_COLOR[s.key].dark}
+                  stroke={CATEGORY_COLOR[s.key].dark}
+                  strokeWidth={0.8}
+                  strokeLinejoin="round"
                   className="transition-opacity duration-300"
                   opacity={focus && focus !== s.key ? 0.18 : 1}
                   onPointerEnter={() => setFocus(s.key)}
