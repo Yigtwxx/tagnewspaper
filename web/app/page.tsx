@@ -28,7 +28,11 @@ export default async function Home() {
         <Hero snapshot={snapshot} />
         <LeadAndFeed snapshot={snapshot} runningHead={runningHead} />
         <Numbers stats={snapshot.stats} runningHead={runningHead} />
-        <CaseTimeline events={snapshot.events} runningHead={runningHead} />
+        <CaseTimeline
+          events={snapshot.events}
+          articles={snapshot.latest}
+          runningHead={runningHead}
+        />
         <NewsDensity snapshot={snapshot} runningHead={runningHead} />
         <SourceSpread snapshot={snapshot} runningHead={runningHead} />
         <TopicTrends snapshot={snapshot} runningHead={runningHead} />

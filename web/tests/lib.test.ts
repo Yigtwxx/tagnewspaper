@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { DRUM, drumPath } from '@/components/hero/FlapCell';
+import { caseOverview, splitSentences } from '@/lib/case';
 import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
 import { trimLeadingEmpty } from '@/lib/series';
 import { editionStart, formatCompact, formatTime, issueNumber, trUpper } from '@/lib/format';
+import type { CaseEventT } from '@/lib/schema';
 
 describe('format', () => {
   it('uppercases Turkish correctly', () => {
@@ -110,5 +112,54 @@ describe('trimLeadingEmpty', () => {
         3,
       ),
     ).toHaveLength(3);
+  });
+});
+
+describe('case overview', () => {
+  const event = (id: string, date: string, type: CaseEventT['type']): CaseEventT => ({
+    id,
+    date,
+    type,
+    title: id,
+    description: '',
+    court: null,
+    evidence: [],
+    published: true,
+    is_seed: true,
+  });
+
+  it('splits a description into sentences without breaking ordinals', () => {
+    const text =
+      'İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi davaları reddetti. Karar 22 Ekim 2026. Kesinleşme doğrulanmadı.';
+    expect(splitSentences(text)).toEqual([
+      'İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi davaları reddetti.',
+      'Karar 22 Ekim 2026.',
+      'Kesinleşme doğrulanmadı.',
+    ]);
+  });
+
+  it('leads with the latest court decision and keeps what followed it', () => {
+    const overview = caseOverview([
+      event('a', '2025-01-10', 'filing'),
+      event('b', '2026-06-24', 'court_decision'),
+      event('c', '2026-10-22', 'court_decision'),
+      event('d', '2026-10-24', 'statement'),
+    ]);
+    expect(overview?.featured.id).toBe('c');
+    expect(overview?.after.map((e) => e.id)).toEqual(['d']);
+    expect(overview?.earlier.map((e) => e.id)).toEqual(['b', 'a']);
+  });
+
+  it('falls back to the latest event when no court decision exists', () => {
+    const overview = caseOverview([
+      event('a', '2025-01-10', 'filing'),
+      event('b', '2025-03-01', 'statement'),
+    ]);
+    expect(overview?.featured.id).toBe('b');
+    expect(overview?.after).toEqual([]);
+  });
+
+  it('returns nothing for an empty case', () => {
+    expect(caseOverview([])).toBeUndefined();
   });
 });
