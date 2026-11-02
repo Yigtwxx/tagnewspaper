@@ -40,6 +40,14 @@ export function TopBar({
       <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-8">
         <Link
           href="/"
+          onClick={(e) => {
+            if (pathname !== '/') return;
+            // Same page: Next would not move, so scroll back to the nameplate ourselves.
+            e.preventDefault();
+            history.replaceState(null, '', '/');
+            if (window.__lenis) window.__lenis.scrollTo(0);
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           className="flex shrink-0 items-center gap-2"
           aria-label="The TAG Newspaper, ön sayfa"
         >
