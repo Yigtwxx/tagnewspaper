@@ -112,8 +112,8 @@ def _stat(
     )
 
 
-def test_promote_stat_requires_two_independent_newer_sources(now: datetime) -> None:
-    current = StatDoc(
+def _current_drivers() -> StatDoc:
+    return StatDoc(
         _id="drivers",
         key="drivers",
         label="Kayıtlı sürücü",
@@ -123,17 +123,28 @@ def test_promote_stat_requires_two_independent_newer_sources(now: datetime) -> N
         source_name="Martı",
         source_url="https://ir.marti.tech/x",
     )
-    one = [_stat(630_000, "a.example", WIRE_TEXT, "2026-12-31", now)]
-    assert promote_stat(current, one) is None
-    wire = [*one, _stat(630_000, "b.example", WIRE_TEXT, "2026-12-31", now)]
-    assert promote_stat(current, wire) is None  # wire copy
-    independent = [*one, _stat(628_000, "c.example", OTHER_TEXT, "2026-12-31", now)]
-    promoted = promote_stat(current, independent)
-    assert promoted is not None
-    assert promoted.value in {628_000, 630_000}
-    assert promoted.label == "Kayıtlı sürücü"
-    older = [
-        _stat(500_000, "a.example", WIRE_TEXT, "2026-01-01", now),
-        _stat(500_000, "c.example", OTHER_TEXT, "2026-01-01", now),
+
+
+def test_promote_stat_news_only_never_changes_figure(now: datetime) -> None:
+    current = _current_drivers()
+    press = [
+        _stat(538_000, "a.example", WIRE_TEXT, "2026-11-01", now),
+        _stat(538_000, "c.example", OTHER_TEXT, "2026-11-02", now),
     ]
-    assert promote_stat(current, older) is None
+    result = promote_stat(current, press)
+    assert result is None, f"News citations must not change stats, got {result}"
+
+
+def test_promote_stat_newer_primary_source_updates_figure(now: datetime) -> None:
+    current = _current_drivers()
+    candidates = [_stat(630_000, "ir.marti.tech", OTHER_TEXT, "2026-12-31", now)]
+    promoted = promote_stat(current, candidates)
+    assert promoted is not None, "A newer company figure should be promoted"
+    assert promoted.value == 630_000, f"Expected 630000, got {promoted.value}"
+    assert promoted.label == "Kayıtlı sürücü", f"Label changed: {promoted.label}"
+
+
+def test_promote_stat_older_primary_source_is_ignored(now: datetime) -> None:
+    current = _current_drivers()
+    older = [_stat(500_000, "ir.marti.tech", OTHER_TEXT, "2026-01-01", now)]
+    assert promote_stat(current, older) is None, "Older figures must not win"

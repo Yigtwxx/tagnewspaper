@@ -176,33 +176,28 @@ def merge_event(events: list[EventDoc], cand: EventCandidate) -> EventDoc:
 def promote_stat(
     current: StatDoc | None, candidates: list[StatCandidate]
 ) -> StatDoc | None:
-    """Return an updated stat if a newer, corroborated figure exists, else None."""
-    if not candidates:
+    """Return an updated stat only when a primary source states a newer figure.
+
+    User figures are the company's to announce. News articles often quote other
+    numbers (claims by opponents, older figures), so press coverage alone never
+    changes a stat, however many outlets repeat it.
+    """
+    primary = [
+        c
+        for c in candidates
+        if is_primary(c.domain) and (current is None or c.as_of > current.as_of)
+    ]
+    if not primary:
         return None
-    newer = [c for c in candidates if current is None or c.as_of > current.as_of]
-    newer.sort(key=lambda c: (c.as_of, c.value), reverse=True)
-    for anchor in newer:
-        agreeing = [
-            c
-            for c in newer
-            if abs(c.value - anchor.value) <= STAT_TOLERANCE * anchor.value
-        ]
-        domains = [c.domain for c in agreeing]
-        fps = [c.fingerprint for c in agreeing]
-        if independent_count(domains, fps) < 2:
-            continue
-        default_label, default_scope = STAT_LABELS[anchor.key]
-        label = current.label if current else default_label
-        scope = current.scope if current else default_scope
-        values = sorted(c.value for c in agreeing)
-        return StatDoc(
-            _id=anchor.key,
-            key=anchor.key,
-            label=label,
-            value=values[len(values) // 2],
-            as_of=max(c.as_of for c in agreeing),
-            scope=scope,
-            source_name=anchor.source_name,
-            source_url=anchor.url,
-        )
-    return None
+    anchor = max(primary, key=lambda c: (c.as_of, c.value))
+    default_label, default_scope = STAT_LABELS[anchor.key]
+    return StatDoc(
+        _id=anchor.key,
+        key=anchor.key,
+        label=current.label if current else default_label,
+        value=anchor.value,
+        as_of=anchor.as_of,
+        scope=current.scope if current else default_scope,
+        source_name=anchor.source_name,
+        source_url=anchor.url,
+    )

@@ -32,6 +32,8 @@ Every party that plays a role: `marti`, `taksici_odasi`, `ibb_ukome`, `bakanlik`
 
 ## actor_statements
 For each party the article quotes or paraphrases, one short Turkish sentence (max 200 characters) in your own words, attributed ("Oda başkanı … gerektiğini öne sürdü."). Only statements actually in the article. No private individuals' names.
+Every statement sentence MUST contain one of these attribution verbs, conjugated: "açıkladı", "belirtti", "öne sürdü", "iddia etti", "savundu", "ifade etti", "dile getirdi", "bildirdi" (or "…'ya göre"). A sentence without one of them is rejected and you will be asked again.
+Good: "Şirket, kararın sürücüler için olumlu olduğunu açıkladı."  Bad: "Kararın sürücüler için olumlu olduğu."
 
 ## is_allegation and risk_level
 - `is_allegation`: `true` if the article reports an accusation of wrongdoing against a person, company or institution.
