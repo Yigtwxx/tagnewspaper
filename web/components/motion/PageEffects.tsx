@@ -56,6 +56,7 @@ export function PageEffects() {
     }
 
     const cells = gsap.utils.toArray<HTMLElement>('.rule-cell');
+    if (cells.length === 0) return;
     gsap.set(cells, { '--rule-p': 0 });
     ScrollTrigger.batch(cells, {
       start: 'top 92%',
