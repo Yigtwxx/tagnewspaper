@@ -36,3 +36,4 @@ Thumbs.db
 # Local artifacts
 *.log
 screenshots/tmp/
+.atlas-project
