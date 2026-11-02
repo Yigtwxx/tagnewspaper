@@ -169,10 +169,9 @@ export function CityMap() {
             {WAVES.map((w) => (
               <li
                 key={w.wave}
-                className={`border-l-2 pl-4 transition-opacity duration-500 ${
-                  wave >= w.wave ? 'opacity-100' : 'opacity-30'
-                }`}
-                style={{ borderColor: w.color }}
+                className="border-l-2 pl-4 transition-[border-color] duration-500"
+                // Only the rule lights up as each wave arrives; the text stays fully legible.
+                style={{ borderColor: wave >= w.wave ? w.color : 'rgb(255 255 255 / 0.18)' }}
               >
                 <p className="font-sans text-sm font-bold">
                   {w.when}: <span className="hl">{w.label}</span>

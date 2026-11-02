@@ -37,6 +37,7 @@ export function LeadAndFeed({
       className="margin-clip relative px-4 pt-10 pb-24 sm:px-8"
     >
       <SectionMargins index={1} label="Gündem" theme="paper" runningHead={runningHead} />
+      <h2 className="sr-only">Gündem</h2>
       <div className="mx-auto max-w-[1360px]">
         {lead ? (
           <div className="rule-grid">
