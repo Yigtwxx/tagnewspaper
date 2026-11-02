@@ -44,9 +44,11 @@ flowchart LR
   U[Ziyaretçi] --> W
 ```
 
-- **`pipeline/`**: Python 3.12 + uv. Haberleri çeker, tekilleştirir, aynı olayı yazan haberleri
-  kümeler, kişisel verileri temizler, Claude Haiku ile özetler, güvenlik kurallarından geçirir ve
-  sayfanın tüm verisini tek bir `snapshot` dokümanı olarak yazar.
+- **`pipeline/`**: Python 3.12 + uv. Haberleri çeker, tekilleştirir, kişisel verileri temizler,
+  Claude Haiku ile özetler, güvenlik kurallarından geçirir ve sayfanın tüm verisini tek bir
+  `snapshot` dokümanı olarak yazar. Aynı olayı farklı sözlerle yazan haberleri de Claude ile
+  son 48 saatin hikâyeleriyle karşılaştırıp tek kümede toplar; farklı illeri anlatan iki haber
+  hiçbir zaman birleşmez. Manşet, en çok yayın organının yazdığı hikâyedir.
 - **`web/`**: Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, GSAP +
   ScrollTrigger, Lenis, d3. Sayfa tek bir veritabanı okumasıyla oluşur; pipeline her çalışmada
   önbelleği yeniler.
@@ -87,6 +89,7 @@ cp .env.example .env               # ANTHROPIC_API_KEY ve MONGODB_URI değerleri
 uv sync
 uv run python -m tagnews run --dry-run   # hiçbir şey yazmadan çeker ve sayar
 uv run python -m tagnews run             # tam çalışma
+uv run python -m tagnews recluster       # son 72 saatin haberlerini hikâyelere yeniden gruplar
 ```
 
 ### Ortam değişkenleri
