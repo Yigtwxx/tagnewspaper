@@ -24,7 +24,7 @@ export default async function Image() {
     getSnapshot(),
     readFile(join(process.cwd(), 'assets/fonts/LibreCaslonText-Bold.ttf')),
     readFile(join(process.cwd(), 'assets/fonts/LibreFranklin-SemiBold.ttf')),
-    readFile(join(process.cwd(), 'assets/fonts/GrenzeGotisch-Bold.ttf')),
+    readFile(join(process.cwd(), 'assets/fonts/UnifrakturMaguntia-Book.ttf')),
   ]);
 
   const lead = snapshot.lead?.article ?? snapshot.latest[0];
@@ -107,7 +107,7 @@ export default async function Image() {
       fonts: [
         { name: 'Caslon', data: caslon, style: 'normal', weight: 700 },
         { name: 'Franklin', data: franklin, style: 'normal', weight: 600 },
-        { name: 'Gothic', data: gothic, style: 'normal', weight: 700 },
+        { name: 'Gothic', data: gothic, style: 'normal', weight: 400 },
       ],
     },
   );
