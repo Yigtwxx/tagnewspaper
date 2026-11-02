@@ -78,6 +78,31 @@ Everything the home page renders, precomputed by the pipeline. See
 `ArticleView` = article without `fetched_at`, `model`, `prompt_version`, `actor_statements`,
 with `_id` renamed to `id` and `published_at` as ISO string.
 
+## `market` collection — single document `_id: "MRT"`
+
+Martı Technologies on NYSE American (`MRT`, SEC CIK 1852767), read by the `/borsa` page.
+Refreshed by the pipeline at most once per Istanbul calendar day. Like `snapshot`,
+datetimes inside are ISO strings. See `fixtures/market.sample.json`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `_id`, `symbol` | `"MRT"` | |
+| `exchange` | string | `"NYSE American"` |
+| `currency` | string | `"USD"` |
+| `updated_at` | ISO string | last refresh in which at least one source succeeded |
+| `price_source` | `"Alpha Vantage"` \| null | null when `prices` is empty |
+| `prices` | `[{date, open, high, low, close, volume}]` | daily bars, date ascending, unique, ≤ 260, may be empty |
+| `filings` | `[{form, filed, title, url}]` | SEC EDGAR, newest first, ≤ 15 |
+
+- `prices[].date` is the **US trading day** and `filings[].filed` the **SEC filing date**
+  (both `YYYY-MM-DD`, US Eastern), not Istanbul dates. Prices are floats > 0, `volume` an
+  int ≥ 0.
+- `filings[].form` is the EDGAR form type (`6-K`, `20-F`, `SC 13G`, `SCHEDULE 13G/A`, …);
+  `title` is the filing's own description when it is informative, otherwise a Turkish label
+  (`"6-K: Dönemsel rapor"`); `url` always starts with `https://www.sec.gov/Archives/`.
+- One source failing never empties the other's data: the previous `prices` or `filings`
+  are kept, so either list can be older than `updated_at`.
+
 ## `/api/news` (web, read-only)
 
 `GET /api/news?cursor=<published_at ISO>|<id>&category=<Category>&limit=<1..24>`

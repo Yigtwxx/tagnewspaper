@@ -38,3 +38,12 @@ describe('shared contract fixtures', () => {
     expect(ArticleView.safeParse(bad).success).toBe(false);
   });
 });
+
+describe('market contract fixture', () => {
+  it('parses the MRT market document', async () => {
+    const { Market } = await import('@/lib/schema');
+    const market = Market.parse(load('market.sample.json'));
+    expect(market.symbol).toBe('MRT');
+    expect(market.prices.length).toBeGreaterThan(1);
+  });
+});

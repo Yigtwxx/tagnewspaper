@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from tagnews.models import ArticleDoc, NewsPage, Snapshot
+from tagnews.models import ArticleDoc, MarketDoc, NewsPage, Snapshot
 
 from conftest import SHARED_FIXTURES
 
@@ -37,3 +37,14 @@ def test_news_page_fixture_roundtrip_is_lossless() -> None:
     page = NewsPage.model_validate(raw)
     assert page.next_cursor is not None
     assert page.model_dump(mode="json") == raw
+
+
+def test_market_fixture_roundtrip_is_lossless() -> None:
+    raw = _load("market.sample.json")
+    market = MarketDoc.model_validate(raw)
+    assert market.id == market.symbol == "MRT"
+    assert market.prices and market.price_source == "Alpha Vantage"
+    assert all(
+        f.url.startswith("https://www.sec.gov/Archives/") for f in market.filings
+    )
+    assert market.to_mongo() == raw

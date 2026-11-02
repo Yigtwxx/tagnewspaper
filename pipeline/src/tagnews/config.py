@@ -16,6 +16,9 @@ DEFAULT_MODEL = "claude-haiku-5-5"
 DEFAULT_GOOGLE_NEWS_BASE_URL = "https://news.google.com/rss/search"
 USER_AGENT_TOKEN = "tagnewspaper-bot"
 USER_AGENT = f"{USER_AGENT_TOKEN}/0.1 (+https://github.com/Yigtwxx/tagnewspaper)"
+# SEC fair-access policy: declare who you are. SEC asks for a contact e-mail too
+# ("Company Name admin@example.com"); set SEC_USER_AGENT to include one.
+DEFAULT_SEC_USER_AGENT = "tagnewspaper https://github.com/Yigtwxx/tagnewspaper"
 
 # USD per million tokens (input, output) for prompts <= 100K tokens.
 MODEL_PRICES_PER_MTOK: dict[str, tuple[float, float]] = {
@@ -67,6 +70,8 @@ class Settings:
     max_decodes_per_run: int = 40
     log_level: str = "INFO"
     user_agent: str = USER_AGENT
+    alphavantage_api_key: str | None = field(default=None, repr=False)
+    sec_user_agent: str = DEFAULT_SEC_USER_AGENT
 
 
 def load_settings(env_file: Path | None = None) -> Settings:
@@ -88,6 +93,8 @@ def load_settings(env_file: Path | None = None) -> Settings:
         max_items_per_run=_env_int("MAX_ITEMS_PER_RUN", 25),
         max_decodes_per_run=_env_int("MAX_DECODES_PER_RUN", 40),
         log_level=(_env_str("LOG_LEVEL") or "INFO").upper(),
+        alphavantage_api_key=_env_str("ALPHAVANTAGE_API_KEY"),
+        sec_user_agent=_env_str("SEC_USER_AGENT") or DEFAULT_SEC_USER_AGENT,
     )
 
 

@@ -1,5 +1,5 @@
 """One ingestion run: collect -> decode -> dedupe -> extract -> enrich -> guard ->
-promote -> snapshot -> revalidate -> run log."""
+promote -> snapshot -> market (once a day) -> revalidate -> run log."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ from tagnews.decode import BatchDecoder, decode_urls
 from tagnews.extract import Extractor
 from tagnews.guards import check, final_scrub, source_text_usable
 from tagnews.llm import PROMPT_VERSION, ArticleInput, Enrichment, LlmResult, Summarizer
+from tagnews.market import refresh_market
 from tagnews.models import (
     ActorStatement,
     ArticleDoc,
@@ -63,6 +64,8 @@ class Deps:
     batch_decoder: BatchDecoder
     now: Callable[[], datetime] = utc_now
     gdelt_sleep: bool = True
+    # Refresh the daily `market` document after the snapshot (off in news-only tests).
+    market: bool = True
 
 
 @dataclass(frozen=True)
@@ -327,6 +330,23 @@ def _promote_stats(store: Store, new: list[StatCandidate]) -> list[StatDoc]:
     return changed
 
 
+def _refresh_market(deps: Deps, run: RunRecord) -> None:
+    """The daily market job. Any failure is logged and recorded, never raised."""
+    try:
+        result = refresh_market(
+            deps.store,
+            deps.http,
+            deps.now(),
+            alphavantage_api_key=deps.settings.alphavantage_api_key,
+            sec_user_agent=deps.settings.sec_user_agent,
+        )
+    except Exception as exc:  # the market page must never break the news run
+        log.exception("market refresh failed")
+        run.errors.append(f"market: {type(exc).__name__}")
+        return
+    run.errors.extend(f"market {error}" for error in result.errors)
+
+
 def run_pipeline(
     deps: Deps, dry_run: bool = False, max_items: int | None = None
 ) -> RunRecord:
@@ -436,6 +456,10 @@ def run_pipeline(
     finished = deps.now()
     rebuild_snapshot(store, finished, last_run_at=started)
     if not dry_run:
+        if deps.market:
+            # Before revalidate: the web caches everything under one tag, so a
+            # single POST refreshes both the news and the market page.
+            _refresh_market(deps, run)
         revalidate.trigger(
             deps.http, deps.settings.revalidate_url, deps.settings.revalidate_secret
         )

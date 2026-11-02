@@ -1,0 +1,322 @@
+{
+  "_id": "MRT",
+  "symbol": "MRT",
+  "exchange": "NYSE American",
+  "currency": "USD",
+  "updated_at": "2026-11-02T09:00:00Z",
+  "price_source": "Alpha Vantage",
+  "prices": [
+    {
+      "date": "2026-09-14",
+      "open": 1.634,
+      "high": 1.6983,
+      "low": 1.6267,
+      "close": 1.6622,
+      "volume": 469200
+    },
+    {
+      "date": "2026-09-15",
+      "open": 1.6463,
+      "high": 1.659,
+      "low": 1.5996,
+      "close": 1.6315,
+      "volume": 703900
+    },
+    {
+      "date": "2026-09-16",
+      "open": 1.6426,
+      "high": 1.6957,
+      "low": 1.6201,
+      "close": 1.6546,
+      "volume": 574800
+    },
+    {
+      "date": "2026-09-17",
+      "open": 1.6461,
+      "high": 1.6774,
+      "low": 1.5525,
+      "close": 1.5933,
+      "volume": 264100
+    },
+    {
+      "date": "2026-09-18",
+      "open": 1.5777,
+      "high": 1.5873,
+      "low": 1.5155,
+      "close": 1.5465,
+      "volume": 678800
+    },
+    {
+      "date": "2026-09-21",
+      "open": 1.5671,
+      "high": 1.6112,
+      "low": 1.5522,
+      "close": 1.5745,
+      "volume": 333700
+    },
+    {
+      "date": "2026-09-22",
+      "open": 1.5971,
+      "high": 1.6412,
+      "low": 1.5572,
+      "close": 1.624,
+      "volume": 277500
+    },
+    {
+      "date": "2026-09-23",
+      "open": 1.6139,
+      "high": 1.6431,
+      "low": 1.5495,
+      "close": 1.5782,
+      "volume": 133700
+    },
+    {
+      "date": "2026-09-24",
+      "open": 1.5564,
+      "high": 1.5698,
+      "low": 1.5284,
+      "close": 1.5497,
+      "volume": 427900
+    },
+    {
+      "date": "2026-09-25",
+      "open": 1.5385,
+      "high": 1.5499,
+      "low": 1.5167,
+      "close": 1.5226,
+      "volume": 548000
+    },
+    {
+      "date": "2026-09-28",
+      "open": 1.5143,
+      "high": 1.5371,
+      "low": 1.4718,
+      "close": 1.4975,
+      "volume": 329700
+    },
+    {
+      "date": "2026-09-29",
+      "open": 1.4942,
+      "high": 1.5535,
+      "low": 1.4654,
+      "close": 1.5352,
+      "volume": 586200
+    },
+    {
+      "date": "2026-09-30",
+      "open": 1.543,
+      "high": 1.5747,
+      "low": 1.5082,
+      "close": 1.5527,
+      "volume": 570200
+    },
+    {
+      "date": "2026-10-01",
+      "open": 1.5563,
+      "high": 1.5937,
+      "low": 1.5056,
+      "close": 1.5311,
+      "volume": 481200
+    },
+    {
+      "date": "2026-10-02",
+      "open": 1.5408,
+      "high": 1.5709,
+      "low": 1.5005,
+      "close": 1.516,
+      "volume": 890400
+    },
+    {
+      "date": "2026-10-05",
+      "open": 1.5276,
+      "high": 1.5354,
+      "low": 1.4811,
+      "close": 1.5224,
+      "volume": 152800
+    },
+    {
+      "date": "2026-10-06",
+      "open": 1.5169,
+      "high": 1.5888,
+      "low": 1.5071,
+      "close": 1.5583,
+      "volume": 633300
+    },
+    {
+      "date": "2026-10-07",
+      "open": 1.5379,
+      "high": 1.6263,
+      "low": 1.5204,
+      "close": 1.5983,
+      "volume": 409800
+    },
+    {
+      "date": "2026-10-08",
+      "open": 1.6209,
+      "high": 1.6429,
+      "low": 1.5555,
+      "close": 1.5883,
+      "volume": 621000
+    },
+    {
+      "date": "2026-10-09",
+      "open": 1.5884,
+      "high": 1.5943,
+      "low": 1.567,
+      "close": 1.5723,
+      "volume": 404200
+    },
+    {
+      "date": "2026-10-12",
+      "open": 1.5957,
+      "high": 1.6617,
+      "low": 1.5537,
+      "close": 1.627,
+      "volume": 371700
+    },
+    {
+      "date": "2026-10-13",
+      "open": 1.6033,
+      "high": 1.609,
+      "low": 1.5564,
+      "close": 1.5668,
+      "volume": 344600
+    },
+    {
+      "date": "2026-10-14",
+      "open": 1.5886,
+      "high": 1.5948,
+      "low": 1.5547,
+      "close": 1.586,
+      "volume": 502200
+    },
+    {
+      "date": "2026-10-15",
+      "open": 1.5964,
+      "high": 1.6366,
+      "low": 1.5611,
+      "close": 1.6124,
+      "volume": 732200
+    },
+    {
+      "date": "2026-10-16",
+      "open": 1.6257,
+      "high": 1.6809,
+      "low": 1.6104,
+      "close": 1.6352,
+      "volume": 857600
+    },
+    {
+      "date": "2026-10-19",
+      "open": 1.6516,
+      "high": 1.6637,
+      "low": 1.5961,
+      "close": 1.6366,
+      "volume": 255800
+    },
+    {
+      "date": "2026-10-20",
+      "open": 1.6507,
+      "high": 1.6743,
+      "low": 1.5813,
+      "close": 1.5958,
+      "volume": 646600
+    },
+    {
+      "date": "2026-10-21",
+      "open": 1.5913,
+      "high": 1.6089,
+      "low": 1.5582,
+      "close": 1.5712,
+      "volume": 671900
+    },
+    {
+      "date": "2026-10-22",
+      "open": 1.5506,
+      "high": 1.5595,
+      "low": 1.5194,
+      "close": 1.526,
+      "volume": 489700
+    },
+    {
+      "date": "2026-10-23",
+      "open": 1.5087,
+      "high": 1.5876,
+      "low": 1.4795,
+      "close": 1.5702,
+      "volume": 378700
+    },
+    {
+      "date": "2026-10-26",
+      "open": 1.5668,
+      "high": 1.5938,
+      "low": 1.5168,
+      "close": 1.5416,
+      "volume": 503500
+    },
+    {
+      "date": "2026-10-27",
+      "open": 1.5224,
+      "high": 1.5808,
+      "low": 1.5051,
+      "close": 1.5394,
+      "volume": 829600
+    },
+    {
+      "date": "2026-10-28",
+      "open": 1.5351,
+      "high": 1.6179,
+      "low": 1.5018,
+      "close": 1.5841,
+      "volume": 738200
+    },
+    {
+      "date": "2026-10-29",
+      "open": 1.5924,
+      "high": 1.6169,
+      "low": 1.5375,
+      "close": 1.5775,
+      "volume": 560500
+    },
+    {
+      "date": "2026-10-30",
+      "open": 1.5855,
+      "high": 1.6498,
+      "low": 1.5624,
+      "close": 1.6091,
+      "volume": 197400
+    }
+  ],
+  "filings": [
+    {
+      "form": "6-K",
+      "filed": "2026-10-28",
+      "title": "6-K: Dönemsel rapor",
+      "url": "https://www.sec.gov/Archives/edgar/data/1852767/000110465926110987/tm2629876d1_6k.htm"
+    },
+    {
+      "form": "SCHEDULE 13G/A",
+      "filed": "2026-10-20",
+      "title": "SCHEDULE 13G/A: Büyük pay sahipliği bildirimi (güncelleme)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1852767/000119312526405060/xslSCHEDULE_13G_X01/primary_doc.xml"
+    },
+    {
+      "form": "6-K",
+      "filed": "2026-10-01",
+      "title": "Unaudited interim condensed consolidated financial statements",
+      "url": "https://www.sec.gov/Archives/edgar/data/1852767/000110465926101234/tm2627001d1_6k.htm"
+    },
+    {
+      "form": "424B3",
+      "filed": "2026-08-29",
+      "title": "424B3: İzahname",
+      "url": "https://www.sec.gov/Archives/edgar/data/1852767/000119312526300111/d123456d424b3.htm"
+    },
+    {
+      "form": "20-F",
+      "filed": "2026-04-30",
+      "title": "20-F: Yıllık rapor",
+      "url": "https://www.sec.gov/Archives/edgar/data/1852767/000110465926050505/mrt-20251231x20f.htm"
+    }
+  ]
+}

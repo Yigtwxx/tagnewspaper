@@ -60,9 +60,14 @@ def _get(
     timeout: float,
     params: dict[str, str] | None,
     follow_redirects: bool,
+    headers: dict[str, str] | None,
 ) -> httpx.Response:
     response = client.get(
-        url, params=params, timeout=timeout, follow_redirects=follow_redirects
+        url,
+        params=params,
+        headers=headers,
+        timeout=timeout,
+        follow_redirects=follow_redirects,
     )
     if response.status_code >= 500:
         raise _ServerError(str(response.status_code))
@@ -75,14 +80,16 @@ def get_with_retry(
     timeout: float = 20.0,
     params: dict[str, str] | None = None,
     follow_redirects: bool = False,
+    headers: dict[str, str] | None = None,
 ) -> httpx.Response:
     """GET with backoff on network errors and 5xx.
 
     4xx (incl. 429) is returned as-is: for feeds a 403/429 is a block signal that
-    should trigger the fallback chain rather than hammering the server.
+    should trigger the fallback chain rather than hammering the server. `headers`
+    are merged over the client's defaults (e.g. a per-API User-Agent).
     """
     try:
-        return _get(client, url, timeout, params, follow_redirects)
+        return _get(client, url, timeout, params, follow_redirects, headers)
     except _ServerError as exc:
         raise SourceError(f"HTTP {exc}") from exc
     except httpx.HTTPError as exc:

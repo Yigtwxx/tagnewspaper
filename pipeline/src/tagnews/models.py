@@ -7,9 +7,16 @@ The `snapshot` document stores ISO-8601 UTC strings via `model_dump(mode="json")
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, PlainSerializer
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    PlainSerializer,
+    model_validator,
+)
 
 Category = Literal[
     "dava",
@@ -320,6 +327,62 @@ class Snapshot(_Model):
 class NewsPage(_Model):
     items: list[ArticleView]
     next_cursor: str | None
+
+
+MARKET_SYMBOL: Literal["MRT"] = "MRT"
+MAX_PRICE_BARS = 260
+MAX_FILINGS = 15
+
+PositivePrice = Annotated[float, Field(gt=0, allow_inf_nan=False)]
+
+
+class PriceBar(_Model):
+    """One daily bar; `date` is the US trading day."""
+
+    date: IsoDate
+    open: PositivePrice
+    high: PositivePrice
+    low: PositivePrice
+    close: PositivePrice
+    volume: int = Field(ge=0)
+
+
+class Filing(_Model):
+    """One SEC EDGAR filing; `filed` is the SEC filing date."""
+
+    form: str = Field(min_length=1)
+    filed: IsoDate
+    title: str = Field(min_length=1)
+    url: str = Field(pattern=r"^https://www\.sec\.gov/Archives/")
+
+
+class MarketDoc(_Model):
+    """The single `market` document (`_id: "MRT"`) read by the web `/borsa` page."""
+
+    id: Literal["MRT"] = Field(default=MARKET_SYMBOL, alias="_id")
+    symbol: Literal["MRT"] = MARKET_SYMBOL
+    exchange: str = "NYSE American"
+    currency: str = "USD"
+    updated_at: UtcDatetime
+    price_source: Literal["Alpha Vantage"] | None
+    prices: list[PriceBar] = Field(max_length=MAX_PRICE_BARS)
+    filings: list[Filing] = Field(max_length=MAX_FILINGS)
+
+    @model_validator(mode="after")
+    def _check_order(self) -> Self:
+        dates = [bar.date for bar in self.prices]
+        if dates != sorted(set(dates)):
+            raise ValueError("prices must be unique and ascending by date")
+        filed = [filing.filed for filing in self.filings]
+        if filed != sorted(filed, reverse=True):
+            raise ValueError("filings must be newest first")
+        if bool(self.prices) != (self.price_source is not None):
+            raise ValueError("price_source is set exactly when prices is non-empty")
+        return self
+
+    def to_mongo(self) -> dict[str, object]:
+        """JSON-mode dump: like `snapshot`, datetimes are stored as ISO strings."""
+        return self.model_dump(mode="json", by_alias=True)
 
 
 class RunCounts(_Model):

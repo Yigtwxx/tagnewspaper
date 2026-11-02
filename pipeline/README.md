@@ -15,6 +15,8 @@ uv run python -m tagnews init-db          # indexes + how to create the Atlas us
 uv run python -m tagnews seed             # curated court timeline + figures (seed/)
 uv run python -m tagnews run --dry-run    # fetch/decode/cluster only: no DB, no LLM
 uv run python -m tagnews run              # one real cycle (what CI runs every 15 min)
+uv run python -m tagnews market --dry-run # fetch EDGAR (+ prices) and print; no DB
+uv run python -m tagnews market [--force] # refresh the `market` doc (once a day)
 uv run python -m tagnews hide <id>        # hide one article (correction/removal request)
 
 uv run ruff check && uv run ruff format --check && uv run pytest
@@ -31,9 +33,12 @@ uv run ruff check && uv run ruff format --check && uv run pytest
 | `FETCH_FULLTEXT` | fetch article pages (robots.txt respected) |
 | `GOOGLE_NEWS_BASE_URL` | override only to test the fallback |
 | `MAX_ITEMS_PER_RUN`, `MAX_DECODES_PER_RUN` | per-run limits |
+| `ALPHAVANTAGE_API_KEY` | optional; daily MRT prices (secret, never logged) |
+| `SEC_USER_AGENT` | declared User-Agent for SEC EDGAR; include a contact e-mail |
 
 GitHub Actions secrets: `ANTHROPIC_API_KEY`, `MONGODB_URI`, `REVALIDATE_URL`,
-`REVALIDATE_SECRET` (optional repository variable `ANTHROPIC_MODEL`).
+`REVALIDATE_SECRET`, optional `ALPHAVANTAGE_API_KEY` (optional repository variables
+`ANTHROPIC_MODEL`, `SEC_USER_AGENT`).
 
 ## How a run works
 
@@ -58,6 +63,12 @@ GitHub Actions secrets: `ANTHROPIC_API_KEY`, `MONGODB_URI`, `REVALIDATE_URL`,
 8. **Promote**: a timeline event needs two independently written sources (wire copies
    count once) or one primary source; a new figure needs two independent domains that
    agree within ±2 %.
-9. **Snapshot → revalidate → run log** (`runs` keeps tokens and cost).
+9. **Snapshot → market → revalidate → run log** (`runs` keeps tokens and cost).
+10. **Market** (`market.py`, at most once per Istanbul day): MRT filings from the SEC
+    EDGAR submissions API (insider forms 3/4/5/144 skipped) and, with
+    `ALPHAVANTAGE_API_KEY`, daily prices merged with the stored ones (newest 260 kept).
+    A failing source keeps its previous data (3 failures in a row: rests 24 h, like
+    the news sources; `market --force` overrides); a market error never fails the
+    news run. It runs before revalidate, so one POST refreshes both pages.
 
 Set `settings.publishing_paused = true` (`_id: "global"`) in Mongo to stop all runs.

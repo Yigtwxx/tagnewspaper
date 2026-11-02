@@ -1,4 +1,4 @@
-"""Command line: `python -m tagnews {run,hide,seed,init-db}`."""
+"""Command line: `python -m tagnews {run,market,hide,seed,init-db}`."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ from tagnews.config import Settings, configure_logging, load_settings
 from tagnews.decode import default_batch_decoder
 from tagnews.extract import TextExtractor
 from tagnews.llm import AnthropicSummarizer, Summarizer
+from tagnews.market import MarketRefresh, refresh_market
 from tagnews.models import EventDoc, StatDoc, utc_now
 from tagnews.run import Deps, rebuild_snapshot, run_pipeline
 from tagnews.store import MemoryStore, MongoStore
@@ -94,6 +95,48 @@ def _print_dry_run(store: MemoryStore, run: dict[str, object]) -> None:
         print(f"snapshot: latest={len(store.snapshot.latest)} totals={totals}")
 
 
+def cmd_market(settings: Settings, force: bool, dry_run: bool) -> int:
+    """Refresh the `market` document; `--dry-run` fetches and prints, writes nothing."""
+    store: MemoryStore | MongoStore = MemoryStore() if dry_run else _mongo(settings)
+    try:
+        if store.publishing_paused():
+            print("publishing is paused (settings.publishing_paused); nothing to do")
+            return 0
+        with _http_client(settings) as http:
+            result = refresh_market(
+                store,
+                http,
+                utc_now(),
+                force=force or dry_run,
+                alphavantage_api_key=settings.alphavantage_api_key,
+                sec_user_agent=settings.sec_user_agent,
+            )
+            if result.written and not dry_run:
+                revalidate.trigger(
+                    http, settings.revalidate_url, settings.revalidate_secret
+                )
+    finally:
+        if isinstance(store, MongoStore):
+            store.close()
+    _print_market(result)
+    return 1 if result.status == "failed" else 0
+
+
+def _print_market(result: MarketRefresh) -> None:
+    print(f"market: {result.status}")
+    for error in result.errors:
+        print(f"  error: {error}")
+    doc = result.doc
+    if doc is None:
+        return
+    print(f"updated_at={doc.updated_at.isoformat()} price_source={doc.price_source}")
+    if doc.prices:
+        last = doc.prices[-1]
+        print(f"prices: {len(doc.prices)} bars, last {last.date} close {last.close}")
+    for filing in doc.filings:
+        print(f"- {filing.filed} {filing.form:<14} {filing.title[:70]} | {filing.url}")
+
+
 def cmd_hide(settings: Settings, article_id: str) -> int:
     store = _mongo(settings)
     article = store.get_article(article_id)
@@ -158,6 +201,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="fetch + decode + cluster only; no database, no LLM, no revalidate",
     )
     run.add_argument("--max-items", type=int, default=None)
+    market = sub.add_parser(
+        "market", help="refresh the MRT market document (SEC EDGAR + Alpha Vantage)"
+    )
+    market.add_argument(
+        "--force", action="store_true", help="ignore the once-a-day guard"
+    )
+    market.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="fetch + parse and print; no database, no revalidate",
+    )
     hide = sub.add_parser("hide", help="hide one article (correction/removal request)")
     hide.add_argument("article_id")
     seed = sub.add_parser("seed", help="load curated events/stats from seed/")
@@ -172,6 +226,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     configure_logging(settings.log_level)
     if args.command == "run":
         return cmd_run(settings, args.dry_run, args.max_items)
+    if args.command == "market":
+        return cmd_market(settings, args.force, args.dry_run)
     if args.command == "hide":
         return cmd_hide(settings, args.article_id)
     if args.command == "seed":

@@ -2,26 +2,33 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 
 import httpx
+import pytest
 import respx
 
 from tagnews.config import Settings
 from tagnews.llm import LlmResult
+from tagnews.market import ALPHA_VANTAGE_URL, EDGAR_SUBMISSIONS_URL
 from tagnews.run import Deps, run_pipeline
 from tagnews.store import MemoryStore
 from tagnews.textnorm import article_id
 
 from conftest import (
+    EDGAR_SAMPLE,
     FIXTURES,
     SOURCE_TEXT,
     FakeExtractor,
     FakeSummarizer,
+    alpha_vantage_payload,
+    load_json,
     make_enrichment,
+    weekdays,
 )
 
 BASE = "https://news.google.test/rss/search"
+REVALIDATE = "https://site.test/api/revalidate"
 
 
 def _decoder(batch: list[str]) -> list[dict[str, object]]:
@@ -41,12 +48,16 @@ def _deps(
     summarizer: FakeSummarizer | None,
     text: str | None,
     now: datetime,
+    market: bool = False,
+    alphavantage_api_key: str | None = None,
 ) -> Deps:
     settings = Settings(
         google_news_base_url=BASE,
         google_news_queries=('"Martı TAG"',),
-        revalidate_url="https://site.test/api/revalidate",
+        revalidate_url=REVALIDATE,
         revalidate_secret="test-secret",
+        alphavantage_api_key=alphavantage_api_key,
+        sec_user_agent="tagnewspaper ops@example.test",
     )
     return Deps(
         settings=settings,
@@ -57,6 +68,7 @@ def _deps(
         batch_decoder=_decoder,
         now=lambda: now,
         gdelt_sleep=False,
+        market=market,
     )
 
 
@@ -212,3 +224,77 @@ def test_run_pipeline_llm_error_is_retried_next_run(now: datetime) -> None:
     with httpx.Client() as client:
         run_pipeline(_deps(store, client, healthy, SOURCE_TEXT, now), max_items=1)
     assert store.articles[article.id].display == "full", "the retry pass fixed it"
+
+
+@respx.mock
+def test_run_pipeline_market_refresh_precedes_single_revalidate(now: datetime) -> None:
+    _mock_google()
+    edgar = respx.get(EDGAR_SUBMISSIONS_URL).mock(
+        return_value=httpx.Response(200, json=load_json(EDGAR_SAMPLE))
+    )
+    respx.get(url__startswith=ALPHA_VANTAGE_URL).mock(
+        return_value=httpx.Response(
+            200, json=alpha_vantage_payload(weekdays(date(2026, 10, 1), 5))
+        )
+    )
+    revalidate = respx.post(REVALIDATE).mock(return_value=httpx.Response(200))
+    store = MemoryStore()
+    with httpx.Client() as client:
+        deps = _deps(
+            store,
+            client,
+            FakeSummarizer([]),
+            SOURCE_TEXT,
+            now,
+            market=True,
+            alphavantage_api_key="av-test-key",
+        )
+        run = run_pipeline(deps, max_items=1)
+
+    assert run.ok and not run.errors, run.errors
+    assert store.market is not None and len(store.market.prices) == 5
+    assert revalidate.call_count == 1, "one POST covers news and market"
+    order = [call.request.url.host for call in respx.calls]
+    assert order.index("data.sec.gov") < order.index("site.test"), order
+    assert edgar.call_count == 1
+
+
+@respx.mock
+def test_run_pipeline_market_failure_keeps_news_run_ok(now: datetime) -> None:
+    _mock_google()
+    respx.get(EDGAR_SUBMISSIONS_URL).mock(return_value=httpx.Response(403))
+    revalidate = respx.post(REVALIDATE).mock(return_value=httpx.Response(200))
+    store = MemoryStore()
+    with httpx.Client() as client:
+        run = run_pipeline(
+            _deps(store, client, FakeSummarizer([]), SOURCE_TEXT, now, market=True),
+            max_items=1,
+        )
+
+    assert run.ok
+    assert run.errors == ["market edgar: HTTP 403"]
+    assert store.market is None
+    assert store.snapshot is not None and revalidate.called
+
+
+@respx.mock
+def test_run_pipeline_market_crash_is_logged_not_raised(
+    now: datetime, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _mock_google()
+    respx.post(REVALIDATE).mock(return_value=httpx.Response(200))
+    store = MemoryStore()
+
+    def broken() -> None:
+        raise RuntimeError("market collection unreadable")
+
+    monkeypatch.setattr(store, "load_market", broken)
+    with httpx.Client() as client:
+        run = run_pipeline(
+            _deps(store, client, FakeSummarizer([]), SOURCE_TEXT, now, market=True),
+            max_items=1,
+        )
+
+    assert run.ok
+    assert run.errors == ["market: RuntimeError"]
+    assert store.runs[-1].ok, "the run log is still written"

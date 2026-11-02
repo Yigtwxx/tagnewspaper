@@ -13,6 +13,7 @@ from pymongo.database import Database
 from tagnews.models import (
     ArticleDoc,
     EventDoc,
+    MarketDoc,
     RunRecord,
     Snapshot,
     SourceHealth,
@@ -47,6 +48,8 @@ class Store(Protocol):
     def save_snapshot(self, snapshot: Snapshot) -> None: ...
     def save_run(self, run: RunRecord) -> None: ...
     def last_run_at(self) -> datetime | None: ...
+    def load_market(self) -> MarketDoc | None: ...
+    def save_market(self, doc: MarketDoc) -> None: ...
 
 
 class MongoStore:
@@ -154,6 +157,13 @@ class MongoStore:
         )
         return doc["started_at"] if doc else None
 
+    def load_market(self) -> MarketDoc | None:
+        doc = self.db.market.find_one({"_id": "MRT"})
+        return MarketDoc.model_validate(doc) if doc else None
+
+    def save_market(self, doc: MarketDoc) -> None:
+        self.db.market.replace_one({"_id": doc.id}, doc.to_mongo(), upsert=True)
+
     def set_publishing_paused(self, paused: bool) -> None:
         self.db.settings.update_one(
             {"_id": "global"}, {"$set": {"publishing_paused": paused}}, upsert=True
@@ -206,6 +216,7 @@ class MemoryStore:
         self.health: dict[str, SourceHealth] = {}
         self.snapshot: Snapshot | None = None
         self.runs: list[RunRecord] = []
+        self.market: MarketDoc | None = None
         self.paused = False
 
     def publishing_paused(self) -> bool:
@@ -271,3 +282,9 @@ class MemoryStore:
     def last_run_at(self) -> datetime | None:
         done = [r.started_at for r in self.runs if r.ok and not r.dry_run]
         return max(done) if done else None
+
+    def load_market(self) -> MarketDoc | None:
+        return self.market.model_copy(deep=True) if self.market else None
+
+    def save_market(self, doc: MarketDoc) -> None:
+        self.market = doc
