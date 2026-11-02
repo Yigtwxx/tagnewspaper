@@ -18,6 +18,7 @@ from tagnews.extract import TextExtractor
 from tagnews.llm import AnthropicSummarizer, Summarizer
 from tagnews.market import MarketRefresh, refresh_market
 from tagnews.models import EventDoc, StatDoc, utc_now
+from tagnews.promote import is_primary_stat
 from tagnews.run import Deps, rebuild_snapshot, run_pipeline
 from tagnews.store import MemoryStore, MongoStore
 
@@ -171,7 +172,8 @@ def cmd_seed(settings: Settings, seed_dir: Path) -> int:
     store.save_events(events)
     for stat in stats:
         current = {s.key: s for s in store.load_stats()}.get(stat.key)
-        if current is None or current.as_of <= stat.as_of:
+        stale = current is None or not is_primary_stat(current)
+        if stale or current.as_of <= stat.as_of:
             store.save_stat(stat)
     now = utc_now()
     rebuild_snapshot(store, now, store.last_run_at() or now)

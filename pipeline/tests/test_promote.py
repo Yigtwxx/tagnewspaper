@@ -9,6 +9,7 @@ from tagnews.promote import (
     EventCandidate,
     appears_in,
     independent_count,
+    is_primary_stat,
     merge_event,
     parse_turkish_number,
     promote_stat,
@@ -148,3 +149,34 @@ def test_promote_stat_older_primary_source_is_ignored(now: datetime) -> None:
     current = _current_drivers()
     older = [_stat(500_000, "ir.marti.tech", OTHER_TEXT, "2026-01-01", now)]
     assert promote_stat(current, older) is None, "Older figures must not win"
+
+
+def _press_drivers() -> StatDoc:
+    return StatDoc(
+        _id="drivers",
+        key="drivers",
+        label="Kayıtlı sürücü",
+        value=538_000,
+        as_of="2026-11-02",
+        scope="Türkiye",
+        source_name="Kocatepe Gazetesi",
+        source_url="https://www.kocatepegazetesi.com.tr/x",
+    )
+
+
+@pytest.mark.parametrize(
+    ("stat", "expected"),
+    [(_current_drivers(), True), (_press_drivers(), False)],
+)
+def test_is_primary_stat_checks_source_domain(stat: StatDoc, expected: bool) -> None:
+    assert is_primary_stat(stat) is expected, f"{stat.source_url} -> {expected}"
+
+
+def test_promote_stat_press_figure_never_blocks_primary_source(now: datetime) -> None:
+    current = _press_drivers()
+    company = [_stat(584_000, "ir.marti.tech", OTHER_TEXT, "2026-09-02", now)]
+    promoted = promote_stat(current, company)
+    assert promoted is not None, (
+        "A stored press figure must yield to the company figure"
+    )
+    assert promoted.value == 584_000, f"Expected 584000, got {promoted.value}"

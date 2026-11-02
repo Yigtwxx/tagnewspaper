@@ -12,6 +12,7 @@ import hashlib
 import re
 from dataclasses import dataclass
 from datetime import date
+from urllib.parse import urlsplit
 
 from rapidfuzz import fuzz
 
@@ -53,6 +54,11 @@ _NUMBER_RE = re.compile(
 
 def is_primary(domain: str) -> bool:
     return any(domain == d or domain.endswith(f".{d}") for d in PRIMARY_DOMAINS)
+
+
+def is_primary_stat(stat: StatDoc) -> bool:
+    """Whether a stored figure is backed by an allow-listed primary source."""
+    return is_primary(urlsplit(stat.source_url).hostname or "")
 
 
 def parse_turkish_number(raw: str) -> int | None:
@@ -182,10 +188,13 @@ def promote_stat(
     numbers (claims by opponents, older figures), so press coverage alone never
     changes a stat, however many outlets repeat it.
     """
+    # A figure that came from press coverage (stored before this rule existed) never
+    # blocks a primary source, whatever its date.
+    floor = current.as_of if current is not None and is_primary_stat(current) else None
     primary = [
         c
         for c in candidates
-        if is_primary(c.domain) and (current is None or c.as_of > current.as_of)
+        if is_primary(c.domain) and (floor is None or c.as_of > floor)
     ]
     if not primary:
         return None
