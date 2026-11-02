@@ -11,7 +11,7 @@ from tagnews.models import (
     SourceRef,
     StatDoc,
 )
-from tagnews.snapshot import build_snapshot, top_terms
+from tagnews.snapshot import build_snapshot, category_daily, top_terms
 
 
 def _article(
@@ -178,3 +178,25 @@ def test_top_terms_titles_last_30_days_ranks_shared_words(now: datetime) -> None
     assert terms.get("taksiciler") == 2, f"Expected 2 for taksiciler, got {terms}"
     assert "martı" not in terms and "için" not in terms, f"Stopwords leaked: {terms}"
     assert all(n >= 2 for n in terms.values()), f"Singletons leaked: {terms}"
+
+
+def test_category_daily_last_60_days_zero_filled(now: datetime) -> None:
+    articles = [
+        _article(1, "a.example", now, "c1", category="dava"),
+        _article(2, "b.example", now, "c2", category="dava"),
+        _article(3, "c.example", now - timedelta(days=3), "c3", category="saha"),
+        _article(4, "d.example", now - timedelta(days=90), "c4", category="saha"),
+    ]
+    days = category_daily(articles, now.date())
+
+    assert len(days) == 60, f"Expected 60 days, got {len(days)}"
+    assert days[-1].counts["dava"] == 2, (
+        f"Today should have 2 dava, got {days[-1].counts}"
+    )
+    assert days[-4].counts["saha"] == 1, (
+        f"Three days ago should have 1 saha: {days[-4]}"
+    )
+    assert all(len(d.counts) == 8 for d in days), "Every day lists all eight categories"
+    assert sum(sum(d.counts.values()) for d in days) == 3, (
+        "The 90-day-old story is outside"
+    )

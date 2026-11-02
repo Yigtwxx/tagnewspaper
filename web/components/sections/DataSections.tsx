@@ -125,13 +125,18 @@ export function TopicTrends({
   snapshot: SnapshotT;
   runningHead: string;
 }) {
-  // Keep the stream, but start one week before coverage begins (at least five weeks wide).
-  const data = trimLeadingEmpty(
-    snapshot.category_weekly,
-    (w) => CATEGORIES.every((c) => !w.counts[c]),
-    5,
-    1,
-  );
+  // Daily counts give the stream its detail; weekly counts are the fallback for older
+  // snapshots. Either way it starts just before coverage begins.
+  const empty = (w: { counts: Partial<Record<string, number>> }) =>
+    CATEGORIES.every((c) => !w.counts[c]);
+  const daily = trimLeadingEmpty(snapshot.category_daily, empty, 21, 3);
+  const useDaily = daily.some((d) => !empty(d));
+  const data = useDaily
+    ? daily
+    : trimLeadingEmpty(snapshot.category_weekly, empty, 5, 1).map((w) => ({
+        date: w.week_start,
+        counts: w.counts,
+      }));
   if (data.length < 2) return null;
   const totals = CATEGORIES.map((c) => ({
     c,
@@ -150,17 +155,24 @@ export function TopicTrends({
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>
           <p className="dek">
-            Son {data.length} haftada haberlerin konulara dağılımı. En çok yer bulan konu{' '}
+            Son {data.length} {useDaily ? 'günde' : 'haftada'} haberlerin konulara dağılımı. En çok
+            yer bulan konu{' '}
             <span className="hl">{CATEGORY_LABEL[leader.c].toLocaleLowerCase('tr-TR')}</span> oldu.
           </p>
         </div>
-        <StreamGraph data={data} />
+        <StreamGraph data={data} unit={useDaily ? 'day' : 'week'} smooth={useDaily ? 3 : 1} />
         <TopTerms terms={snapshot.top_terms} />
-        <TableToggle summary="Haftalık sayıları tablo olarak göster">
+        <TableToggle
+          summary={
+            useDaily
+              ? 'Günlük sayıları tablo olarak göster'
+              : 'Haftalık sayıları tablo olarak göster'
+          }
+        >
           <table className="w-full">
             <thead>
               <tr>
-                <th className={th}>Hafta</th>
+                <th className={th}>{useDaily ? 'Gün' : 'Hafta'}</th>
                 {CATEGORIES.map((c) => (
                   <th key={c} className={th}>
                     {CATEGORY_LABEL[c]}
@@ -170,8 +182,8 @@ export function TopicTrends({
             </thead>
             <tbody>
               {[...data].reverse().map((w) => (
-                <tr key={w.week_start}>
-                  <td className={td}>{formatCalendarDate(w.week_start, { short: true })}</td>
+                <tr key={w.date}>
+                  <td className={td}>{formatCalendarDate(w.date, { short: true })}</td>
                   {CATEGORIES.map((c) => (
                     <td key={c} className={td}>
                       {w.counts[c] ?? 0}

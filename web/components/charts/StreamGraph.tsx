@@ -7,6 +7,7 @@ import {
   curveCatmullRom,
   type Series,
   stack,
+  stackOffsetSilhouette,
   stackOffsetWiggle,
   stackOrderNone,
 } from 'd3-shape';
@@ -20,8 +21,9 @@ import { CATEGORIES, type CategoryT } from '@/lib/schema';
 import { Tooltip } from './Tooltip';
 import { useChartWidth } from './useChartWidth';
 
-export interface WeekCounts {
-  week_start: string;
+export interface PeriodCounts {
+  /** Start of the period: a day, or the Monday of a week. */
+  date: string;
   counts: Partial<Record<CategoryT, number>>;
 }
 
@@ -40,7 +42,16 @@ function utcDay(ymd: string): Date {
  * On entering view the stream "blooms" open from its centre line, one layer after another;
  * hovering the legend or a layer brings that topic forward and dims the rest.
  */
-export function StreamGraph({ data }: { data: WeekCounts[] }) {
+export function StreamGraph({
+  data,
+  unit = 'week',
+  smooth = 1,
+}: {
+  data: PeriodCounts[];
+  unit?: 'day' | 'week';
+  /** Centered moving-average window for the drawn shape; tooltips keep raw counts. */
+  smooth?: number;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const pathRefs = useRef<Array<SVGPathElement | null>>([]);
   const width = useChartWidth(wrapRef);
@@ -53,15 +64,22 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
   const innerW = Math.max(10, width - m.left - m.right);
   const innerH = height - m.top - m.bottom;
 
-  const rows: Row[] = data.map((w) => {
-    const row = { t: utcDay(w.week_start).getTime() } as Row;
+  const raw: Row[] = data.map((w) => {
+    const row = { t: utcDay(w.date).getTime() } as Row;
     for (const c of CATEGORIES) row[c] = w.counts[c] ?? 0;
+    return row;
+  });
+  const half = Math.floor(smooth / 2);
+  const rows: Row[] = raw.map((r, i) => {
+    const win = raw.slice(Math.max(0, i - half), i + half + 1);
+    const row = { t: r.t } as Row;
+    for (const c of CATEGORIES) row[c] = win.reduce((n, w) => n + w[c], 0) / win.length;
     return row;
   });
   const series: Layer[] = stack<Row, CategoryT>()
     .keys(CATEGORIES)
     .order(stackOrderNone)
-    .offset(stackOffsetWiggle)(rows);
+    .offset(unit === 'day' ? stackOffsetSilhouette : stackOffsetWiggle)(rows);
 
   let lo = 0;
   let hi = 1;
@@ -87,7 +105,7 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
       .curve(curveCatmullRom.alpha(0.5))(layer as unknown as Array<[number, number]>) ?? '';
 
   // Direct labels for the biggest topics, placed where each layer is thickest.
-  const totals = series.map((s) => s.reduce((sum, [a, b]) => sum + (b - a), 0));
+  const totals = CATEGORIES.map((c) => raw.reduce((sum, r) => sum + r[c], 0));
   const labelled = [...series.keys()].sort((a, b) => totals[b] - totals[a]).slice(0, DIRECT_LABELS);
   const labels = labelled
     .map((li) => {
@@ -155,7 +173,7 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
   }
 
   const ticks = x.ticks(width < 640 ? 3 : 6);
-  const hovered = hover !== undefined ? rows[hover] : undefined;
+  const hovered = hover !== undefined ? raw[hover] : undefined;
 
   return (
     <div>
@@ -272,7 +290,8 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
         {hovered && hover !== undefined && (
           <Tooltip x={m.left + x(new Date(hovered.t))} y={m.top + 8} width={width}>
             <p className="mb-1 text-(--mute)">
-              {formatCalendarDate(data[hover].week_start, { year: false })} haftası
+              {formatCalendarDate(data[hover].date, { year: false })}
+              {unit === 'week' ? ' haftası' : ''}
             </p>
             <ul className="flex flex-col gap-0.5">
               {CATEGORIES.map((c) => (

@@ -922,6 +922,788 @@
     "articles_90d": 378,
     "sources_90d": 6
   },
+  "category_daily": [
+    {
+      "date": "2026-09-04",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-06",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-07",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-08",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-09-09",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-09-10",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-11",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-12",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-13",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-14",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-15",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-16",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-17",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-18",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-19",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-09-20",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-09-21",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-09-22",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-09-23",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-24",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-25",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-26",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-27",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-28",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-29",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-09-30",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-01",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-02",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-03",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-06",
+      "counts": {
+        "dava": 2,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-07",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 1,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 1,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 1,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 1,
+        "sirket": 2,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 1,
+        "surucu_yolcu": 2,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "counts": {
+        "dava": 0,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "counts": {
+        "dava": 1,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 1,
+        "saha": 2,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 0,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 1,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 1,
+        "ekonomi": 2,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-25",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 0,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-26",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-27",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 1,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 1,
+        "diger": 2
+      }
+    },
+    {
+      "date": "2026-10-28",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 0,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-29",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-30",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 1,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 1
+      }
+    },
+    {
+      "date": "2026-10-31",
+      "counts": {
+        "dava": 5,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 0,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-11-01",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    },
+    {
+      "date": "2026-11-02",
+      "counts": {
+        "dava": 4,
+        "regulasyon": 2,
+        "taksici_odasi": 2,
+        "sirket": 2,
+        "surucu_yolcu": 1,
+        "saha": 0,
+        "ekonomi": 0,
+        "diger": 0
+      }
+    }
+  ],
   "top_terms": [
     {
       "term": "istinaf",

@@ -11,6 +11,7 @@ from tagnews.models import (
     CATEGORIES,
     ActorStatementView,
     ArticleDoc,
+    CategoryDay,
     CategoryWeek,
     DailyCount,
     EventDoc,
@@ -34,6 +35,7 @@ LEAD_WINDOW = timedelta(hours=48)
 LEAD_MAX_SOURCES = 8
 STAT_ORDER = ("registered_riders", "drivers", "drivers_istanbul")
 TERM_DAYS = 30
+CATEGORY_DAYS = 60
 TOP_TERMS = 12
 TERM_MIN_LEN = 4
 TERM_MIN_COUNT = 2
@@ -205,6 +207,22 @@ def source_counts(articles: list[ArticleDoc]) -> list[SourceCount]:
     ]
 
 
+def category_daily(articles: list[ArticleDoc], today: date) -> list[CategoryDay]:
+    """Per-day topic counts for the last 60 days (Istanbul dates), zero-filled."""
+    days = [today - timedelta(days=d) for d in range(CATEGORY_DAYS - 1, -1, -1)]
+    table: dict[date, Counter[str]] = {d: Counter() for d in days}
+    for article in articles:
+        day = local_date(article.published_at)
+        if day in table:
+            table[day][article.category] += 1
+    return [
+        CategoryDay(
+            date=d.isoformat(), counts={c: table[d].get(c, 0) for c in CATEGORIES}
+        )
+        for d in days
+    ]
+
+
 def category_weekly(articles: list[ArticleDoc], today: date) -> list[CategoryWeek]:
     this_monday = today - timedelta(days=today.weekday())
     weeks = [this_monday - timedelta(weeks=w) for w in range(WEEKS - 1, -1, -1)]
@@ -304,4 +322,5 @@ def build_snapshot(
             sources_90d=len({a.source.domain for a in visible}),
         ),
         top_terms=top_terms(visible, today),
+        category_daily=category_daily(visible, today),
     )

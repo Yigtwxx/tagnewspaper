@@ -285,6 +285,11 @@ class CategoryWeek(_Model):
     counts: dict[Category, int]
 
 
+class CategoryDay(_Model):
+    date: IsoDate
+    counts: dict[Category, int]
+
+
 class ActorStatementView(_Model):
     actor: Actor
     summary: str
@@ -318,6 +323,7 @@ class Snapshot(_Model):
     actor_statements: list[ActorStatementView]
     totals: Totals
     top_terms: list[TermCount] = Field(default_factory=list)
+    category_daily: list[CategoryDay] = Field(default_factory=list)
 
     def to_mongo(self) -> dict[str, object]:
         """JSON-mode dump: the snapshot stores ISO strings, not BSON Dates."""

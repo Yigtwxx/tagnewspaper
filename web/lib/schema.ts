@@ -127,6 +127,14 @@ export const Snapshot = z.object({
   top_terms: z
     .array(z.object({ term: z.string(), count: z.number().int().nonnegative() }))
     .default([]),
+  category_daily: z
+    .array(
+      z.object({
+        date: IsoDate,
+        counts: z.record(Category, z.number().int().nonnegative()),
+      }),
+    )
+    .default([]),
 });
 
 export const NewsPage = z.object({
@@ -157,6 +165,7 @@ export const EMPTY_SNAPSHOT: SnapshotT = {
   actor_statements: [],
   totals: { articles_90d: 0, sources_90d: 0 },
   top_terms: [],
+  category_daily: [],
 };
 
 export function isEmptySnapshot(s: SnapshotT): boolean {
