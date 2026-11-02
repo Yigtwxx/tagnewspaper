@@ -12,6 +12,7 @@ const SECTIONS = [
   { id: 'dava', label: 'Dava' },
   { id: 'veriler', label: 'Veriler' },
   { id: 'taraflar', label: 'Taraflar' },
+  { id: 'borsa', label: 'Borsa' },
   { id: 'kunye', label: 'Künye' },
 ] as const;
 
@@ -24,6 +25,7 @@ const TO_INDEX: Record<string, string> = {
   sources: 'veriler',
   topics: 'veriler',
   actors: 'taraflar',
+  market: 'borsa',
   colophon: 'kunye',
 };
 

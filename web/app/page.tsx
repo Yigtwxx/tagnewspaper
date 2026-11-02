@@ -6,15 +6,16 @@ import { CaseTimeline } from '@/components/sections/CaseTimeline';
 import { Colophon } from '@/components/sections/Colophon';
 import { NewsDensity, SourceSpread, TopicTrends } from '@/components/sections/DataSections';
 import { LeadAndFeed } from '@/components/sections/LeadAndFeed';
+import { MarketBrief } from '@/components/sections/MarketBrief';
 import { Numbers } from '@/components/sections/Numbers';
 import { SideRails } from '@/components/SideRails';
 import { TopBar } from '@/components/TopBar';
-import { getSnapshot } from '@/lib/data';
+import { getMarket, getSnapshot } from '@/lib/data';
 import { editionStart, formatDate, issueNumber } from '@/lib/format';
 import { isEmptySnapshot } from '@/lib/schema';
 
 export default async function Home() {
-  const snapshot = await getSnapshot();
+  const [snapshot, market] = await Promise.all([getSnapshot(), getMarket()]);
   const hasData = !isEmptySnapshot(snapshot);
 
   return (
@@ -36,6 +37,7 @@ export default async function Home() {
         <SourceSpread snapshot={snapshot} />
         <TopicTrends snapshot={snapshot} />
         <ActorVoices statements={snapshot.actor_statements} />
+        <MarketBrief market={market} />
       </main>
       <Colophon lastRunAt={snapshot.last_run_at} hasData={hasData} />
       <ThemeTriggers />

@@ -8,11 +8,11 @@ import { relativeTime } from '@/lib/format';
 import { useNow, useScrolledPast } from '@/lib/hooks';
 
 const NAV = [
-  { href: '/', label: 'Gazete', page: '/' },
-  { href: '/#dava', label: 'Dava', page: undefined },
-  { href: '/#veriler', label: 'Veriler', page: undefined },
-  { href: '/borsa', label: 'Borsa', page: '/borsa' },
-  { href: '/#kunye', label: 'Künye', page: undefined },
+  { href: '/#haberler', label: 'Gazete' },
+  { href: '/#dava', label: 'Dava' },
+  { href: '/#veriler', label: 'Veriler' },
+  { href: '/#borsa', label: 'Borsa' },
+  { href: '/#kunye', label: 'Künye' },
 ] as const;
 
 /** Site bar with tabs. On the front page it slides in after the nameplate; elsewhere it stays. */
@@ -52,7 +52,7 @@ export function TopBar({
         >
           <ul className="flex gap-4 font-sans text-sm whitespace-nowrap sm:gap-6">
             {NAV.map((item) => {
-              const current = item.page !== undefined && pathname === item.page;
+              const current = pathname === '/borsa' && item.href === '/#borsa';
               return (
                 <li key={item.href}>
                   <Link
