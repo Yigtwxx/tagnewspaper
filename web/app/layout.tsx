@@ -73,10 +73,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     >
       <body>
         <a
-          href="#haberler"
+          href="#icerik"
           className="sr-only z-[100] bg-tag px-4 py-2 font-sans text-black focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
         >
-          Haberlere geç
+          İçeriğe geç
         </a>
         <SmoothScroll />
         {children}

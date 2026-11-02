@@ -64,7 +64,14 @@ export function Hero({ snapshot }: { snapshot: SnapshotT }) {
         </div>
         <div className="hero-in meta flex items-center justify-between py-2 text-white/80">
           <span>
-            {empty ? 'İlk sayı hazırlanıyor' : formatDate(snapshot.generated_at, { weekday: true })}
+            {empty ? (
+              'İlk sayı hazırlanıyor'
+            ) : (
+              <>
+                <span className="lg:hidden">Sayı {issueNumber(snapshot.generated_at)}, </span>
+                {formatDate(snapshot.generated_at, { weekday: true })}
+              </>
+            )}
           </span>
           <span className="hidden sm:inline">Martı ile bağlantısı olmayan gönüllü bir yayın</span>
           <span>{empty ? '' : `Son güncelleme ${formatTime(snapshot.last_run_at)}`}</span>

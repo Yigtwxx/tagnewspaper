@@ -75,7 +75,7 @@ export function CaseTimeline({
       for (const item of gsap.utils.toArray<HTMLElement>('.tl-item', list)) {
         gsap.from(item.querySelectorAll('.tl-reveal'), {
           opacity: 0,
-          x: 40,
+          y: 24,
           duration: 0.8,
           ease: 'power3.out',
           stagger: 0.08,

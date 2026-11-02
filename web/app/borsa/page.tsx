@@ -78,7 +78,7 @@ export default async function BorsaPage() {
   return (
     <>
       <TopBar lastRunAt={snapshot.last_run_at} hasData={hasData} alwaysShown />
-      <main>
+      <main id="icerik">
         <section data-section="market" data-theme="paper" className="px-4 pt-28 pb-24 sm:px-8">
           <div className="mx-auto max-w-[1360px]">
             <header className="section-head mb-10 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">

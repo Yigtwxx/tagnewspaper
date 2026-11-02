@@ -60,6 +60,8 @@
 }
 
 html {
+  /* Mobile browsers widen the page to fit overflow unless the root clips it as well. */
+  overflow-x: clip;
   background: #000;
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
