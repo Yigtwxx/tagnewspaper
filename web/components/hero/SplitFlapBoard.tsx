@@ -157,8 +157,11 @@ export function SplitFlapBoard({ rows }: { rows: BoardRow[] }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 rounded-sm outline-offset-4 transition-opacity hover:opacity-80"
-                    aria-label={`${row.time}, ${row.source}: ${row.title}${fresh ? ' (yeni)' : ''}`}
                   >
+                    <span className="sr-only">
+                      {row.time}, {row.source}: {row.title}
+                      {fresh ? ' (yeni)' : ''}
+                    </span>
                     {cells}
                   </a>
                 ) : (

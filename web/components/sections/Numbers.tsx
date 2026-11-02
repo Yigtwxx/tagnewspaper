@@ -11,7 +11,7 @@ function Figure({ stat }: { stat: StatT }) {
   const numeric = Number(compact.value.replace(/\./g, '').replace(',', '.'));
   return (
     <div className="flex flex-col gap-3">
-      <p className="flex items-baseline gap-3">
+      <p className="flex items-baseline gap-3 pb-3">
         <span
           className="numeral text-[clamp(4.5rem,12vw,10.5rem)]"
           data-count={numeric}
@@ -69,7 +69,7 @@ export function Numbers({ stats }: { stats: StatT[] }) {
               {riders && (
                 <>
                   <Figure stat={riders} />
-                  <div className="flex flex-col justify-end gap-4">
+                  <div className="flex flex-col justify-start gap-4 lg:pt-6">
                     <DotMatrix
                       group={{
                         count: Math.round(riders.value / PER_DOT),
@@ -89,7 +89,7 @@ export function Numbers({ stats }: { stats: StatT[] }) {
                     <Figure stat={drivers} />
                     {istanbul && <Figure stat={istanbul} />}
                   </div>
-                  <div className="flex flex-col justify-end gap-4">
+                  <div className="flex flex-col justify-start gap-4 lg:pt-6">
                     <DotMatrix
                       group={{
                         count: Math.round(drivers.value / PER_DOT),

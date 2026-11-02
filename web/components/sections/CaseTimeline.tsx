@@ -20,8 +20,8 @@ function EventCard({ event, index }: { event: CaseEventT; index: number }) {
   return (
     <li className="tl-card relative flex w-full shrink-0 flex-col gap-4 lg:w-[min(34rem,42vw)]">
       <div className="flex items-center gap-4">
-        <span className="tl-node relative z-10 inline-block size-5 rounded-full border-[3px] border-black bg-tag" />
-        <span className="font-sans text-sm font-semibold">
+        <span className="tl-node relative z-10 inline-block size-5 rounded-full border-[3px] border-black bg-black" />
+        <span className="relative z-10 bg-tag pr-3 font-sans text-sm font-semibold">
           {String(index + 1).padStart(2, '0')} / {TYPE_LABEL[event.type]}
         </span>
       </div>
@@ -123,7 +123,7 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
           </div>
           <ol
             ref={trackRef}
-            className="flex flex-col gap-16 border-l-[3px] border-black/25 pl-6 will-change-transform lg:flex-row lg:gap-20 lg:border-l-0 lg:pl-[max(2rem,calc((100vw-1360px)/2))]"
+            className="flex flex-col gap-16 border-l-[3px] border-black/25 pl-6 will-change-transform lg:flex-row lg:gap-20 lg:border-l-0 lg:pl-[max(0px,calc((100vw-1360px)/2-2rem))]"
           >
             {events.map((event, i) => (
               <EventCard key={event.id} event={event} index={i} />
