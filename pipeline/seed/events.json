@@ -284,7 +284,7 @@
     "date": "2026-10-22",
     "type": "court_decision",
     "title": "İstinaf mahkemesi ilk derece kararını kaldırdı",
-    "description": "Haberlere göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, Martı'nın istinaf başvurusunu kabul ederek ilk derece kararını kaldırdı ve davaları reddetti. Kararda, yasa koyucunun yasaklamadığı bir ticari faaliyetin mahkeme kararıyla yasaklanamayacağı ve yeni mevzuata ihtiyaç olduğu belirtildi. Kararın kesinleşme durumu haberlerde doğrulanmadı. Şirketin SEC başvurusuna göre karar 22 Ekim'de verildi; haberler 23 Ekim'de yayımlandı.",
+    "description": "Haberlere göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, Martı'nın istinaf başvurusunu kabul ederek ilk derece kararını kaldırdı ve davaları reddetti. Kararda, yasa koyucunun yasaklamadığı bir ticari faaliyetin mahkeme kararıyla yasaklanamayacağı ve yeni mevzuata ihtiyaç olduğu belirtildi. Şirketin SEC bildirimine göre karar oybirliğiyle 22 Ekim'de verildi ve kesin değil; davacılar Yargıtay'a başvurabilir. Haberler 23 Ekim'de yayımlandı.",
     "court": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi",
     "evidence": [
       {
@@ -296,6 +296,11 @@
         "url": "https://www.internethaber.com/marti-tag-turkiyede-yasal-mi-mahkemeden-karar-cikti-2465503h.htm",
         "source_name": "İnternet Haber",
         "domain": "internethaber.com"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026112250/ea0309624-6k_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 6-K (26 Ekim 2026)",
+        "domain": "sec.gov"
       }
     ]
   },

@@ -8,12 +8,20 @@ import { EditionSeal } from './EditionSeal';
 import { SplitFlapMasthead } from './SplitFlapMasthead';
 import { Ticker } from './Ticker';
 
+const WINDOW_MS = 89 * 86_400_000;
+
+/** Case events dated within the same 90-day window as the article and source totals. */
+function recentEvents(snapshot: SnapshotT): number {
+  const cutoff = new Date(Date.parse(snapshot.generated_at) - WINDOW_MS).toISOString().slice(0, 10);
+  return snapshot.events.filter((e) => e.published && e.date >= cutoff).length;
+}
+
 /** Left ear: a double-ruled box that sums up what the paper has covered so far. */
 function TallyEar({ snapshot, empty }: { snapshot: SnapshotT; empty: boolean }) {
   const rows: [string, string][] = [
     [formatNumber(snapshot.totals.articles_90d), 'haber'],
     [formatNumber(snapshot.totals.sources_90d), 'kaynak'],
-    [formatNumber(snapshot.events.filter((e) => e.published).length), 'dava gelişmesi'],
+    [formatNumber(recentEvents(snapshot)), 'dava gelişmesi'],
   ];
   return (
     <div className="hidden w-44 shrink-0 lg:block">

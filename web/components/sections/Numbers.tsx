@@ -42,28 +42,40 @@ function Figure({ stat }: { stat: StatT }) {
 }
 
 /**
- * Share of drivers who are in Istanbul, as a 10 x 10 grid where each dot is one percent.
- * Tall enough to sit beside the two driver figures it explains.
+ * Istanbul's share of registered drivers as the company states it: 36% of drivers were
+ * outside Istanbul as of 2 September 2026. Dividing the two stored figures would mix a June
+ * count with a September one, so the share is kept here with its own date and source, like
+ * the city waves. Update it with the next release that states the split.
  */
-function IstanbulShare({ drivers, istanbul }: { drivers: StatT; istanbul: StatT }) {
-  const share = Math.min(100, Math.round((istanbul.value / drivers.value) * 100));
+const ISTANBUL_SHARE = {
+  percent: 64,
+  asOf: '2026-09-02',
+  source: {
+    name: 'Martı basın bülteni (3 Eylül 2026)',
+    url: 'https://ir.marti.tech/news-events/press-releases/detail/117/martis-ride-hailing-service-reaches-4-90-million-riders',
+  },
+} as const;
+
+/** The share as a 10 x 10 grid, one dot per percent; it fills the column beside the figures. */
+function IstanbulShare() {
+  const { percent, asOf, source } = ISTANBUL_SHARE;
   return (
     <div className="flex flex-col gap-5 lg:pt-6">
       <p className="max-w-md font-serif text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-bold">
-        Her 100 sürücüden <span className="hl whitespace-nowrap">{share} tanesi</span>{' '}
+        Her 100 sürücüden <span className="hl whitespace-nowrap">{percent} tanesi</span>{' '}
         İstanbul&apos;da.
       </p>
       <DotMatrix
-        group={{ count: 100, filled: share, color: '#01b251' }}
+        group={{ count: 100, filled: percent, color: '#01b251' }}
         columns={10}
         ring={1.2}
         className="max-w-[440px]"
-        label={`Her 100 sürücüden ${share} tanesi İstanbul'da`}
+        label={`Her 100 sürücüden ${percent} tanesi İstanbul'da`}
       />
       <ul className="meta flex flex-wrap gap-x-6 gap-y-2">
         <li className="flex items-center gap-2">
           <span className="inline-block size-2.5 rounded-full bg-tag" aria-hidden="true" />
-          İstanbul ({formatCalendarDate(istanbul.as_of, { year: false })} verisi)
+          İstanbul
         </li>
         <li className="flex items-center gap-2">
           <span
@@ -74,8 +86,11 @@ function IstanbulShare({ drivers, istanbul }: { drivers: StatT; istanbul: StatT 
         </li>
       </ul>
       <p className="meta max-w-md">
-        Her nokta sürücülerin yüzde birini gösterir. İki rakam farklı tarihlerde açıklandığı için
-        oran yaklaşıktır.
+        Her nokta sürücülerin yüzde birini gösterir. Türkiye, {formatCalendarDate(asOf)} itibarıyla.
+        Kaynak:{' '}
+        <a href={source.url} target="_blank" rel="noopener noreferrer" className="link-underline">
+          {source.name}
+        </a>
       </p>
     </div>
   );
@@ -132,7 +147,7 @@ export function Numbers({ stats, runningHead }: { stats: StatT[]; runningHead: s
                     {istanbul && <Figure stat={istanbul} />}
                   </div>
                   {istanbul ? (
-                    <IstanbulShare drivers={drivers} istanbul={istanbul} />
+                    <IstanbulShare />
                   ) : (
                     <div className="flex flex-col justify-start gap-4 lg:pt-6">
                       <DotMatrix
