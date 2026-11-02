@@ -134,6 +134,17 @@ TERM_STOPWORDS: frozenset[str] = frozenset(
         "türkiye",
         "türk",
         "istanbul",
+        # Titles name people by role and full name; the role words and the founder's
+        # first names add nothing next to the surname, which stays.
+        "başkanı",
+        "kurucusu",
+        "odası",
+        "oğuz",
+        "alper",
+        # Headline boilerplate ("dikkat çeken", "karar çıktı").
+        "dikkat",
+        "çeken",
+        "çıktı",
         "nın",
         "nin",
         "nun",
