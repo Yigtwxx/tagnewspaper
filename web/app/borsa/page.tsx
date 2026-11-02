@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { NewsBox } from '@/components/feed/NewsBox';
 import { StockChart } from '@/components/market/StockChart';
+import { TradingViewChart } from '@/components/market/TradingViewChart';
 import { PageEffects } from '@/components/motion/PageEffects';
 import { ThemeTriggers } from '@/components/motion/ThemeTriggers';
 import { Colophon } from '@/components/sections/Colophon';
@@ -84,7 +85,7 @@ export default async function BorsaPage() {
               <h1 className="section-title mt-4">Martı hissesi</h1>
               <p className="dek">
                 Martı Technologies, <span className="hl">NYSE American</span> borsasında{' '}
-                <span className="hl">MRT</span> koduyla işlem görüyor. Fiyatlar gün sonu verisidir.
+                <span className="hl">MRT</span> koduyla işlem görüyor. Fiyatlar gecikmeli olabilir.
                 Bu sayfa <span className="hl">yatırım tavsiyesi değildir</span>.
               </p>
             </header>
@@ -95,18 +96,7 @@ export default async function BorsaPage() {
                 <StockChart prices={market.prices} />
               </>
             ) : (
-              <p className="body-copy max-w-2xl border-y border-(--line) py-8">
-                Fiyat verisi henüz bağlanmadı. Güncel fiyatı{' '}
-                <a
-                  href="https://ir.marti.tech/stock-info/quote"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-underline"
-                >
-                  Martı yatırımcı ilişkileri
-                </a>{' '}
-                sayfasında görebilirsiniz.
-              </p>
+              <TradingViewChart />
             )}
 
             <div className="mt-20 grid gap-16 lg:grid-cols-12">
@@ -178,9 +168,11 @@ export default async function BorsaPage() {
             </div>
 
             <p className="meta mt-20 max-w-3xl border-t border-(--line) pt-6">
-              Fiyatlar gün sonu ve gecikmeli verilerdir
-              {market?.price_source ? ` (kaynak: ${market.price_source})` : ''}; başvurular SEC
-              EDGAR&apos;dan alınır.
+              Fiyatlar gecikmeli verilerdir
+              {market?.price_source
+                ? ` (kaynak: ${market.price_source})`
+                : ' (kaynak: TradingView)'}
+              ; başvurular SEC EDGAR&apos;dan alınır.
               {market ? ` Son güncelleme: ${formatDate(market.updated_at)}.` : ''} Bu sayfa bilgi
               amaçlıdır, yatırım tavsiyesi değildir. TAGNEWSPAPER&apos;ın Martı ile bağlantısı
               yoktur.
