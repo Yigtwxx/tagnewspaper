@@ -1,5 +1,235 @@
 [
   {
+    "_id": "ev-seed-2023-02-03",
+    "date": "2023-02-03",
+    "type": "filing",
+    "title": "İstanbul Otomobilciler Esnaf Odası, Martı'ya haksız rekabet davası açtı",
+    "description": "Martı'nın ABD Menkul Kıymetler ve Borsa Komisyonu'na (SEC) sunduğu yıllık raporlara göre İstanbul Otomobilciler Esnaf Odası (haberlerde İstanbul Taksiciler Esnaf Odası olarak da geçiyor), şirketin TAG yolculuk hizmeti ile elektrikli moped hizmetinin haksız rekabet oluşturduğu iddiasıyla İstanbul 14. Asliye Ticaret Mahkemesi'nde dava açtı. Davacı, bu hizmetlere internet sitesi ve mobil uygulama üzerinden erişimin engellenmesini de talep etti.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390024033158/ea0202410-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2023 faaliyet yılı)",
+        "domain": "sec.gov"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026042974/ea0284871-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2025 faaliyet yılı)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2023-03-06",
+    "date": "2023-03-06",
+    "type": "court_decision",
+    "title": "Mahkeme, ihtiyati tedbir olarak Martı TAG ve Martı Motosiklet'e erişim engeli getirdi",
+    "description": "İstanbul 14. Asliye Ticaret Mahkemesi, davacı odanın ihtiyati tedbir talebini kabul ederek Martı uygulaması ve internet sitesi üzerinden sunulan Martı TAG ve Martı Motosiklet hizmetlerine erişim engeli getirilmesine hükmetti. Martı'nın SEC raporlarında kararın tarihi 6 Mart 2023 olarak belirtiliyor; karar 8 Mart'ta haberlere yansıdı ve şirket karara itiraz edeceğini açıkladı.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.aa.com.tr/tr/gundem/mahkemeden-marti-tag-ve-marti-motosiklete-erisim-engeli/2840103",
+        "source_name": "Anadolu Ajansı",
+        "domain": "aa.com.tr"
+      },
+      {
+        "url": "https://www.dha.com.tr/gundem/marti-ceosundan-erisim-engeli-aciklamasi-tag-gibi-bir-hizmeti-3-5-taksi-baronuna-yedirmeyiz-2217413",
+        "source_name": "Demirören Haber Ajansı (DHA)",
+        "domain": "dha.com.tr"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390024033158/ea0202410-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2023 faaliyet yılı)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2023-06-20",
+    "date": "2023-06-20",
+    "type": "court_decision",
+    "title": "Martı'nın itirazının ardından TAG'a yönelik ihtiyati tedbir kaldırıldı",
+    "description": "Martı'nın SEC'e sunduğu izahname ve yıllık rapora göre şirket, erişim engeli içeren ihtiyati tedbir kararına ilk derece mahkemesi nezdinde itiraz etti ve tedbir 20 Haziran 2023 itibarıyla kaldırıldı. Esas dava ilk derece mahkemesinde sürdü.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000110465923085871/mrt-20221231xf1.htm",
+        "source_name": "Martı Technologies – SEC Form F-1 izahnamesi (31 Temmuz 2023)",
+        "domain": "sec.gov"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390024033158/ea0202410-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2023 faaliyet yılı)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2024-07-18",
+    "date": "2024-07-18",
+    "type": "regulation",
+    "title": "Paylaşımlı yolculuk yönetmeliği ilk kez İBB UKOME alt komisyonu gündemine geldi",
+    "description": "Haberlere göre İstanbul Büyükşehir Belediyesi Ulaşım Koordinasyon Merkezi (UKOME) alt komisyonunda paylaşımlı yolculuk yönetmeliği ilk kez gündeme alındı. Martı kurucusu, toplantının ardından UKOME'nin ilgili bakanlık ve kurumlardan görüş isteyeceğini, ardından bir komisyon kurularak taslağın oylamaya sunulacağını açıkladı.",
+    "court": null,
+    "evidence": [
+      {
+        "url": "https://www.iha.com.tr/istanbul-haberleri/paylasimli-yolculuk-yonetmeligi-ukome-gundeminde-100241846",
+        "source_name": "İhlas Haber Ajansı (İHA)",
+        "domain": "iha.com.tr"
+      },
+      {
+        "url": "https://www.bloomberght.com/marti-tag-kurucusundan-paylasimli-yolculuk-aciklamasi-2356712",
+        "source_name": "Bloomberg HT (AA)",
+        "domain": "bloomberght.com"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2024-07-19",
+    "date": "2024-07-19",
+    "type": "court_decision",
+    "title": "İlk derece mahkemesi TAG için haksız rekabet tespit edip durdurma kararı verdi",
+    "description": "Haberlere göre İstanbul 14. Asliye Ticaret Mahkemesi, davayı kısmen kabul ederek Martı TAG hizmetinin haksız rekabet oluşturduğuna ve hizmetin şirketin diğer ticari faaliyetlerine engel olmayacak şekilde durdurulmasına hükmetti; Martı'nın SEC raporuna göre motosiklet hizmetine ilişkin talepler reddedildi. Martı kararı üst mahkemeye taşıyacağını açıkladı ve itirazını 1 Ekim 2024'te sundu.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.hurriyet.com.tr/ekonomi/mahkeme-karar-verdi-marti-taga-durdurma-karari-42492348",
+        "source_name": "Hürriyet (AA)",
+        "domain": "hurriyet.com.tr"
+      },
+      {
+        "url": "https://anlatilaninotesi.com.tr/20240719/martinin-kurucusu-oktemden-haksiz-rekabet-davasi-sonrasi-aciklama-biz-bezmeyiz-1086038484.html",
+        "source_name": "Sputnik Türkiye",
+        "domain": "anlatilaninotesi.com.tr"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390025036882/ea0238107-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2024 faaliyet yılı)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2024-08-08",
+    "date": "2024-08-08",
+    "type": "regulation",
+    "title": "Martı: Gelir İdaresi, paylaşımlı yolculuk kazancının vergilendirileceğini bildirdi",
+    "description": "Martı'nın açıklamasına göre Gelir İdaresi Başkanlığı, kendisine yapılan bir başvuruya verdiği yanıtta paylaşımlı yolculuk platformu üzerinden yapılan şehir içi taşımacılıktan elde edilen kazancın ticari kazanç olarak vergilendirilmesi gerektiğini, şartlar sağlanırsa basit usulün uygulanabileceğini belirtti. Martı, sürücüleri vergi mükellefi olmaya teşvik edeceğini açıkladı.",
+    "court": null,
+    "evidence": [
+      {
+        "url": "https://www.dha.com.tr/ekonomi/tag-suruculeri-paylasimli-yolculuk-gelirleri-uzerinden-vergi-odeyecek-2486850",
+        "source_name": "Demirören Haber Ajansı (DHA)",
+        "domain": "dha.com.tr"
+      },
+      {
+        "url": "https://www.cumhuriyet.com.tr/ekonomi/paylasimli-yolculuga-vergi-duzenlemesi-2235775",
+        "source_name": "Cumhuriyet (İHA)",
+        "domain": "cumhuriyet.com.tr"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2024-10-17",
+    "date": "2024-10-17",
+    "type": "court_decision",
+    "title": "İdare mahkemesi, Martı'nın e-ulaşım lisansı başvurusunun reddine ilişkin işlemi durdurdu",
+    "description": "Yeni Şafak'ın aktardığı karar metnine göre İstanbul 7. İdare Mahkemesi, Martı'nın elektronik ulaşım yönetim lisansı başvurusunun İBB tarafından zımnen reddedilmesine ilişkin işlemin yürütmesini 17 Ekim 2024'te oybirliğiyle durdurdu; karara karşı Bölge İdare Mahkemesi'ne itiraz yolu açık bırakıldı. Karar 1 Kasım 2024'te Martı kurucusu tarafından duyuruldu; kurucu, TAG'ın artık lisanslı hizmet vereceğini savundu.",
+    "court": "İstanbul 7. İdare Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.yenisafak.com/hayat/marti-tag-kurucusu-oguz-alper-oktem-mujde-diyerek-duyurdu-kazandik-4654415",
+        "source_name": "Yeni Şafak",
+        "domain": "yenisafak.com"
+      },
+      {
+        "url": "https://www.dha.com.tr/gundem/marti-kurucusu-oktem-marti-tag-artik-lisansli-sekilde-e-ulasim-hizmeti-verecek-2525096",
+        "source_name": "Demirören Haber Ajansı (DHA)",
+        "domain": "dha.com.tr"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2024-11-22",
+    "date": "2024-11-22",
+    "type": "court_decision",
+    "title": "İstinaf, 2024 tarihli ilk derece kararını kaldırıp dosyayı yeniden yargılamaya gönderdi",
+    "description": "Martı'nın 22 Kasım 2024'te duyurduğuna göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, şirketin istinaf başvurusunu kabul ederek 19 Temmuz 2024 tarihli kararı kaldırdı; dairenin karar tarihi incelenen kaynaklarda yer almıyor. Şirketin SEC raporuna göre daire, bilirkişi raporlarının yetersiz olduğu ve savunmaların yeterince incelenmediği gerekçesiyle dosyayı ilk derece mahkemesine geri gönderdi ve yeniden yargılama 27 Kasım 2024'te başladı.",
+    "court": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi",
+    "evidence": [
+      {
+        "url": "https://www.dha.com.tr/ekonomi/marti-tag-ust-mahkeme-marti-lehine-karar-verdi-2536538",
+        "source_name": "Demirören Haber Ajansı (DHA)",
+        "domain": "dha.com.tr"
+      },
+      {
+        "url": "https://t24.com.tr/ekonomi/istinaf-mahkemesi-nden-marti-karari-erisim-engeli-kalkti,1198294",
+        "source_name": "T24",
+        "domain": "t24.com.tr"
+      },
+      {
+        "url": "https://egirisim.com/2024/11/22/istinaf-mahkemesi-istanbul-taksiciler-odasinin-marti-tagi-kapattirma-talebini-reddetti",
+        "source_name": "egirişim",
+        "domain": "egirisim.com"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026042974/ea0284871-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2025 faaliyet yılı)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2025-03-03",
+    "date": "2025-03-03",
+    "type": "regulation",
+    "title": "TBMM'ye izinsiz yolcu taşımacılığında ehliyet geri alınmasını öngören teklif sunuldu",
+    "description": "İYİ Parti Afyonkarahisar Milletvekili Hakan Şeref Olgun'un sunduğu Karayolları Trafik Kanunu değişiklik teklifi (2/2961), izinsiz yolcu taşımacılığı yapan sürücülerin belgelerinin ilk ihlalde 6 ay, bir yıl içinde tekrarında 1 yıl süreyle geri alınmasını öngörüyor. Martı kurucusu teklifin TAG sürücülerini hedef aldığını savunarak tepki gösterdi; TBMM kayıtlarına göre teklif İçişleri Komisyonu'nda bekliyor.",
+    "court": null,
+    "evidence": [
+      {
+        "url": "https://www.tbmm.gov.tr/Yasama/KanunTeklifi/db023545-26d3-4806-9ffa-01955ffeb5c5",
+        "source_name": "TBMM – Kanun Teklifi 2/2961",
+        "domain": "tbmm.gov.tr"
+      },
+      {
+        "url": "https://afyonsehir.com/bu-skandala-imza-atanlar-sandikta-bunun-bedelini-cok-agir-sekilde-oder",
+        "source_name": "Afyon Şehir Gazetesi",
+        "domain": "afyonsehir.com"
+      },
+      {
+        "url": "https://www.paraanaliz.com/haberler/korsan-taksiciler-icin-yeni-kanun-teklifi",
+        "source_name": "ParaAnaliz",
+        "domain": "paraanaliz.com"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2025-03-21",
+    "date": "2025-03-21",
+    "type": "court_decision",
+    "title": "Yeniden yargılamada yeni bilirkişi heyeti atandı, başka şoför odaları davaya katıldı",
+    "description": "Martı'nın SEC raporlarına göre İstanbul 14. Asliye Ticaret Mahkemesi, yeniden yargılamanın ikinci duruşmasında İzmir ve Kayseri'deki şoför odaları ile Türkiye Şoförler ve Otomobilciler Federasyonu'nun müdahale taleplerini kabul etti ve yeni bir bilirkişi heyeti atadı. Antalya Şoförler ve Otomobilciler Odası'nın Antalya 1. Asliye Ticaret Mahkemesi'nde açtığı dava da bu dosyayla birleştirilmişti.",
+    "court": "İstanbul 14. Asliye Ticaret Mahkemesi",
+    "evidence": [
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390025036882/ea0238107-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2024 faaliyet yılı)",
+        "domain": "sec.gov"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026042974/ea0284871-20f_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 20-F (2025 faaliyet yılı)",
+        "domain": "sec.gov"
+      },
+      {
+        "url": "https://www.dha.com.tr/gundem/istinaf-karari-bozmustu-marti-taga-yeniden-haksiz-rekabet-davasi-2567734",
+        "source_name": "Demirören Haber Ajansı (DHA)",
+        "domain": "dha.com.tr"
+      }
+    ]
+  },
+  {
     "_id": "ev-seed-2026-06-24",
     "date": "2026-06-24",
     "type": "court_decision",
@@ -20,11 +250,41 @@
     ]
   },
   {
-    "_id": "ev-seed-2026-10-23",
-    "date": "2026-10-23",
+    "_id": "ev-seed-2026-10-01",
+    "date": "2026-10-01",
+    "type": "other",
+    "title": "TŞOF Başkanı: İcra dairesi, TAG'a erişim engeli için Siber Güvenlik Başkanlığı'na yazdı",
+    "description": "TESK Genel Başkanı ve TŞOF Başkanı, İstanbul 22. İcra Dairesi'nin 24 Haziran 2026 tarihli ilk derece kararının infazı amacıyla Siber Güvenlik Başkanlığı'na yazı gönderdiğini ve erişim engeli sürecinin başlatıldığını açıkladı. Martı ise 26 Ekim'de SEC'e sunduğu bildirimde istinaf kararının davacıların başlattığı icra süreçlerinin dayanağını ortadan kaldırdığını değerlendirdiğini ve hizmetlerinin kesintisiz sürdüğünü bildirdi.",
+    "court": null,
+    "evidence": [
+      {
+        "url": "https://x.com/MehmetYiginer/status/2105666859202695515/photo/1",
+        "source_name": "TESK/TŞOF Başkanı – X açıklaması",
+        "domain": "x.com"
+      },
+      {
+        "url": "https://www.antalyakorfez.com/mehmet-yiginerden-marti-tag-aciklamasi-erisime-kapatilmasi-sureci-baslatildi",
+        "source_name": "Antalya Körfez",
+        "domain": "antalyakorfez.com"
+      },
+      {
+        "url": "https://www.bursasaati.com.tr/marti-tag-erisime-kapaniyor-cezalar-kapida",
+        "source_name": "Bursa Saati",
+        "domain": "bursasaati.com.tr"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026112250/ea0309624-6k_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 6-K (26 Ekim 2026)",
+        "domain": "sec.gov"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2026-10-22",
+    "date": "2026-10-22",
     "type": "court_decision",
     "title": "İstinaf mahkemesi ilk derece kararını kaldırdı",
-    "description": "Haberlere göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, Martı'nın istinaf başvurusunu kabul ederek ilk derece kararını kaldırdı ve davaları reddetti. Kararda, yasa koyucunun yasaklamadığı bir ticari faaliyetin mahkeme kararıyla yasaklanamayacağı ve yeni mevzuata ihtiyaç olduğu belirtildi. Kararın kesinleşme durumu haberlerde doğrulanmadı.",
+    "description": "Haberlere göre İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi, Martı'nın istinaf başvurusunu kabul ederek ilk derece kararını kaldırdı ve davaları reddetti. Kararda, yasa koyucunun yasaklamadığı bir ticari faaliyetin mahkeme kararıyla yasaklanamayacağı ve yeni mevzuata ihtiyaç olduğu belirtildi. Kararın kesinleşme durumu haberlerde doğrulanmadı. Şirketin SEC başvurusuna göre karar 22 Ekim'de verildi; haberler 23 Ekim'de yayımlandı.",
     "court": "İstanbul Bölge Adliye Mahkemesi 14. Hukuk Dairesi",
     "evidence": [
       {
@@ -36,6 +296,31 @@
         "url": "https://www.internethaber.com/marti-tag-turkiyede-yasal-mi-mahkemeden-karar-cikti-2465503h.htm",
         "source_name": "İnternet Haber",
         "domain": "internethaber.com"
+      }
+    ]
+  },
+  {
+    "_id": "ev-seed-2026-10-24",
+    "date": "2026-10-24",
+    "type": "statement",
+    "title": "İstanbul Taksiciler Esnaf Odası, istinaf kararına karşı Yargıtay'a başvuracağını açıkladı",
+    "description": "İstanbul Taksiciler Esnaf Odası Başkanı, istinaf kararını eleştirerek Yargıtay yolunun açık olduğunu, temyiz başvurusu yapacaklarını ve TBMM'de yasal düzenleme için girişimde bulunacaklarını açıkladı. Martı'nın SEC bildirimine göre davacılar gerekçeli kararın tebliğinden itibaren iki hafta içinde Yargıtay'a başvurabilir; 2 Kasım 2026 itibarıyla temyiz başvurusunun yapıldığına dair doğrulanmış bilgi bulunmuyor.",
+    "court": null,
+    "evidence": [
+      {
+        "url": "https://x.com/ismetDALCI/status/2114028528618389999",
+        "source_name": "İstanbul Taksiciler Esnaf Odası Başkanı – X açıklaması",
+        "domain": "x.com"
+      },
+      {
+        "url": "https://editorhaber.com.tr/haber/marti-tag-kararinda-uc-farkli-ses",
+        "source_name": "Editör Haber",
+        "domain": "editorhaber.com.tr"
+      },
+      {
+        "url": "https://www.sec.gov/Archives/edgar/data/1852767/000121390026112250/ea0309624-6k_marti.htm",
+        "source_name": "Martı Technologies – SEC Form 6-K (26 Ekim 2026)",
+        "domain": "sec.gov"
       }
     ]
   }
