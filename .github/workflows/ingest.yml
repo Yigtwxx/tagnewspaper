@@ -1,0 +1,53 @@
+name: ingest
+
+# Collect, summarize and publish news every 15 minutes.
+# Minutes are offset from :00 because GitHub delays/drops top-of-hour cron runs.
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+    inputs:
+      max_items:
+        description: "Max new items to process in this run"
+        required: false
+        default: ""
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: true
+          cache-dependency-glob: pipeline/uv.lock
+
+      - name: Install
+        run: uv sync --frozen --no-dev
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          REVALIDATE_URL: ${{ secrets.REVALIDATE_URL }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          MAX_ITEMS: ${{ inputs.max_items }}
+        run: |
+          if [ -n "$MAX_ITEMS" ]; then
+            uv run --no-dev python -m tagnews run --max-items "$MAX_ITEMS"
+          else
+            uv run --no-dev python -m tagnews run
+          fi
