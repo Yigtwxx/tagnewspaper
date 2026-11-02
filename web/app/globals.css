@@ -51,7 +51,7 @@
   --accent-text: #000000;
   --line: rgb(0 0 0 / 0.28);
   --surface: #04a74b;
-  --alert: #7a0c0c;
+  --alert: #4a0000;
   color-scheme: light;
 }
 [data-theme] {
