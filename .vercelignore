@@ -1,0 +1,11 @@
+# Only web/ is built on Vercel; never upload secrets or the Python pipeline.
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+pipeline/
+docs/
+.github/
+**/node_modules
+**/.next
