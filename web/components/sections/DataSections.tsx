@@ -36,7 +36,7 @@ export function NewsDensity({ snapshot }: { snapshot: SnapshotT }) {
       id="veriler"
       data-section="density"
       data-theme="paper"
-      className="px-4 py-28 sm:px-8 sm:py-36"
+      className="px-4 py-16 sm:px-8 sm:py-24"
     >
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
@@ -77,7 +77,7 @@ export function SourceSpread({ snapshot }: { snapshot: SnapshotT }) {
   if (data.length === 0) return null;
 
   return (
-    <section data-section="sources" data-theme="paper" className="px-4 pb-28 sm:px-8 sm:pb-36">
+    <section data-section="sources" data-theme="paper" className="px-4 pb-16 sm:px-8 sm:pb-24">
       <div className="mx-auto max-w-[1360px]">
         <header className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Kim yazdı?</h2>
@@ -106,7 +106,7 @@ export function TopicTrends({ snapshot }: { snapshot: SnapshotT }) {
   const leader = totals[0];
 
   return (
-    <section data-section="topics" data-theme="ink" className="px-4 py-28 sm:px-8 sm:py-36">
+    <section data-section="topics" data-theme="ink" className="px-4 py-16 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">
           <h2 className="section-title mt-4">Hangi konu öne çıktı?</h2>

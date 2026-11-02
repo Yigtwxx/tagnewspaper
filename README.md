@@ -8,22 +8,22 @@ görselleştirir. Her öğe kaynağına bağlantı verir.
 > TAGNEWSPAPER'ın Martı ile ya da herhangi bir tarafla bağlantısı yoktur. Gönüllü bir bilgi
 > sayfasıdır; para kazanmaz, reklam almaz, Martı logosu kullanmaz.
 
-![Split-flap tabelalı açılış ekranı (kurgusal örnek veriyle)](docs/screenshot-hero.png)
+**Canlı site:** https://tagnewspaper.vercel.app
 
 ## Sayfada neler var?
 
 | Bölüm | Ne gösterir |
 |---|---|
-| Tabela | Son manşetler, havalimanı kalkış tabelası gibi harf harf döner |
+| Künye | Split-flap tabela, kayan manşet bandı; her gün 11.00'de yeni sayı |
 | Gündem | En çok kaynağın yazdığı haber manşette; altında konuya göre süzülebilen haber akışı |
-| Kaç kişi kullanıyor? | Şirketin açıkladığı son kullanıcı ve sürücü rakamları (canlı değildir), nokta grafiğiyle |
+| Kaç kişi kullanıyor? | Şirketin açıkladığı son kullanıcı ve sürücü rakamları (canlı değildir) ve TAG'ın hizmet verdiği 40 şehrin haritası |
 | Dava nerede? | Mahkeme kararlarının zaman çizelgesi; yalnızca doğrulanmış gelişmeler |
 | Ne zaman konuşuldu? | Son 90 günün günlük haber sayısı, dava gelişmeleri işaretli |
 | Kim yazdı? | Yayın organlarına göre haber dağılımı |
 | Hangi konu öne çıktı? | Haftalara göre konu dağılımı (stream grafiği) |
 | Kim ne diyor? | Tarafların haberlere yansıyan açıklamaları, atıf diliyle |
+| Borsa (`/borsa`) | Martı hissesi (NYSE American: MRT) ve SEC başvuruları |
 
-![Dava zaman çizelgesi (kurgusal örnek veriyle)](docs/screenshot-case.png)
 
 ## Mimari
 

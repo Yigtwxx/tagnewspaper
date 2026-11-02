@@ -20,16 +20,16 @@ export function TradingViewChart() {
     script.type = 'text/javascript';
     script.innerHTML = JSON.stringify({
       symbols: [['Martı (MRT)', 'AMEX:MRT|12M']],
-      chartOnly: false,
+      chartOnly: true,
       width: '100%',
       height: '100%',
       locale: 'tr',
       colorTheme: 'light',
       autosize: true,
-      showVolume: true,
+      showVolume: false,
       showMA: false,
       hideDateRanges: false,
-      hideMarketStatus: false,
+      hideMarketStatus: true,
       hideSymbolLogo: true,
       scalePosition: 'right',
       scaleMode: 'Normal',
@@ -39,13 +39,13 @@ export function TradingViewChart() {
       valuesTracking: '1',
       changeMode: 'price-and-percent',
       chartType: 'area',
-      lineWidth: 2,
+      lineWidth: 3,
       lineType: 0,
       lineColor: '#01b251',
       topColor: 'rgba(1, 178, 81, 0.28)',
       bottomColor: 'rgba(1, 178, 81, 0)',
       backgroundColor: 'rgba(255, 255, 255, 1)',
-      gridLineColor: 'rgba(0, 0, 0, 0.06)',
+      gridLineColor: 'rgba(0, 0, 0, 0)',
       widgetFontColor: '#000000',
       dateRanges: ['1m|30', '3m|60', '12m|1D', '60m|1W', 'all|1M'],
     });
@@ -54,7 +54,7 @@ export function TradingViewChart() {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="tradingview-widget-container h-[460px] w-full border-y border-(--line)">
+      <div className="tradingview-widget-container h-[380px] w-full border-y border-(--line)">
         <div ref={ref} className="tradingview-widget-container__widget h-full w-full" />
       </div>
       <p className="meta">

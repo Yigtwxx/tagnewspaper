@@ -50,7 +50,7 @@ export function Numbers({ stats }: { stats: StatT[] }) {
       id="rakamlar"
       data-section="numbers"
       data-theme="ink"
-      className="px-4 py-28 sm:px-8 sm:py-36"
+      className="px-4 py-20 sm:px-8 sm:py-24"
     >
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">

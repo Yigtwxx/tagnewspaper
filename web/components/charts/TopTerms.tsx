@@ -29,7 +29,7 @@ export function TopTerms({ terms }: { terms: Term[] }) {
         duration: 0.8,
         ease: 'back.out(1.7)',
         stagger: { each: 0.06, from: 'random' },
-        scrollTrigger: { trigger: ref.current, start: 'top 80%', once: true },
+        scrollTrigger: { trigger: ref.current, start: 'top 95%', once: true },
       });
     },
     { scope: ref },

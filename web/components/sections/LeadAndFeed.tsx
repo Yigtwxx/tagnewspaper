@@ -1,4 +1,5 @@
 import { encodeCursor } from '@/lib/cursor';
+import { boxShape, SHAPE_CLASS } from '@/lib/layout';
 import type { SnapshotT } from '@/lib/schema';
 
 import { FeedClient } from '../feed/FeedClient';
@@ -31,7 +32,7 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
       <div className="mx-auto max-w-[1360px]">
         {lead ? (
           <div className="rule-grid">
-            <div className="rule-grid__inner grid-flow-row-dense grid-cols-1 sm:auto-rows-[23rem] sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rule-grid__inner grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rule-cell sm:col-span-2 sm:row-span-2">
                 <LeadBox
                   article={lead.article}
@@ -42,11 +43,14 @@ export function LeadAndFeed({ snapshot }: { snapshot: SnapshotT }) {
               <div className="rule-cell sm:row-span-2 lg:col-start-4 lg:row-start-1">
                 <LatestBox articles={briefs} />
               </div>
-              {front.map((article) => (
-                <div key={article.id} className="rule-cell">
-                  <NewsBox article={article} terms={terms} />
-                </div>
-              ))}
+              {front.map((article) => {
+                const shape = boxShape(article);
+                return (
+                  <div key={article.id} className={`rule-cell ${SHAPE_CLASS[shape]}`}>
+                    <NewsBox article={article} terms={terms} shape={shape} />
+                  </div>
+                );
+              })}
             </div>
           </div>
         ) : (

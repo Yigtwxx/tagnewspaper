@@ -13,7 +13,7 @@ export function ActorVoices({ statements }: { statements: ActorStatementT[] }) {
       id="taraflar"
       data-section="actors"
       data-theme="paper"
-      className="px-4 py-28 sm:px-8 sm:py-36"
+      className="px-4 py-20 sm:px-8 sm:py-24"
     >
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12 grid gap-4 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-end">

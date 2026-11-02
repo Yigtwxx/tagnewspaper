@@ -3,7 +3,8 @@
 import { useRef, useState } from 'react';
 
 import { CATEGORY_LABEL } from '@/lib/labels';
-import { Flip, gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/motion';
+import { boxShape, SHAPE_CLASS } from '@/lib/layout';
+import { gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/motion';
 import { type ArticleViewT, CATEGORIES, type CategoryT, NewsPage } from '@/lib/schema';
 
 import { NewsBox } from './NewsBox';
@@ -31,29 +32,20 @@ export function FeedClient({
   const present = new Set(items.map((a) => a.category));
   const visible = filter === 'all' ? items : items.filter((a) => a.category === filter);
 
-  function animateLayout(update: () => void) {
+  /** Swap the visible set, then fade the new boxes in. No layout tweening, so nothing jumps. */
+  function changeFilter(next: Filter) {
+    if (next === filter) return;
+    setFilter(next);
     const grid = gridRef.current;
-    if (!grid || prefersReducedMotion()) {
-      update();
-      return;
-    }
-    registerGsap();
-    const state = Flip.getState(grid.querySelectorAll('[data-flip-id]'));
-    update();
+    if (!grid || prefersReducedMotion()) return;
     requestAnimationFrame(() => {
-      Flip.from(state, {
-        duration: 0.55,
-        ease: 'power3.inOut',
-        absolute: true,
-        onEnter: (els) =>
-          gsap.fromTo(
-            els,
-            { opacity: 0, y: 24 },
-            { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' },
-          ),
-        onLeave: (els) => gsap.to(els, { opacity: 0, duration: 0.2 }),
-        onComplete: () => ScrollTrigger.refresh(),
-      });
+      registerGsap();
+      gsap.fromTo(
+        grid.children,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out', stagger: 0.03, overwrite: true },
+      );
+      ScrollTrigger.refresh();
     });
   }
 
@@ -95,7 +87,7 @@ export function FeedClient({
               key={c}
               type="button"
               aria-pressed={active}
-              onClick={() => animateLayout(() => setFilter(c))}
+              onClick={() => changeFilter(c)}
               className={`border-b-2 pb-1 font-sans text-sm transition-colors ${
                 active
                   ? 'border-(--fg) font-semibold text-(--fg)'
@@ -111,13 +103,16 @@ export function FeedClient({
       <div className="rule-grid">
         <div
           ref={gridRef}
-          className="rule-grid__inner grid-cols-1 sm:auto-rows-[23rem] sm:grid-cols-2 lg:grid-cols-4"
+          className="rule-grid__inner grid-flow-row-dense grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {visible.map((article) => (
-            <div key={article.id} className="rule-cell" data-flip-id={article.id}>
-              <NewsBox article={article} terms={terms} />
-            </div>
-          ))}
+          {visible.map((article) => {
+            const shape = boxShape(article);
+            return (
+              <div key={article.id} className={`rule-cell ${SHAPE_CLASS[shape]}`}>
+                <NewsBox article={article} terms={terms} shape={shape} />
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -116,7 +116,7 @@ export function StreamGraph({ data }: { data: WeekCounts[] }) {
       gsap.set(wrapRef.current.querySelectorAll('.stream-label'), { opacity: 0 });
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: wrapRef.current, start: 'top 75%', once: true },
+        scrollTrigger: { trigger: wrapRef.current, start: 'top 92%', once: true },
       });
       // Inner layers open first, so the stream unfolds from its middle outwards.
       const order = [...series.keys()].sort(

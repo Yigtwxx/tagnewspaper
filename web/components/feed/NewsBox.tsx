@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import { formatDate, formatTime } from '@/lib/format';
 import { CATEGORY_LABEL } from '@/lib/labels';
+import type { BoxShape } from '@/lib/layout';
 import type { ArticleViewT } from '@/lib/schema';
 
 import { GenerativeCover } from './GenerativeCover';
@@ -54,23 +55,30 @@ function StoryLink({ article, children }: { article: ArticleViewT; children: Rea
   );
 }
 
-/** A fixed-size ruled box on the front page grid. Text is clamped so every box keeps its size. */
+/** One story on the ruled grid. Its shape comes from its length; text is never cropped. */
 export function NewsBox({
   article,
   terms = KEY_TERMS,
+  shape = 'small',
 }: {
   article: ArticleViewT;
   terms?: readonly string[];
+  shape?: BoxShape;
 }) {
   const summary = article.display === 'full' ? article.summary : null;
+  const big = shape !== 'small';
   return (
-    <article className="group relative flex h-full flex-col gap-3 overflow-hidden p-5">
+    <article className="group relative flex h-full flex-col gap-3 p-5">
       <Kicker article={article} />
-      <h3 className="headline line-clamp-4 text-[1.375rem]">
+      <h3 className={`headline ${big ? 'text-[clamp(1.45rem,1.9vw,1.75rem)]' : 'text-[1.3rem]'}`}>
         <StoryLink article={article}>{article.title}</StoryLink>
       </h3>
       {summary ? (
-        <p className="body-copy line-clamp-6 text-[0.98rem] text-(--fg)/85">
+        <p
+          className={`body-copy text-(--fg)/85 ${
+            shape === 'wide' ? 'gap-8 lg:columns-2' : ''
+          } ${big ? 'text-[1.02rem]' : 'text-[0.98rem]'}`}
+        >
           <Highlighted text={summary} terms={terms} />
         </p>
       ) : (
@@ -95,9 +103,9 @@ export function LeadBox({
 }) {
   const summary = article.display === 'full' ? article.summary : null;
   return (
-    <article className="relative flex h-full flex-col gap-4 overflow-hidden p-5 sm:p-6">
+    <article className="relative flex h-full flex-col gap-4 p-5 sm:p-6">
       <Kicker article={article} />
-      <h3 className="headline line-clamp-4 text-[clamp(1.9rem,3vw,2.6rem)] leading-[1.08]">
+      <h3 className="headline text-[clamp(1.9rem,3vw,2.6rem)] leading-[1.1]">
         <a
           href={article.url}
           target="_blank"
@@ -109,7 +117,7 @@ export function LeadBox({
       </h3>
       <GenerativeCover id={article.id} className="aspect-[21/9] w-full" />
       {summary && (
-        <p className="body-copy line-clamp-4 text-[1.08rem]">
+        <p className="body-copy text-[1.08rem]">
           <Highlighted text={summary} terms={terms} />
         </p>
       )}
@@ -141,7 +149,7 @@ export function LeadBox({
 /** Tall box listing the newest headlines, newspaper "briefing" style. */
 export function LatestBox({ articles }: { articles: ArticleViewT[] }) {
   return (
-    <aside className="flex h-full flex-col overflow-hidden p-5" aria-labelledby="latest-title">
+    <aside className="flex h-full flex-col p-5" aria-labelledby="latest-title">
       <h3 id="latest-title" className="kicker border-b border-(--fg) pb-2 text-[0.8rem]">
         Diğer başlıklar
       </h3>
@@ -155,7 +163,7 @@ export function LatestBox({ articles }: { articles: ArticleViewT[] }) {
               <time dateTime={a.published_at} className="meta block">
                 {formatTime(a.published_at)}, {a.source.name}
               </time>
-              <span className="mt-1 line-clamp-3 font-serif text-[1.02rem] leading-snug font-bold group-hover:underline">
+              <span className="mt-1 block font-serif text-[1.02rem] leading-snug font-bold group-hover:underline">
                 {a.title}
               </span>
             </a>

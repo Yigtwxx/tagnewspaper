@@ -12,7 +12,7 @@ export function Colophon({ lastRunAt, hasData }: { lastRunAt: string; hasData: b
       id="kunye"
       data-section="colophon"
       data-theme="ink"
-      className="px-4 pt-28 pb-12 sm:px-8 sm:pt-36"
+      className="px-4 pt-20 pb-12 sm:px-8 sm:pt-24"
     >
       <div className="mx-auto max-w-[1360px]">
         <div className="section-head mb-12">

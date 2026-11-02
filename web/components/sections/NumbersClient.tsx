@@ -72,12 +72,15 @@ export function NumbersMotion({ children }: { children: ReactNode }) {
           minimumFractionDigits: digits,
           maximumFractionDigits: digits,
         });
-        el.textContent = fmt.format(0);
+        // The real figure stays on screen until the count starts; it never rests at zero.
         gsap.to(state, {
           v: target,
           duration: 1.8,
           ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+          scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+          onStart: () => {
+            el.textContent = fmt.format(0);
+          },
           onUpdate: () => {
             el.textContent = fmt.format(state.v);
           },
@@ -93,7 +96,7 @@ export function NumbersMotion({ children }: { children: ReactNode }) {
           duration: 0.55,
           ease: 'back.out(2.2)',
           stagger: { grid: 'auto', from: 'center', amount: 1.3 },
-          scrollTrigger: { trigger: svg, start: 'top 75%', once: true },
+          scrollTrigger: { trigger: svg, start: 'top 95%', once: true },
         });
       }
     },

@@ -95,7 +95,7 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
       id="dava"
       data-section="case"
       data-theme="tag"
-      className="px-4 py-24 sm:px-8 sm:py-32"
+      className="px-4 py-20 sm:px-8 sm:py-24"
     >
       <div className="mx-auto grid max-w-[1360px] gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
@@ -197,7 +197,7 @@ export function CaseTimeline({ events }: { events: CaseEventT[] }) {
                   )}
                 </li>
               ))}
-              <li className="tl-item relative flex flex-col gap-3">
+              <li className="tl-item relative flex flex-col gap-3 pb-2">
                 <span
                   className="tl-node absolute top-1 -left-10 size-[21px] animate-pulse rounded-full border-[3px] border-black bg-white sm:-left-14"
                   aria-hidden="true"

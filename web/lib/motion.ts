@@ -1,14 +1,13 @@
 'use client';
 
 import gsap from 'gsap';
-import { Flip } from 'gsap/Flip';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 let registered = false;
 
 export function registerGsap(): typeof gsap {
   if (!registered && typeof window !== 'undefined') {
-    gsap.registerPlugin(ScrollTrigger, Flip);
+    gsap.registerPlugin(ScrollTrigger);
     ScrollTrigger.config({ ignoreMobileResize: true });
     registered = true;
   }
@@ -21,4 +20,4 @@ export function prefersReducedMotion(): boolean {
   );
 }
 
-export { Flip, gsap, ScrollTrigger };
+export { gsap, ScrollTrigger };

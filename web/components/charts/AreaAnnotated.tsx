@@ -74,7 +74,7 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
           attr: { width: innerW + 4 },
           duration: 1.6,
           ease: 'power2.inOut',
-          scrollTrigger: { trigger: wrapRef.current, start: 'top 75%', once: true },
+          scrollTrigger: { trigger: wrapRef.current, start: 'top 95%', once: true },
         },
       );
     },
