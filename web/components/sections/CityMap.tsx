@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 
 import { useReducedMotion } from '@/lib/hooks';
 import { gsap, prefersReducedMotion, registerGsap } from '@/lib/motion';
-import { MAP_H, MAP_W, TAG_CITIES, TURKEY_OUTLINE } from '@/lib/turkey-map';
+import { MAP_H, MAP_W, PROVINCES, TURKEY_OUTLINE } from '@/lib/turkey-map';
 
 import { FlapCell } from '../hero/FlapCell';
 
@@ -15,7 +15,7 @@ const WAVES = [
     total: 20,
     label: 'İlk 20 şehir',
     when: '2026 yazına kadar',
-    color: '#ffffff',
+    color: '#01b251',
     source: {
       name: 'Martı basın bülteni',
       url: 'https://ir.marti.tech/news-events/press-releases/detail/112/marti-and-tensor-partner-to-deploy-autonomous-vehicles-in',
@@ -26,7 +26,7 @@ const WAVES = [
     total: 30,
     label: '10 yeni şehir',
     when: 'Ağustos 2026',
-    color: '#7fd8a8',
+    color: '#2fc47a',
     source: {
       name: 'Martı basın bülteni, 12 Ağustos 2026',
       url: 'https://ir.marti.tech/news-events/press-releases/detail/114/marti-technologies-launches-ride-hailing-service-in-10-new',
@@ -37,7 +37,7 @@ const WAVES = [
     total: 40,
     label: '10 yeni şehir',
     when: 'Ekim 2026',
-    color: '#01b251',
+    color: '#8fe3b5',
     source: {
       name: 'Martı duyurusu, 28 Ekim 2026',
       url: 'https://www.businesswire.com/news/home/20261028699518/en/',
@@ -45,7 +45,11 @@ const WAVES = [
   },
 ] as const;
 
-const HUB = TAG_CITIES.find((c) => c.name === 'İstanbul') ?? TAG_CITIES[0];
+const TAG = PROVINCES.filter(
+  (p): p is Required<typeof p> => p.wave !== undefined && p.x !== undefined,
+);
+const HUB = TAG.find((p) => p.code === 34) ?? TAG[0];
+const BASE_FILL = '#141615';
 
 function arc(x: number, y: number): string {
   const mx = (HUB.x + x) / 2;
@@ -54,8 +58,8 @@ function arc(x: number, y: number): string {
 }
 
 /**
- * Where TAG runs. The outline draws in, then each launch wave lights up from Istanbul
- * while a split-flap counter turns 20 → 30 → 40.
+ * Where TAG runs. Province borders draw in; then, wave by wave, routes leave Istanbul and
+ * each province turns green as its route arrives, while a split-flap counter turns to 40.
  */
 export function CityMap() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -72,39 +76,62 @@ export function CityMap() {
       const outline = root.querySelector<SVGPathElement>('.tr-outline');
       if (!outline) return;
       const len = outline.getTotalLength();
+      const borders = root.querySelector('.tr-borders');
 
-      gsap.set(outline, { strokeDasharray: len, strokeDashoffset: len, fillOpacity: 0 });
-      gsap.set(root.querySelectorAll('.city-dot'), { scale: 0, transformOrigin: '50% 50%' });
+      gsap.set(outline, { strokeDasharray: len, strokeDashoffset: len });
+      gsap.set(borders, { opacity: 0 });
+      gsap.set(root.querySelectorAll('.prov-tag'), { fill: BASE_FILL });
       gsap.set(root.querySelectorAll('.city-arc'), { opacity: 0 });
       setCount(0);
       setWave(0);
 
       const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: 'top 70%', once: true },
+        scrollTrigger: { trigger: root, start: 'top 80%', once: true },
       });
-      tl.to(outline, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' });
-      tl.to(outline, { fillOpacity: 1, duration: 0.6 }, '-=0.4');
+      tl.to(outline, { strokeDashoffset: 0, duration: 1.5, ease: 'power2.inOut' });
+      tl.to(borders, { opacity: 1, duration: 0.6 }, '-=0.5');
 
       for (const w of WAVES) {
-        const arcs = gsap.utils.toArray<SVGPathElement>(`.city-arc[data-wave="${w.wave}"]`, root);
-        const dots = gsap.utils.toArray<SVGGElement>(`.city-dot[data-wave="${w.wave}"]`, root);
+        const members = TAG.filter((p) => p.wave === w.wave);
+        const start = tl.duration() + 0.2;
         tl.add(() => {
           setWave(w.wave);
           setCount(w.total);
+        }, start);
+        members.forEach((p, k) => {
+          const a = root.querySelector<SVGPathElement>(`.city-arc[data-code="${p.code}"]`);
+          const shape = root.querySelector(`.prov-tag[data-code="${p.code}"]`);
+          const at = start + k * 0.05;
+          if (a) {
+            const l = a.getTotalLength();
+            tl.fromTo(
+              a,
+              { strokeDasharray: l, strokeDashoffset: l, opacity: 1 },
+              { strokeDashoffset: 0, duration: 0.8, ease: 'power2.out' },
+              at,
+            );
+          }
+          // The province lights up the moment its route arrives.
+          if (shape) {
+            tl.fromTo(
+              shape,
+              { fill: '#e9fff2' },
+              { fill: w.color, duration: 0.5, ease: 'power1.out', immediateRender: false },
+              at + 0.75,
+            );
+          }
         });
-        arcs.forEach((a) => {
-          const l = a.getTotalLength();
-          gsap.set(a, { strokeDasharray: l, strokeDashoffset: l, opacity: 1 });
-        });
-        tl.to(arcs, { strokeDashoffset: 0, duration: 0.9, ease: 'power2.out', stagger: 0.04 });
-        tl.to(dots, { scale: 1, duration: 0.5, ease: 'back.out(3)', stagger: 0.04 }, '-=0.6');
-        tl.to(arcs, { opacity: 0.18, duration: 0.6 }, '+=0.4');
+        tl.to(
+          root.querySelectorAll(`.city-arc[data-wave="${w.wave}"]`),
+          { opacity: 0.16, duration: 0.6 },
+          '+=0.3',
+        );
       }
     },
     { scope: rootRef },
   );
 
-  const hovered = TAG_CITIES.find((c) => c.name === hover);
+  const hovered = TAG.find((p) => p.name === hover);
   const digits = String(count).padStart(2, '0');
 
   return (
@@ -144,8 +171,9 @@ export function CityMap() {
                   {w.when}: <span className="hl">{w.label}</span>
                 </p>
                 <p className="mt-1 text-[0.98rem] leading-relaxed text-white/80">
-                  {TAG_CITIES.filter((c) => c.wave === w.wave)
-                    .map((c) => c.name)
+                  {TAG.filter((p) => p.wave === w.wave)
+                    .map((p) => p.name)
+                    .sort((a, b) => a.localeCompare(b, 'tr'))
                     .join(', ')}
                 </p>
                 <a
@@ -168,59 +196,47 @@ export function CityMap() {
             role="img"
             aria-label="TAG'ın hizmet verdiği 40 şehrin Türkiye haritası"
           >
-            <defs>
-              <radialGradient id="city-glow">
-                <stop offset="0" stopColor="#01b251" stopOpacity="0.55" />
-                <stop offset="1" stopColor="#01b251" stopOpacity="0" />
-              </radialGradient>
-            </defs>
+            <g className="tr-borders">
+              {PROVINCES.map((p) => (
+                <path
+                  key={p.code}
+                  className={p.wave ? 'prov-tag cursor-default' : undefined}
+                  data-code={p.code}
+                  d={p.d}
+                  fill={p.wave ? WAVES[p.wave - 1].color : BASE_FILL}
+                  stroke="#ffffff"
+                  strokeOpacity={hover === p.name && p.name ? 0.95 : 0.28}
+                  strokeWidth={hover === p.name && p.name ? 1.6 : 0.6}
+                  strokeLinejoin="round"
+                  onPointerEnter={p.name ? () => setHover(p.name) : undefined}
+                  onPointerLeave={p.name ? () => setHover(undefined) : undefined}
+                />
+              ))}
+            </g>
             <path
-              className="tr-outline"
+              className="tr-outline pointer-events-none"
               d={TURKEY_OUTLINE}
-              fill="#0f1110"
+              fill="none"
               stroke="#ffffff"
-              strokeOpacity={0.55}
-              strokeWidth={1.2}
+              strokeOpacity={0.85}
+              strokeWidth={1.4}
               strokeLinejoin="round"
             />
-            {TAG_CITIES.filter((c) => c !== HUB).map((c) => (
+            {TAG.filter((p) => p !== HUB).map((p) => (
               <path
-                key={`arc-${c.name}`}
-                className="city-arc"
-                data-wave={c.wave}
-                d={arc(c.x, c.y)}
+                key={`arc-${p.code}`}
+                className="city-arc pointer-events-none"
+                data-code={p.code}
+                data-wave={p.wave}
+                d={arc(p.x, p.y)}
                 fill="none"
-                stroke="#01b251"
-                strokeWidth={1.2}
-                opacity={0.18}
+                stroke="#ffffff"
+                strokeWidth={1.1}
+                opacity={0.16}
               />
             ))}
-            {TAG_CITIES.map((c) => {
-              const color = WAVES[c.wave - 1].color;
-              const on = hover === c.name;
-              return (
-                <g
-                  key={c.name}
-                  className="city-dot cursor-default"
-                  data-wave={c.wave}
-                  transform={`translate(${c.x},${c.y})`}
-                  onPointerEnter={() => setHover(c.name)}
-                  onPointerLeave={() => setHover(undefined)}
-                >
-                  <circle r={c === HUB ? 26 : 16} fill="url(#city-glow)" />
-                  <circle
-                    r={c === HUB ? 8 : on ? 7 : 5}
-                    fill={color}
-                    stroke="#000"
-                    strokeWidth={1.5}
-                    className="transition-[r] duration-200"
-                  />
-                  <circle r={14} fill="transparent" />
-                </g>
-              );
-            })}
             {hovered && (
-              <g transform={`translate(${hovered.x},${hovered.y - 16})`} pointerEvents="none">
+              <g transform={`translate(${hovered.x},${hovered.y - 10})`} pointerEvents="none">
                 <text
                   textAnchor="middle"
                   className="fill-white font-sans text-[15px] font-bold"
@@ -234,7 +250,7 @@ export function CityMap() {
             )}
             <text
               x={HUB.x}
-              y={HUB.y - 20}
+              y={HUB.y - 14}
               textAnchor="middle"
               className="pointer-events-none fill-white font-sans text-[14px] font-bold"
               stroke="#000"
@@ -245,7 +261,7 @@ export function CityMap() {
             </text>
           </svg>
           <p className="meta mt-3">
-            Noktaların üzerine gelince şehir adı görünür. Harita, şirketin duyurduğu hizmet
+            Yeşil illerin üzerine gelince il adı görünür. Harita, şirketin duyurduğu hizmet
             şehirlerini gösterir; şehir içindeki kapsama alanını göstermez.
           </p>
         </div>
