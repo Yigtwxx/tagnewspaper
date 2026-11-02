@@ -17,10 +17,15 @@ export function DotMatrix({
   group,
   columns,
   label,
+  ring = 2,
+  className = 'max-w-[520px]',
 }: {
   group: DotGroup;
   columns: number;
   label: string;
+  /** Ring stroke in viewBox units; large grids read better with a lighter ring. */
+  ring?: number;
+  className?: string;
 }) {
   const size = 10;
   const gap = 5;
@@ -30,7 +35,7 @@ export function DotMatrix({
   return (
     <svg
       viewBox={`0 0 ${w} ${h}`}
-      className="dots block w-full max-w-[520px]"
+      className={`dots block w-full ${className}`}
       role="img"
       aria-label={label}
     >
@@ -43,10 +48,10 @@ export function DotMatrix({
             key={i}
             cx={cx}
             cy={cy}
-            r={solid ? size / 2 : size / 2 - 1}
+            r={solid ? size / 2 : size / 2 - ring / 2}
             fill={solid ? group.color : 'none'}
             stroke={solid ? 'none' : group.color}
-            strokeWidth={solid ? 0 : 2}
+            strokeWidth={solid ? 0 : ring}
           />
         );
       })}

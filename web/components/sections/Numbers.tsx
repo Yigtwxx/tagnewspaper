@@ -41,6 +41,46 @@ function Figure({ stat }: { stat: StatT }) {
   );
 }
 
+/**
+ * Share of drivers who are in Istanbul, as a 10 x 10 grid where each dot is one percent.
+ * Tall enough to sit beside the two driver figures it explains.
+ */
+function IstanbulShare({ drivers, istanbul }: { drivers: StatT; istanbul: StatT }) {
+  const share = Math.min(100, Math.round((istanbul.value / drivers.value) * 100));
+  return (
+    <div className="flex flex-col gap-5 lg:pt-6">
+      <p className="max-w-md font-serif text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-bold">
+        Her 100 sürücüden <span className="hl whitespace-nowrap">{share} tanesi</span>{' '}
+        İstanbul&apos;da.
+      </p>
+      <DotMatrix
+        group={{ count: 100, filled: share, color: '#01b251' }}
+        columns={10}
+        ring={1.2}
+        className="max-w-[440px]"
+        label={`Her 100 sürücüden ${share} tanesi İstanbul'da`}
+      />
+      <ul className="meta flex flex-wrap gap-x-6 gap-y-2">
+        <li className="flex items-center gap-2">
+          <span className="inline-block size-2.5 rounded-full bg-tag" aria-hidden="true" />
+          İstanbul ({formatCalendarDate(istanbul.as_of, { year: false })} verisi)
+        </li>
+        <li className="flex items-center gap-2">
+          <span
+            className="inline-block size-2.5 rounded-full border-2 border-tag"
+            aria-hidden="true"
+          />
+          Diğer şehirler
+        </li>
+      </ul>
+      <p className="meta max-w-md">
+        Her nokta sürücülerin yüzde birini gösterir. İki rakam farklı tarihlerde açıklandığı için
+        oran yaklaşıktır.
+      </p>
+    </div>
+  );
+}
+
 export function Numbers({ stats, runningHead }: { stats: StatT[]; runningHead: string }) {
   const riders = stats.find((s) => s.key === 'registered_riders');
   const drivers = stats.find((s) => s.key === 'drivers');
@@ -91,37 +131,22 @@ export function Numbers({ stats, runningHead }: { stats: StatT[]; runningHead: s
                     <Figure stat={drivers} />
                     {istanbul && <Figure stat={istanbul} />}
                   </div>
-                  <div className="flex flex-col justify-start gap-4 lg:pt-6">
-                    <DotMatrix
-                      group={{
-                        count: Math.round(drivers.value / PER_DOT),
-                        filled: istanbul
-                          ? Math.round(istanbul.value / PER_DOT)
-                          : Math.round(drivers.value / PER_DOT),
-                        color: '#01b251',
-                      }}
-                      columns={35}
-                      label={`${drivers.label}: her nokta 10.000 sürücü`}
-                    />
-                    {istanbul && (
-                      <ul className="meta flex flex-wrap gap-x-6 gap-y-2">
-                        <li className="flex items-center gap-2">
-                          <span
-                            className="inline-block size-2.5 rounded-full bg-tag"
-                            aria-hidden="true"
-                          />
-                          İstanbul ({formatCalendarDate(istanbul.as_of, { year: false })} verisi)
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <span
-                            className="inline-block size-2.5 rounded-full border-2 border-tag"
-                            aria-hidden="true"
-                          />
-                          Diğer şehirler (aradaki fark)
-                        </li>
-                      </ul>
-                    )}
-                  </div>
+                  {istanbul ? (
+                    <IstanbulShare drivers={drivers} istanbul={istanbul} />
+                  ) : (
+                    <div className="flex flex-col justify-start gap-4 lg:pt-6">
+                      <DotMatrix
+                        group={{
+                          count: Math.round(drivers.value / PER_DOT),
+                          filled: Math.round(drivers.value / PER_DOT),
+                          color: '#01b251',
+                        }}
+                        columns={35}
+                        label={`${drivers.label}: her nokta 10.000 sürücü`}
+                      />
+                      <p className="meta">Her nokta 10.000 sürücüyü gösterir.</p>
+                    </div>
+                  )}
                 </>
               )}
             </div>

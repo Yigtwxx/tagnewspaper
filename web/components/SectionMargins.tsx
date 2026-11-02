@@ -8,8 +8,9 @@ const COLOR: Record<MarginTheme, string> = {
 };
 
 /**
- * Page margins on wide screens (1440px and up). Every section carries its own fixed copy of
- * the margin type, and every section clips its contents (`.margin-clip`), so a copy is only
+ * Page margins on wide screens (1520px and up; narrower, they would overlap the content).
+ * Every section carries its own fixed copy of the margin type, and every section clips its
+ * contents (`.margin-clip`), so a copy is only
  * visible inside its own section. Where two sections meet, the type splits exactly on the
  * boundary, half in one color and half in the other, and the change travels with the scroll.
  * Left: the section's number and name, set vertically. Right: the running head.
@@ -27,7 +28,7 @@ export function SectionMargins({
 }) {
   const color = COLOR[theme];
   return (
-    <div aria-hidden="true" className="hidden min-[1440px]:block">
+    <div aria-hidden="true" className="hidden min-[1520px]:block">
       <div
         className="pointer-events-none fixed top-1/2 left-5 z-30 -translate-y-1/2"
         style={{ color }}
