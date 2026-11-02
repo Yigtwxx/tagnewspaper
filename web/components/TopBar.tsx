@@ -40,7 +40,7 @@ export function TopBar({
         <Link href="/" className="shrink-0 font-serif text-lg font-bold">
           <span className="text-(--accent-text)">TAG</span>NEWSPAPER
         </Link>
-        <nav aria-label="Sekmeler" className="no-scrollbar min-w-0 overflow-x-auto">
+        <nav aria-label="Sekmeler" className="no-scrollbar min-w-0 overflow-y-hidden max-md:overflow-x-auto">
           <ul className="flex gap-4 font-sans text-sm whitespace-nowrap sm:gap-6">
             {NAV.map((item) => {
               const current = item.page !== undefined && pathname === item.page;
