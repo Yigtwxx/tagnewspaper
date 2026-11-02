@@ -921,5 +921,39 @@
   "totals": {
     "articles_90d": 378,
     "sources_90d": 6
-  }
+  },
+  "top_terms": [
+    {
+      "term": "istinaf",
+      "count": 14
+    },
+    {
+      "term": "mahkeme",
+      "count": 11
+    },
+    {
+      "term": "taksiciler",
+      "count": 9
+    },
+    {
+      "term": "ukome",
+      "count": 7
+    },
+    {
+      "term": "karar",
+      "count": 6
+    },
+    {
+      "term": "düzenleme",
+      "count": 5
+    },
+    {
+      "term": "sürücüler",
+      "count": 4
+    },
+    {
+      "term": "komisyon",
+      "count": 3
+    }
+  ]
 }

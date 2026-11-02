@@ -292,6 +292,11 @@ class Totals(_Model):
     sources_90d: int
 
 
+class TermCount(_Model):
+    term: str
+    count: int
+
+
 class Snapshot(_Model):
     id: Literal["current"] = Field(default="current", alias="_id")
     generated_at: UtcDatetime
@@ -305,6 +310,7 @@ class Snapshot(_Model):
     category_weekly: list[CategoryWeek]
     actor_statements: list[ActorStatementView]
     totals: Totals
+    top_terms: list[TermCount] = Field(default_factory=list)
 
     def to_mongo(self) -> dict[str, object]:
         """JSON-mode dump: the snapshot stores ISO strings, not BSON Dates."""

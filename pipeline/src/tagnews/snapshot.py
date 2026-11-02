@@ -19,8 +19,10 @@ from tagnews.models import (
     Snapshot,
     SourceCount,
     StatDoc,
+    TermCount,
     Totals,
 )
+from tagnews.textnorm import words
 
 ISTANBUL = ZoneInfo("Europe/Istanbul")
 LATEST_LIMIT = 24
@@ -31,6 +33,106 @@ STATEMENTS_PER_ACTOR = 3
 LEAD_WINDOW = timedelta(hours=48)
 LEAD_MAX_SOURCES = 8
 STAT_ORDER = ("registered_riders", "drivers", "drivers_istanbul")
+TERM_DAYS = 30
+TOP_TERMS = 12
+TERM_MIN_LEN = 4
+TERM_MIN_COUNT = 2
+
+# Words every story shares, Turkish function words and leftover suffix fragments
+# (apostrophes split "Martı'nın" into "martı" + "nın").
+TERM_STOPWORDS: frozenset[str] = frozenset(
+    [
+        "martı",
+        "marti",
+        "tag",
+        "taksi",
+        "uygulaması",
+        "uygulama",
+        "haber",
+        "haberi",
+        "son",
+        "dakika",
+        "yeni",
+        "için",
+        "gibi",
+        "kadar",
+        "daha",
+        "sonra",
+        "önce",
+        "olarak",
+        "olan",
+        "olduğu",
+        "oldu",
+        "olacak",
+        "etti",
+        "eden",
+        "edildi",
+        "ediyor",
+        "dedi",
+        "açıkladı",
+        "açıklama",
+        "yaptı",
+        "yapılan",
+        "değil",
+        "ancak",
+        "ama",
+        "veya",
+        "ile",
+        "ise",
+        "bile",
+        "hem",
+        "çok",
+        "bütün",
+        "tüm",
+        "bunu",
+        "buna",
+        "bunun",
+        "şimdi",
+        "artık",
+        "yine",
+        "nasıl",
+        "neden",
+        "nerede",
+        "hangi",
+        "kimin",
+        "karşı",
+        "üzerine",
+        "ilgili",
+        "ilişkin",
+        "tarafından",
+        "yeniden",
+        "bugün",
+        "dün",
+        "yarın",
+        "hafta",
+        "haftası",
+        "günü",
+        "yılı",
+        "türkiye",
+        "türk",
+        "istanbul",
+        "nın",
+        "nin",
+        "nun",
+        "nün",
+        "ının",
+        "inin",
+        "ünün",
+        "unun",
+        "daki",
+        "deki",
+        "taki",
+        "teki",
+        "dan",
+        "den",
+        "tan",
+        "ten",
+        "lar",
+        "ler",
+        "ları",
+        "leri",
+    ]
+)
 
 
 def local_date(value: datetime) -> date:
@@ -143,6 +245,29 @@ def actor_statements(articles: list[ArticleDoc]) -> list[ActorStatementView]:
     return [view for actor in ACTORS for view in per_actor.get(actor, [])]
 
 
+def top_terms(articles: list[ArticleDoc], today: date) -> list[TermCount]:
+    """Top title words of the last 30 days; one vote per article.."""
+    since = today - timedelta(days=TERM_DAYS - 1)
+    counts: Counter[str] = Counter()
+    for article in articles:
+        if local_date(article.published_at) < since:
+            continue
+        tokens = {
+            token
+            for token in words(article.title)
+            if len(token) >= TERM_MIN_LEN
+            and not token.isdigit()
+            and token not in TERM_STOPWORDS
+        }
+        counts.update(tokens)
+    ranked = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    return [
+        TermCount(term=term, count=n)
+        for term, n in ranked[:TOP_TERMS]
+        if n >= TERM_MIN_COUNT
+    ]
+
+
 def build_snapshot(
     articles: list[ArticleDoc],
     events: list[EventDoc],
@@ -178,4 +303,5 @@ def build_snapshot(
             articles_90d=sum(d.count for d in daily),
             sources_90d=len({a.source.domain for a in visible}),
         ),
+        top_terms=top_terms(visible, today),
     )

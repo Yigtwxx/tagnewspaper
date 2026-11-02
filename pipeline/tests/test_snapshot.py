@@ -11,7 +11,7 @@ from tagnews.models import (
     SourceRef,
     StatDoc,
 )
-from tagnews.snapshot import build_snapshot
+from tagnews.snapshot import build_snapshot, top_terms
 
 
 def _article(
@@ -154,3 +154,27 @@ def test_build_snapshot_empty_db_returns_empty_sections(now: datetime) -> None:
     assert snap.latest == []
     assert snap.totals.articles_90d == 0
     assert all(d.count == 0 for d in snap.daily_counts)
+
+
+def test_top_terms_titles_last_30_days_ranks_shared_words(now: datetime) -> None:
+    titles = [
+        "Martı TAG için istinaf mahkemesi kararını verdi",
+        "İstinaf kararı sonrası taksiciler tepkili",
+        "UKOME toplantısında istinaf kararı konuşuldu",
+        "Taksiciler kontak kapattı",
+    ]
+    articles = [
+        _article(i, f"site{i}.example", now - timedelta(days=i), f"c{i}")
+        for i in range(len(titles))
+    ]
+    old = _article(99, "old.example", now - timedelta(days=45), "c99")
+    for article, title in zip(articles, titles, strict=True):
+        article.title = title
+    old.title = "Eski istinaf istinaf haberi"
+
+    terms = {t.term: t.count for t in top_terms([*articles, old], now.date())}
+
+    assert terms.get("istinaf") == 3, f"Expected 3 votes for istinaf, got {terms}"
+    assert terms.get("taksiciler") == 2, f"Expected 2 for taksiciler, got {terms}"
+    assert "martı" not in terms and "için" not in terms, f"Stopwords leaked: {terms}"
+    assert all(n >= 2 for n in terms.values()), f"Singletons leaked: {terms}"

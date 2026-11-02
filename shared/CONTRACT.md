@@ -73,6 +73,7 @@ Everything the home page renders, precomputed by the pipeline. See
 | `category_weekly` | `[{week_start, counts: {<Category>: int}}]` — last 16 ISO weeks, all categories present |
 | `actor_statements` | `[{actor, summary, date, article_id, source_name, url}]` — ≤ 3 per actor, newest first |
 | `totals` | `{articles_90d, sources_90d}` |
+| `top_terms` | `[{term, count}]` — up to 12 title words of the last 30 days, ≥ 2 articles each, stopwords removed (may be empty) |
 
 `ArticleView` = article without `fetched_at`, `model`, `prompt_version`, `actor_statements`,
 with `_id` renamed to `id` and `published_at` as ISO string.
