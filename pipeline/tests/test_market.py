@@ -164,9 +164,9 @@ def test_filing_url_missing_or_odd_document_links_filing_index(document: str) ->
 @pytest.mark.parametrize(
     ("form", "description", "expected"),
     [
-        ("6-K", "6-K", "6-K: Dönemsel rapor"),
-        ("6-K", "PRIMARY DOCUMENT", "6-K: Dönemsel rapor"),
-        ("6-K", "Report of Foreign Private Issuer", "6-K: Dönemsel rapor"),
+        ("6-K", "6-K", "6-K: Şirket bildirimi"),
+        ("6-K", "PRIMARY DOCUMENT", "6-K: Şirket bildirimi"),
+        ("6-K", "Report of Foreign Private Issuer", "6-K: Şirket bildirimi"),
         ("20-F", "FORM 20-F", "20-F: Yıllık rapor"),
         ("20-F/A", "Amendment No. 1", "20-F/A: Yıllık rapor (düzeltme)"),
         ("F-3", "", "F-3: Kayıt beyanı (kısa form)"),

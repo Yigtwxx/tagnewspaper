@@ -60,7 +60,7 @@ MAX_TITLE_LEN = 200
 # Since Dec 2024 EDGAR files Schedules 13D/G as "SCHEDULE 13D" etc.; both spellings
 # are tracked so ownership filings keep showing up.
 FORM_LABELS: dict[str, str] = {
-    "6-K": "Dönemsel rapor",
+    "6-K": "Şirket bildirimi",
     "20-F": "Yıllık rapor",
     "20-F/A": "Yıllık rapor (düzeltme)",
     "F-1": "Kayıt beyanı",
