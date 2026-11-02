@@ -1,6 +1,7 @@
 import { formatCalendarDate, formatCompact } from '@/lib/format';
 import type { StatT } from '@/lib/schema';
 
+import { CityMap } from './CityMap';
 import { DotMatrix, NumbersMotion } from './NumbersClient';
 
 const PER_DOT = 10_000;
@@ -124,6 +125,7 @@ export function Numbers({ stats }: { stats: StatT[] }) {
             </div>
           </NumbersMotion>
         )}
+        <CityMap />
       </div>
     </section>
   );

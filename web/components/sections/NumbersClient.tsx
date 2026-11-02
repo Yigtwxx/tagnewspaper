@@ -84,12 +84,15 @@ export function NumbersMotion({ children }: { children: ReactNode }) {
         });
       }
 
+      // Dots ripple out from the middle of each matrix, like ink spreading on newsprint.
       for (const svg of gsap.utils.toArray<SVGElement>('.dots', root)) {
         gsap.from(svg.querySelectorAll('circle'), {
-          opacity: 0.08,
-          duration: 0.25,
-          ease: 'none',
-          stagger: { amount: 1.4, from: 'start' },
+          scale: 0,
+          opacity: 0,
+          transformOrigin: '50% 50%',
+          duration: 0.55,
+          ease: 'back.out(2.2)',
+          stagger: { grid: 'auto', from: 'center', amount: 1.3 },
           scrollTrigger: { trigger: svg, start: 'top 75%', once: true },
         });
       }
