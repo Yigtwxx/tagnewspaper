@@ -8,6 +8,13 @@ updates:
     groups:
       web-minor:
         update-types: [minor, patch]
+    ignore:
+      # Runtime is Node 22; types must match it.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # typescript-eslint has to support a new TypeScript major first.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: uv
     directory: /pipeline
