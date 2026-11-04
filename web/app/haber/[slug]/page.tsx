@@ -12,6 +12,12 @@ import { isEmptySnapshot } from '@/lib/schema';
 import { ARTICLE_BASE, articlePath, parseArticleSlug } from '@/lib/slug';
 
 /**
+ * The page reads `params` outside Suspense on purpose: bots then get a blocking render with real
+ * 404s. Navigations into it may wait for the server, so opt out of instant-navigation checks.
+ */
+export const instant = false;
+
+/**
  * Cache Components rejects an empty generateStaticParams, and CI builds have no database. This
  * param carries no article id, so it prerenders as a 404.
  */
