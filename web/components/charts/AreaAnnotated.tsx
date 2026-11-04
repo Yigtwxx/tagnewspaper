@@ -6,6 +6,7 @@ import { scaleLinear, scaleUtc } from 'd3-scale';
 import { area, curveMonotoneX, line } from 'd3-shape';
 import { type PointerEvent, useId, useRef, useState } from 'react';
 
+import { placeMarkerLabels } from '@/lib/chart-labels';
 import { formatCalendarDate } from '@/lib/format';
 import { gsap, prefersReducedMotion, registerGsap } from '@/lib/motion';
 
@@ -51,18 +52,17 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
     return t >= utcDay(data[0].date).getTime() && t <= utcDay(data[data.length - 1].date).getTime();
   });
 
-  // Stack marker labels into rows so neighbouring labels never collide.
-  const rowEnds: number[] = [];
-  const placed = [...inRange]
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .map((mk) => {
-      const mx = x(utcDay(mk.date));
-      const w = (mk.label.length + 8) * LABEL_CHAR;
-      let row = 0;
-      while (row < 3 && (rowEnds[row] ?? -Infinity) > mx - 8) row += 1;
-      rowEnds[row] = mx + w;
-      return { mk, row };
-    });
+  // Keep every label inside the chart (narrow screens included) and stack them into rows so
+  // neighbouring labels never collide.
+  const sorted = [...inRange].sort((a, b) => a.date.localeCompare(b.date));
+  const labels = placeMarkerLabels(
+    sorted.map((mk) => ({
+      x: x(utcDay(mk.date)),
+      text: `${formatCalendarDate(mk.date, { year: false, short: true })}: ${mk.label}`,
+    })),
+    { minX: -left, maxX: innerW + right, charW: LABEL_CHAR, pad: 6, gap: 8, maxRows: 4 },
+  );
+  const placed = sorted.map((mk, i) => ({ mk, ...labels[i] }));
   const labelRows = placed.reduce((n, p) => Math.max(n, p.row + 1), 0);
 
   const m = { top: 30 + labelRows * ROW_H, right, bottom: 32, left };
@@ -172,9 +172,8 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
             )}
           </g>
 
-          {placed.map(({ mk, row }) => {
-            const mx = x(utcDay(mk.date));
-            const flip = mx > innerW * 0.7;
+          {placed.map(({ mk, row, x: mx, text, anchor }) => {
+            const flip = anchor === 'end';
             return (
               <g key={`${mk.date}-${mk.label}`} transform={`translate(${mx},0)`}>
                 <line
@@ -187,10 +186,12 @@ export function AreaAnnotated({ data, markers }: { data: DailyPoint[]; markers: 
                 <text
                   x={flip ? -6 : 6}
                   y={-m.top + 22 + row * ROW_H}
-                  textAnchor={flip ? 'end' : 'start'}
+                  textAnchor={anchor}
                   className="fill-(--fg) font-sans text-[12px] font-semibold"
                 >
-                  {formatCalendarDate(mk.date, { year: false, short: true })}: {mk.label}
+                  {/* One string child: React treats <title> specially and splits otherwise. */}
+                  <title>{`${formatCalendarDate(mk.date, { year: false, short: true })}: ${mk.label}`}</title>
+                  {text}
                 </text>
               </g>
             );
