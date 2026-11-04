@@ -78,8 +78,9 @@ export function Colophon({
 
         <div className="mt-24 flex flex-col gap-6 border-t border-(--line) pt-8 md:flex-row md:items-end md:justify-between">
           <p className="flex items-center gap-4" aria-label="The TAG Newspaper">
-            <LogoMark className="size-[clamp(3rem,8vw,6.5rem)]" />
-            <Wordmark className="text-[clamp(2.4rem,7vw,6rem)]" />
+            <LogoMark className="size-[clamp(3rem,8vw,6.5rem)] shrink-0" />
+            {/* Scales with the screen below sm so the one-line wordmark fits a 320px phone. */}
+            <Wordmark className="text-[clamp(1.5rem,7.4vw,2.4rem)] sm:text-[clamp(2.4rem,7vw,6rem)]" />
           </p>
           <div className="meta flex flex-col gap-1 md:items-end">
             {publisher && <p>Yayıncı: {publisher}</p>}
