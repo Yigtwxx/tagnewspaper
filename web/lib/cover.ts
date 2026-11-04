@@ -15,7 +15,14 @@ export interface CoverSpec {
   bands: number[];
   /** Route: polyline points in a 0..100 x 0..56 box. */
   points: Array<[number, number]>;
+  /** Halftone cells printed in TAG green, as [col, row] inside an ACCENT_TILE square tile. */
+  accents: Array<[number, number]>;
 }
+
+/** Side of the repeating tile (in dot cells) that carries the green dots. */
+export const ACCENT_TILE = 17;
+/** Green dots per tile: about one dot in twenty. A large tile keeps the repeat hard to spot. */
+export const ACCENT_COUNT = 14;
 
 /** FNV-1a 32-bit — tiny, stable across runtimes. */
 export function hash32(input: string): number {
@@ -60,12 +67,19 @@ export function coverSpec(id: string): CoverSpec {
     points.push([Number(x.toFixed(1)), Number(y.toFixed(1))]);
   }
 
-  return {
-    kind,
-    cx: Math.round(15 + rand() * 70),
-    cy: Math.round(15 + rand() * 70),
-    angle: Math.round(-35 + rand() * 70),
-    bands,
-    points,
-  };
+  const cx = Math.round(15 + rand() * 70);
+  const cy = Math.round(15 + rand() * 70);
+  const angle = Math.round(-35 + rand() * 70);
+
+  // Drawn last from the stream so existing covers keep their composition.
+  const taken = new Set<number>();
+  const accents: Array<[number, number]> = [];
+  while (accents.length < ACCENT_COUNT) {
+    const cell = Math.floor(rand() * ACCENT_TILE * ACCENT_TILE);
+    if (taken.has(cell)) continue;
+    taken.add(cell);
+    accents.push([cell % ACCENT_TILE, Math.floor(cell / ACCENT_TILE)]);
+  }
+
+  return { kind, cx, cy, angle, bands, points, accents };
 }

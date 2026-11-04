@@ -1,15 +1,22 @@
 import type { ReactNode } from 'react';
 
-import { coverSpec } from '@/lib/cover';
+import { ACCENT_TILE, coverSpec } from '@/lib/cover';
+
+const CELL = 2.4;
+const DOT_R = 0.85;
+const TAG_GREEN = '#01b251';
 
 /**
- * Abstract black-and-white print artwork per article (halftone dots, bands, routes).
- * Never a publisher photo (copyright). Purely decorative, hidden from assistive tech.
+ * Abstract black-and-white print artwork per article (halftone dots, bands, routes), with a
+ * few dots printed in TAG green. Never a publisher photo (copyright). Purely decorative,
+ * hidden from assistive tech.
  */
 export function GenerativeCover({ id, className = '' }: { id: string; className?: string }) {
   const spec = coverSpec(id);
   const color = '#111111';
   const pid = `c${id}`;
+  const dots = `url(#${pid}-dots)`;
+  const accent = `url(#${pid}-accent)`;
 
   return (
     <svg
@@ -20,8 +27,25 @@ export function GenerativeCover({ id, className = '' }: { id: string; className?
       focusable="false"
     >
       <defs>
-        <pattern id={`${pid}-dots`} width="2.4" height="2.4" patternUnits="userSpaceOnUse">
-          <circle cx="1.2" cy="1.2" r="0.85" fill={color} />
+        <pattern id={`${pid}-dots`} width={CELL} height={CELL} patternUnits="userSpaceOnUse">
+          <circle cx={CELL / 2} cy={CELL / 2} r={DOT_R} fill={color} />
+        </pattern>
+        {/* Same grid as the dots, so each green dot sits exactly on a black one. */}
+        <pattern
+          id={`${pid}-accent`}
+          width={CELL * ACCENT_TILE}
+          height={CELL * ACCENT_TILE}
+          patternUnits="userSpaceOnUse"
+        >
+          {spec.accents.map(([col, row]) => (
+            <circle
+              key={`${col}-${row}`}
+              cx={col * CELL + CELL / 2}
+              cy={row * CELL + CELL / 2}
+              r={DOT_R}
+              fill={TAG_GREEN}
+            />
+          ))}
         </pattern>
         <radialGradient id={`${pid}-fade`} cx={`${spec.cx}%`} cy={`${spec.cy}%`} r="70%">
           <stop offset="0" stopColor="#fff" />
@@ -35,7 +59,8 @@ export function GenerativeCover({ id, className = '' }: { id: string; className?
 
       {spec.kind === 'halftone' && (
         <>
-          <rect width="100" height="56" fill={`url(#${pid}-dots)`} mask={`url(#${pid}-mask)`} />
+          <rect width="100" height="56" fill={dots} mask={`url(#${pid}-mask)`} />
+          <rect width="100" height="56" fill={accent} mask={`url(#${pid}-mask)`} />
           <circle cx={spec.cx} cy={(spec.cy / 100) * 56} r="9" fill={color} />
         </>
       )}
@@ -45,16 +70,13 @@ export function GenerativeCover({ id, className = '' }: { id: string; className?
           {
             spec.bands.reduce<{ x: number; els: ReactNode[] }>(
               (acc, w, i) => {
-                acc.els.push(
-                  <rect
-                    key={i}
-                    x={-40 + acc.x * 1.8}
-                    y="-60"
-                    width={w * 1.8}
-                    height="180"
-                    fill={i % 2 === 0 ? color : `url(#${pid}-dots)`}
-                  />,
-                );
+                const band = { x: -40 + acc.x * 1.8, y: -60, width: w * 1.8, height: 180 };
+                if (i % 2 === 0) {
+                  acc.els.push(<rect key={i} {...band} fill={color} />);
+                } else {
+                  acc.els.push(<rect key={i} {...band} fill={dots} />);
+                  acc.els.push(<rect key={`${i}-accent`} {...band} fill={accent} />);
+                }
                 acc.x += w;
                 return acc;
               },
@@ -66,7 +88,8 @@ export function GenerativeCover({ id, className = '' }: { id: string; className?
 
       {spec.kind === 'route' && (
         <>
-          <rect width="100" height="56" fill={`url(#${pid}-dots)`} opacity="0.35" />
+          <rect width="100" height="56" fill={dots} opacity="0.35" />
+          <rect width="100" height="56" fill={accent} opacity="0.35" />
           <polyline
             points={spec.points.map(([x, y]) => `${x},${y}`).join(' ')}
             fill="none"

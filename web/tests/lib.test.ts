@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { DRUM, drumPath } from '@/components/hero/FlapCell';
 import { caseOverview, splitSentences } from '@/lib/case';
-import { coverSpec, hash32 } from '@/lib/cover';
+import { ACCENT_COUNT, ACCENT_TILE, coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
 import { trimLeadingEmpty } from '@/lib/series';
 import {
@@ -79,6 +79,19 @@ describe('cover', () => {
         expect(y).toBeLessThanOrEqual(56);
       }
     }
+  });
+
+  it('picks a few distinct green dots inside the accent tile', () => {
+    for (const id of ['a', 'b', 'c', 'ff8a444c9a8ec514']) {
+      const { accents } = coverSpec(id);
+      expect(accents).toHaveLength(ACCENT_COUNT);
+      expect(new Set(accents.map(([c, r]) => `${c},${r}`)).size).toBe(ACCENT_COUNT);
+      for (const [col, row] of accents) {
+        expect(Number.isInteger(col) && col >= 0 && col < ACCENT_TILE).toBe(true);
+        expect(Number.isInteger(row) && row >= 0 && row < ACCENT_TILE).toBe(true);
+      }
+    }
+    expect(coverSpec('a').accents).not.toEqual(coverSpec('b').accents);
   });
 });
 
