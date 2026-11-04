@@ -9,7 +9,9 @@ Independent Turkish news/case-tracking site for Martı TAG users. Monorepo:
 ## Rules
 
 - Change the contract first (`shared/`), then Pydantic models and `web/lib/schema.ts`.
-- Web reads one `snapshot` doc via `getSnapshot()` (`'use cache'`, tag `news`). Never fetch per section.
+- The home page reads one `snapshot` doc via `getSnapshot()` (`'use cache'`, tag `news`). Never
+  fetch per section. Article pages (`/haber/[slug]`) read one article and its cluster via
+  `getArticle()`, also cached under `news`.
 - `revalidateTag(tag, profile)` needs two args in Next 16; never `export const revalidate`.
 - Read `web/node_modules/next/dist/docs/` before using a Next API you're unsure about.
 - Content safety lives in `pipeline/src/tagnews/guards.py` and `promote.py`; do not weaken it.

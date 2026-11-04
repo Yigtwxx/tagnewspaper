@@ -109,6 +109,18 @@ datetimes inside are ISO strings. See `fixtures/market.sample.json`.
 `GET /api/news?cursor=<published_at ISO>|<id>&category=<Category>&limit=<1..24>`
 → `{items: ArticleView[], next_cursor: string | null}` sorted `published_at desc, _id desc`.
 
+## `/haber/<slug>-<id>` (web, read-only)
+
+One page per article with `display == "full"`; `headline_only` and `hidden` articles have none
+and keep linking to the publisher. `id` is `articles._id`. `slug` is the title lower-cased with
+`tr-TR` rules, `ç ğ ı ö ş ü â î û` folded to ASCII, other diacritics stripped, apostrophes
+removed, every other run of non `[a-z0-9]` replaced by `-`, trimmed and cut to 80 chars at a
+`-` (`/haber/<id>` when nothing is left). A known id under a different slug renders the same
+page with `rel=canonical` set to the canonical path; unknown ids return 404 (streamed with
+`noindex` on the first request). The page lists up to 12 other non-hidden articles
+with the same `cluster_id`, oldest first. `sitemap.xml` lists every `full` article (≤ 5,000,
+newest first). Cluster ids are never part of a URL because `recluster` can change them.
+
 ## `/api/revalidate` (web)
 
 `POST` with header `x-revalidate-secret: <REVALIDATE_SECRET>` → `revalidateTag("news", "max")`.

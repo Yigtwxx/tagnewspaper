@@ -93,6 +93,17 @@ function toView(doc: ArticleDoc): ArticleViewT | undefined {
   return parsed.success ? parsed.data : undefined;
 }
 
+const isView = (v: ArticleViewT | undefined): v is ArticleViewT => v !== undefined;
+
+/** Stored fields that never leave the database (see ArticleView in shared/CONTRACT.md). */
+const VIEW_PROJECTION = {
+  fetched_at: 0,
+  model: 0,
+  prompt_version: 0,
+  actor_statements: 0,
+  gn_guid: 0,
+} as const;
+
 export const MAX_PAGE = 24;
 
 export async function getNewsPage(
@@ -126,20 +137,12 @@ export async function getNewsPage(
   try {
     const docs = await db
       .collection<ArticleDoc>('articles')
-      .find(filter, {
-        projection: {
-          fetched_at: 0,
-          model: 0,
-          prompt_version: 0,
-          actor_statements: 0,
-          gn_guid: 0,
-        },
-      })
+      .find(filter, { projection: VIEW_PROJECTION })
       .sort({ published_at: -1, _id: -1 })
       .limit(size + 1)
       .toArray();
 
-    const views = docs.map(toView).filter((v): v is ArticleViewT => v !== undefined);
+    const views = docs.map(toView).filter(isView);
     const hasMore = views.length > size;
     const items = views.slice(0, size);
     const last = items.at(-1);
@@ -150,6 +153,115 @@ export async function getNewsPage(
   } catch (err) {
     console.error('[data] news page read failed', err instanceof Error ? err.name : 'unknown');
     return { items: [], next_cursor: null };
+  }
+}
+
+export interface ArticlePageData {
+  article: ArticleViewT;
+  /** Other outlets' reports of the same story, oldest first. */
+  related: ArticleViewT[];
+}
+
+export const MAX_RELATED = 12;
+
+function relatedFrom(pool: ArticleViewT[], article: ArticleViewT): ArticleViewT[] {
+  return pool
+    .filter(
+      (a) => a.cluster_id === article.cluster_id && a.id !== article.id && a.display !== 'hidden',
+    )
+    .sort((a, b) => a.published_at.localeCompare(b.published_at))
+    .slice(0, MAX_RELATED);
+}
+
+/**
+ * One summarised article for its own page, plus the rest of its story. `undefined` means there
+ * is no such page (a cached 404). A failed read throws instead, so nothing is cached and search
+ * engines see a retryable 5xx rather than a 404.
+ */
+export async function getArticle(id: string): Promise<ArticlePageData | undefined> {
+  'use cache';
+  cacheTag(NEWS_TAG);
+  cacheLife('news');
+
+  if (demoEnabled()) {
+    const snap = await readDemoSnapshot();
+    const article = snap.latest.find((a) => a.id === id && a.display === 'full');
+    return article ? { article, related: relatedFrom(snap.latest, article) } : undefined;
+  }
+
+  const db = getDb();
+  if (!db) return undefined;
+
+  let docs: { article: ArticleDoc | null; related: ArticleDoc[] };
+  try {
+    const articles = db.collection<ArticleDoc>('articles');
+    const article = await articles.findOne(
+      { _id: id, display: 'full' },
+      { projection: VIEW_PROJECTION },
+    );
+    const related = article
+      ? await articles
+          .find(
+            { cluster_id: article.cluster_id, _id: { $ne: id }, display: { $ne: 'hidden' } },
+            { projection: VIEW_PROJECTION },
+          )
+          .sort({ published_at: 1, _id: 1 })
+          .limit(MAX_RELATED)
+          .toArray()
+      : [];
+    docs = { article, related };
+  } catch (err) {
+    console.error('[data] article read failed', err instanceof Error ? err.name : 'unknown');
+    throw new Error('article read failed');
+  }
+
+  if (!docs.article) return undefined;
+  const article = toView(docs.article);
+  if (!article) {
+    console.error('[data] article failed validation');
+    throw new Error('article failed validation');
+  }
+  return { article, related: docs.related.map(toView).filter(isView) };
+}
+
+export interface ArticleIndexEntry {
+  id: string;
+  title: string;
+  published_at: string;
+}
+
+export const MAX_SITEMAP_ARTICLES = 5_000;
+
+/** Every summarised article, newest first, for the sitemap. Empty on any failure. */
+export async function getArticleIndex(): Promise<ArticleIndexEntry[]> {
+  'use cache';
+  cacheTag(NEWS_TAG);
+  cacheLife('news');
+
+  if (demoEnabled()) {
+    const snap = await readDemoSnapshot();
+    return snap.latest
+      .filter((a) => a.display === 'full')
+      .map(({ id, title, published_at }) => ({ id, title, published_at }));
+  }
+
+  const db = getDb();
+  if (!db) return [];
+  try {
+    const docs = await db
+      .collection<ArticleDoc>('articles')
+      .find({ display: 'full' }, { projection: { _id: 1, title: 1, published_at: 1 } })
+      .sort({ published_at: -1, _id: -1 })
+      .limit(MAX_SITEMAP_ARTICLES)
+      .toArray();
+    return docs.map((d) => ({
+      id: d._id,
+      title: d.title,
+      published_at: d.published_at.toISOString(),
+    }));
+  } catch (err) {
+    console.error('[data] article index read failed', err instanceof Error ? err.name : 'unknown');
+    return [];
   }
 }
 

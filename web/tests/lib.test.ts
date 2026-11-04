@@ -6,6 +6,7 @@ import { coverSpec, hash32 } from '@/lib/cover';
 import { decodeCursor, encodeCursor } from '@/lib/cursor';
 import { trimLeadingEmpty } from '@/lib/series';
 import {
+  clip,
   coverageSince,
   editionStart,
   formatCompact,
@@ -34,6 +35,11 @@ describe('format', () => {
     expect(issueNumber('2026-11-03T07:59:00Z')).toBe(1);
     expect(issueNumber('2026-11-03T08:00:00Z')).toBe(2);
     expect(issueNumber('2026-11-12T09:00:00Z')).toBe(11);
+  });
+
+  it('clips text at a word boundary', () => {
+    expect(clip('kısa metin', 160)).toBe('kısa metin');
+    expect(clip('bir iki üç dört', 9)).toBe('bir iki…');
   });
 
   it('dates an edition by its 11:00 start', () => {

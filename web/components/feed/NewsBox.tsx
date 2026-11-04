@@ -5,6 +5,7 @@ import { CATEGORY_LABEL } from '@/lib/labels';
 import type { BoxShape } from '@/lib/layout';
 import type { ArticleViewT } from '@/lib/schema';
 
+import { ArticleLink } from './ArticleLink';
 import { GenerativeCover } from './GenerativeCover';
 import { Highlighted, KEY_TERMS } from './Highlighted';
 
@@ -44,14 +45,12 @@ export function Byline({ article }: { article: ArticleViewT }) {
 
 function StoryLink({ article, children }: { article: ArticleViewT; children: ReactNode }) {
   return (
-    <a
-      href={article.url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <ArticleLink
+      article={article}
       className="after:absolute after:inset-0 hover:underline hover:decoration-1 hover:underline-offset-4"
     >
       {children}
-    </a>
+    </ArticleLink>
   );
 }
 
@@ -106,14 +105,12 @@ export function LeadBox({
     <article className="relative flex h-full flex-col gap-4 p-5 sm:p-6">
       <Kicker article={article} />
       <h3 className="headline text-[clamp(1.9rem,3vw,2.6rem)] leading-[1.1]">
-        <a
-          href={article.url}
-          target="_blank"
-          rel="noopener noreferrer"
+        <ArticleLink
+          article={article}
           className="hover:underline hover:decoration-2 hover:underline-offset-[6px]"
         >
           {article.title}
-        </a>
+        </ArticleLink>
       </h3>
       <GenerativeCover id={article.id} className="aspect-[21/9] w-full" />
       {summary && (
@@ -159,14 +156,14 @@ export function LatestBox({ articles }: { articles: ArticleViewT[] }) {
       <ol className="flex flex-col divide-y divide-(--line)">
         {articles.map((a) => (
           <li key={a.id} className="py-3">
-            <a href={a.url} target="_blank" rel="noopener noreferrer" className="group block">
+            <ArticleLink article={a} className="group block">
               <time dateTime={a.published_at} className="meta block">
                 {formatTime(a.published_at)}, {a.source.name}
               </time>
               <span className="mt-1 block font-serif text-[1.02rem] leading-snug font-bold group-hover:underline">
                 {a.title}
               </span>
-            </a>
+            </ArticleLink>
           </li>
         ))}
       </ol>

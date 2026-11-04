@@ -9,6 +9,7 @@ import { useNow, useReducedMotion } from '@/lib/hooks';
 import { gsap, prefersReducedMotion, registerGsap, ScrollTrigger } from '@/lib/motion';
 import type { ArticleViewT, CaseEventT } from '@/lib/schema';
 
+import { ArticleLink } from '../feed/ArticleLink';
 import { AllegationBadge } from '../feed/NewsBox';
 import { FlapCell } from '../hero/FlapCell';
 import { SectionMargins } from '../SectionMargins';
@@ -329,12 +330,7 @@ export function CaseTimeline({
                   <ul className="flex flex-col">
                     {news.map((a) => (
                       <li key={a.id} className="cl-reveal border-b border-black/25 last:border-b-0">
-                        <a
-                          href={a.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group flex flex-col gap-1.5 py-4"
-                        >
+                        <ArticleLink article={a} className="group flex flex-col gap-1.5 py-4">
                           <span className="flex flex-wrap items-center gap-x-3 gap-y-1 font-sans text-[13px] text-black/75">
                             {formatDate(a.published_at, { year: false })}, {a.source.name}
                             {a.is_allegation && <AllegationBadge />}
@@ -342,7 +338,7 @@ export function CaseTimeline({
                           <span className="font-serif text-lg leading-snug font-bold group-hover:underline">
                             {a.title}
                           </span>
-                        </a>
+                        </ArticleLink>
                       </li>
                     ))}
                   </ul>

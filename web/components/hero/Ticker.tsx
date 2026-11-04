@@ -1,3 +1,4 @@
+import { ArticleLink } from '@/components/feed/ArticleLink';
 import { formatTime } from '@/lib/format';
 import type { ArticleViewT } from '@/lib/schema';
 
@@ -10,15 +11,13 @@ export function Ticker({ articles }: { articles: ArticleViewT[] }) {
       {items.map((a) => (
         <li key={`${hidden ? 'b' : 'a'}-${a.id}`} className="flex items-center gap-3 pr-10">
           <span className="meta text-white/60">{formatTime(a.published_at)}</span>
-          <a
-            href={a.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <ArticleLink
+            article={a}
             tabIndex={hidden ? -1 : undefined}
             className="font-serif text-[0.98rem] whitespace-nowrap text-white hover:underline"
           >
             {a.title}
-          </a>
+          </ArticleLink>
           <span className="text-tag" aria-hidden="true">
             ■
           </span>

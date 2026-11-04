@@ -7,6 +7,14 @@ export function trUpper(text: string): string {
   return text.toLocaleUpperCase(LOCALE);
 }
 
+/** At most `max` characters, cut at a word boundary and ending with an ellipsis. */
+export function clip(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const head = text.slice(0, max - 1);
+  const cut = head.lastIndexOf(' ');
+  return `${(cut > 0 ? head.slice(0, cut) : head).trimEnd()}…`;
+}
+
 export function formatTime(iso: string): string {
   return new Intl.DateTimeFormat(LOCALE, {
     hour: '2-digit',
