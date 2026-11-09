@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 license = "MIT"
 authors = [{ name = "Yiğit Erdoğan" }]
 dependencies = [
-  "anthropic>=2.3,<3",
+  "anthropic>=2.6.0,<3",
   "feedparser>=6.0.14",
   "googlenewsdecoder>=0.2.2",
   "httpx>=0.28.1",
