@@ -23,7 +23,7 @@ dependencies = [
 tagnews = "tagnews.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=9.2", "respx>=0.23", "ruff>=0.17"]
+dev = ["pytest>=9.2", "respx>=0.23", "ruff>=0.17.4"]
 
 [build-system]
 requires = ["hatchling"]
