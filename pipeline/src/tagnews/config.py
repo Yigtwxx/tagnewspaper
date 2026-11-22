@@ -13,6 +13,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 DEFAULT_MODEL = "claude-haiku-5-5"
+DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b"
 DEFAULT_GOOGLE_NEWS_BASE_URL = "https://news.google.com/rss/search"
 USER_AGENT_TOKEN = "tagnewspaper-bot"
 USER_AGENT = f"{USER_AGENT_TOKEN}/0.1 (+https://github.com/Yigtwxx/tagnewspaper)"
@@ -25,6 +26,9 @@ MODEL_PRICES_PER_MTOK: dict[str, tuple[float, float]] = {
     "claude-haiku-5-5": (0.10, 0.50),
     "claude-sonnet-5-5": (2.00, 10.00),
     "claude-opus-5-5": (4.00, 20.00),
+    # Groq free plan.
+    "openai/gpt-oss-120b": (0.0, 0.0),
+    "openai/gpt-oss-20b": (0.0, 0.0),
 }
 
 GOOGLE_NEWS_QUERIES: tuple[str, ...] = (
@@ -57,6 +61,9 @@ def _env_str(name: str) -> str | None:
 
 @dataclass(frozen=True)
 class Settings:
+    # Groq answers first; Anthropic is the fallback. Either key alone is enough.
+    groq_api_key: str | None = field(default=None, repr=False)
+    groq_model: str = DEFAULT_GROQ_MODEL
     anthropic_api_key: str | None = field(default=None, repr=False)
     anthropic_model: str = DEFAULT_MODEL
     mongodb_uri: str | None = field(default=None, repr=False)
@@ -81,6 +88,8 @@ def load_settings(env_file: Path | None = None) -> Settings:
     """
     load_dotenv(dotenv_path=env_file, override=False)
     return Settings(
+        groq_api_key=_env_str("GROQ_API_KEY"),
+        groq_model=_env_str("GROQ_MODEL") or DEFAULT_GROQ_MODEL,
         anthropic_api_key=_env_str("ANTHROPIC_API_KEY"),
         anthropic_model=_env_str("ANTHROPIC_MODEL") or DEFAULT_MODEL,
         mongodb_uri=_env_str("MONGODB_URI"),

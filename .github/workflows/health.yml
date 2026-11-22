@@ -54,7 +54,7 @@ jobs:
               if len(recent) >= 4 and summarized == 0:
                   problems.append(
                       f"Son 24 saatteki {len(recent)} haberin hiçbiri özetlenemedi. "
-                      "Anthropic bakiyesini ve `ANTHROPIC_MODEL` model adını kontrol edin."
+                      "Groq kotasını (`GROQ_API_KEY`), Anthropic bakiyesini ve model adlarını kontrol edin."
                   )
           with open(os.environ["GITHUB_OUTPUT"], "a") as out:
               out.write(f"healthy={'false' if problems else 'true'}\n")

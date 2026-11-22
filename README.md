@@ -37,7 +37,7 @@ flowchart LR
   GN[Google News RSS] --> P
   RSS[Yayıncı RSS'leri] -. Google erişilemezse .-> P
   GD[GDELT] -. Google erişilemezse .-> P
-  P -->|özet, kategori, risk| C[Claude Haiku]
+  P -->|özet, kategori, risk| C[Groq gpt-oss-120b<br/>yedek: Claude Haiku]
   P -->|tek yazan| DB[(MongoDB Atlas)]
   P -->|POST /api/revalidate| W
   DB -->|salt okunur| W[web/ Next.js 16, Vercel]
@@ -45,8 +45,9 @@ flowchart LR
 ```
 
 - **`pipeline/`**: Python 3.12 + uv. Haberleri çeker, tekilleştirir, kişisel verileri temizler,
-  Claude Haiku ile özetler, güvenlik kurallarından geçirir ve sayfanın tüm verisini tek bir
-  `snapshot` dokümanı olarak yazar. Aynı olayı farklı sözlerle yazan haberleri de Claude ile
+  Groq üzerinde gpt-oss-120b ile (yanıt alınamazsa Claude Haiku ile) özetler, güvenlik
+  kurallarından geçirir ve sayfanın tüm verisini tek bir `snapshot` dokümanı olarak yazar.
+  Aynı olayı farklı sözlerle yazan haberleri de aynı modellerle
   son 48 saatin hikâyeleriyle karşılaştırıp tek kümede toplar; farklı illeri anlatan iki haber
   hiçbir zaman birleşmez. Manşet, en çok yayın organının yazdığı hikâyedir.
 - **`web/`**: Next.js 16 (App Router, Cache Components), TypeScript, Tailwind CSS 4, GSAP +
@@ -85,7 +86,7 @@ TAGNEWS_DEMO_DATA=1 npm run dev     # kurgusal örnek verilerle http://localhost
 
 # Pipeline
 cd pipeline
-cp .env.example .env               # ANTHROPIC_API_KEY ve MONGODB_URI değerlerini girin
+cp .env.example .env               # GROQ_API_KEY (ve/veya ANTHROPIC_API_KEY) ile MONGODB_URI değerlerini girin
 uv sync
 uv run python -m tagnews run --dry-run   # hiçbir şey yazmadan çeker ve sayar
 uv run python -m tagnews run             # tam çalışma
@@ -96,7 +97,9 @@ uv run python -m tagnews recluster       # son 72 saatin haberlerini hikâyelere
 
 | Değişken | Nerede | Açıklama |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | pipeline | Claude API anahtarı |
+| `GROQ_API_KEY` | pipeline | Groq API anahtarı; ilk sorulan sağlayıcı (ücretsiz plan, limitlere kodda uyulur) |
+| `GROQ_MODEL` | pipeline | Varsayılan `openai/gpt-oss-120b` |
+| `ANTHROPIC_API_KEY` | pipeline | Claude API anahtarı; Groq yanıt veremezse kullanılır |
 | `ANTHROPIC_MODEL` | pipeline | Varsayılan `claude-haiku-5-5` |
 | `MONGODB_URI` | ikisi de | Pipeline: yazma yetkili kullanıcı. Web: **salt okunur** kullanıcı |
 | `MONGODB_DB` | ikisi de | Varsayılan `tagnewspaper` |

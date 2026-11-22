@@ -1,12 +1,14 @@
-"""Claude enrichment: relevance, neutral Turkish summary, classification, extraction.
+"""LLM enrichment: relevance, neutral Turkish summary, classification, extraction.
 
-One structured-output call per article (Claude Haiku 5.5 by default). 429/5xx/connection
-errors are retried with exponential backoff; refusals are reported, not raised.
+One structured-output call per article. Groq (`groq_llm.py`) answers first; Claude
+(Haiku 5.5 by default, this module) is the fallback. 429/5xx/connection errors are
+retried with exponential backoff; refusals are reported, not raised.
 """
 
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from importlib import resources
@@ -84,6 +86,7 @@ class LlmResult:
     input_tokens: int
     output_tokens: int
     detail: str | None = None
+    model: str | None = None  # the model that produced this result
 
 
 class Summarizer(Protocol):
@@ -94,6 +97,34 @@ class Summarizer(Protocol):
     ) -> LlmResult:
         """Return an enrichment, or a refused/error result. Must not raise."""
         ...
+
+
+class FallbackSummarizer:
+    """Asks each summarizer in turn; the first result that is not an error wins.
+
+    A refusal is an answer: the next provider is not asked to write what one declined.
+    """
+
+    def __init__(self, chain: Sequence[Summarizer]) -> None:
+        if not chain:
+            raise ValueError("FallbackSummarizer needs at least one summarizer")
+        self._chain = list(chain)
+        self.model = self._chain[0].model
+
+    def enrich(
+        self, article: ArticleInput, feedback: list[str] | None = None
+    ) -> LlmResult:
+        result = LlmResult("error", None, 0, 0, "no_summarizer")
+        for summarizer in self._chain:
+            result = summarizer.enrich(article, feedback)
+            if result.status != "error":
+                return result
+            log.info(
+                "summarizer %s failed (%s); trying the next one",
+                summarizer.model,
+                result.detail,
+            )
+        return result
 
 
 def load_system_prompt() -> str:
@@ -158,30 +189,31 @@ class AnthropicSummarizer:
     def enrich(
         self, article: ArticleInput, feedback: list[str] | None = None
     ) -> LlmResult:
+        model = self.model
         try:
             response = self._parse(build_user_message(article, feedback))
         except anthropic.BadRequestError as exc:
             log.error("LLM request rejected (400): %s", type(exc).__name__)
-            return LlmResult("error", None, 0, 0, "bad_request")
+            return LlmResult("error", None, 0, 0, "bad_request", model)
         except anthropic.RateLimitError:
             log.warning("LLM rate limited after retries")
-            return LlmResult("error", None, 0, 0, "rate_limited")
+            return LlmResult("error", None, 0, 0, "rate_limited", model)
         except anthropic.APIStatusError as exc:
             log.warning("LLM API error: HTTP %s", exc.status_code)
-            return LlmResult("error", None, 0, 0, f"http_{exc.status_code}")
+            return LlmResult("error", None, 0, 0, f"http_{exc.status_code}", model)
         except anthropic.APIConnectionError:
             log.warning("LLM connection error after retries")
-            return LlmResult("error", None, 0, 0, "connection")
+            return LlmResult("error", None, 0, 0, "connection", model)
         except Exception as exc:  # e.g. a response that fails schema validation
             log.warning("LLM response unusable: %s", type(exc).__name__)
-            return LlmResult("error", None, 0, 0, type(exc).__name__)
+            return LlmResult("error", None, 0, 0, type(exc).__name__, model)
 
         usage = response.usage
         in_tok, out_tok = usage.input_tokens, usage.output_tokens
         if response.stop_reason == "refusal":
             category = getattr(response.stop_details, "category", None)
             log.info("LLM refused (category=%s)", category)
-            return LlmResult("refused", None, in_tok, out_tok, str(category))
+            return LlmResult("refused", None, in_tok, out_tok, str(category), model)
         if response.stop_reason == "max_tokens" or response.parsed_output is None:
-            return LlmResult("error", None, in_tok, out_tok, "no_parsed_output")
-        return LlmResult("ok", response.parsed_output, in_tok, out_tok)
+            return LlmResult("error", None, in_tok, out_tok, "no_parsed_output", model)
+        return LlmResult("ok", response.parsed_output, in_tok, out_tok, model=model)

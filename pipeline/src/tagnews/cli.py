@@ -7,27 +7,29 @@ import json
 import logging
 import sys
 from collections.abc import Sequence
+from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 
 import httpx
 
 from tagnews import revalidate
-from tagnews.config import (
-    Settings,
-    configure_logging,
-    estimate_cost_usd,
-    load_settings,
-)
+from tagnews.config import Settings, configure_logging, load_settings
 from tagnews.decode import default_batch_decoder
 from tagnews.extract import TextExtractor
-from tagnews.llm import AnthropicSummarizer, Summarizer
+from tagnews.groq_llm import RUN_BUDGET_S, GroqClient, GroqStoryMatcher, GroqSummarizer
+from tagnews.llm import AnthropicSummarizer, FallbackSummarizer, Summarizer
 from tagnews.market import MarketRefresh, refresh_market
 from tagnews.models import ArticleDoc, EventDoc, StatDoc, utc_now
 from tagnews.promote import is_primary_stat
-from tagnews.run import Deps, rebuild_snapshot, run_pipeline
+from tagnews.run import Deps, add_cost, rebuild_snapshot, run_pipeline
 from tagnews.store import MemoryStore, MongoStore
-from tagnews.stories import AnthropicStoryMatcher, StoryMatcher, recent_stories
+from tagnews.stories import (
+    AnthropicStoryMatcher,
+    FallbackStoryMatcher,
+    StoryMatcher,
+    recent_stories,
+)
 
 log = logging.getLogger("tagnews")
 
@@ -59,7 +61,45 @@ def _mongo(settings: Settings) -> MongoStore:
     return MongoStore(settings.mongodb_uri, settings.mongodb_db)
 
 
+@dataclass
+class LlmChain:
+    """Groq first, Anthropic second; whichever keys are set."""
+
+    summarizer: Summarizer
+    matcher: StoryMatcher
+    groq: GroqClient | None
+
+    def close(self) -> None:
+        if self.groq is not None:
+            self.groq.close()
+
+
+def _llm_chain(settings: Settings, groq_budget_s: float = RUN_BUDGET_S) -> LlmChain:
+    summarizers: list[Summarizer] = []
+    matchers: list[StoryMatcher] = []
+    groq: GroqClient | None = None
+    if settings.groq_api_key:
+        groq = GroqClient(settings.groq_api_key, run_budget_s=groq_budget_s)
+        summarizers.append(GroqSummarizer(groq, settings.groq_model))
+        matchers.append(GroqStoryMatcher(groq, settings.groq_model))
+    if settings.anthropic_api_key:
+        key, model = settings.anthropic_api_key, settings.anthropic_model
+        summarizers.append(AnthropicSummarizer(key, model))
+        matchers.append(AnthropicStoryMatcher(key, model))
+    if not summarizers:
+        sys.exit(
+            "Neither GROQ_API_KEY nor ANTHROPIC_API_KEY is set "
+            "(see pipeline/.env.example)"
+        )
+    if len(summarizers) == 1:
+        return LlmChain(summarizers[0], matchers[0], groq)
+    return LlmChain(
+        FallbackSummarizer(summarizers), FallbackStoryMatcher(matchers), groq
+    )
+
+
 def cmd_run(settings: Settings, dry_run: bool, max_items: int | None) -> int:
+    chain: LlmChain | None = None
     with _http_client(settings) as http:
         if dry_run:
             store = MemoryStore()
@@ -67,15 +107,9 @@ def cmd_run(settings: Settings, dry_run: bool, max_items: int | None) -> int:
             matcher: StoryMatcher | None = None
             limit = max_items or 5
         else:
-            if not settings.anthropic_api_key:
-                sys.exit("ANTHROPIC_API_KEY is not set (see pipeline/.env.example)")
+            chain = _llm_chain(settings)
             store = _mongo(settings)
-            summarizer = AnthropicSummarizer(
-                settings.anthropic_api_key, settings.anthropic_model
-            )
-            matcher = AnthropicStoryMatcher(
-                settings.anthropic_api_key, settings.anthropic_model
-            )
+            summarizer, matcher = chain.summarizer, chain.matcher
             limit = max_items or settings.max_items_per_run
         deps = Deps(
             settings=settings,
@@ -89,6 +123,8 @@ def cmd_run(settings: Settings, dry_run: bool, max_items: int | None) -> int:
         run = run_pipeline(deps, dry_run=dry_run, max_items=limit)
         if isinstance(store, MongoStore):
             store.close()
+        if chain is not None:
+            chain.close()
     if dry_run:
         _print_dry_run(store, run.model_dump(mode="json", by_alias=True))
     return 0 if run.ok else 1
@@ -199,12 +235,9 @@ def cmd_seed(settings: Settings, seed_dir: Path) -> int:
 def cmd_recluster(settings: Settings, hours: int) -> int:
     """Re-group recent articles into stories with the matcher, oldest first, so each
     article is compared with the stories that existed when it was published."""
-    if not settings.anthropic_api_key:
-        sys.exit("ANTHROPIC_API_KEY is not set (see pipeline/.env.example)")
+    # Run by hand, not under the Actions time limit: Groq may pace itself for an hour.
+    chain = _llm_chain(settings, groq_budget_s=3600.0)
     store = _mongo(settings)
-    matcher = AnthropicStoryMatcher(
-        settings.anthropic_api_key, settings.anthropic_model
-    )
     now = utc_now()
     articles = sorted(
         store.articles_since(now - timedelta(hours=hours)),
@@ -212,9 +245,10 @@ def cmd_recluster(settings: Settings, hours: int) -> int:
     )
     seen: list[ArticleDoc] = []
     moved = tokens_in = tokens_out = 0
+    cost: float | None = 0.0
     for article in articles:
         if article.relevant and article.display != "hidden":
-            result = matcher.match(
+            result = chain.matcher.match(
                 article.title,
                 article.summary,
                 article.published_at,
@@ -222,6 +256,12 @@ def cmd_recluster(settings: Settings, hours: int) -> int:
             )
             tokens_in += result.input_tokens
             tokens_out += result.output_tokens
+            cost = add_cost(
+                cost,
+                result.model or chain.matcher.model,
+                result.input_tokens,
+                result.output_tokens,
+            )
             if result.cluster_id and result.cluster_id != article.cluster_id:
                 article.cluster_id = result.cluster_id
                 store.save_article(article)
@@ -231,7 +271,8 @@ def cmd_recluster(settings: Settings, hours: int) -> int:
     with _http_client(settings) as http:
         revalidate.trigger(http, settings.revalidate_url, settings.revalidate_secret)
     store.close()
-    cost = estimate_cost_usd(settings.anthropic_model, tokens_in, tokens_out)
+    chain.close()
+    cost = None if cost is None else round(cost, 6)
     print(
         f"reclustered {moved} of {len(articles)} articles; "
         f"tokens {tokens_in}/{tokens_out}, cost ~${cost}"

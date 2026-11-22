@@ -1,7 +1,7 @@
 # tagnews — ingestion pipeline
 
 Python 3.12 + [uv](https://docs.astral.sh/uv/). Collects Martı TAG news, writes neutral
-Turkish summaries with Claude, and publishes everything the site shows to MongoDB as a
+Turkish summaries with an LLM (Groq first, Claude as fallback), and publishes everything the site shows to MongoDB as a
 single `snapshot` document. The data contract with the web app is
 [`shared/CONTRACT.md`](../shared/CONTRACT.md).
 
@@ -26,7 +26,9 @@ uv run ruff check && uv run ruff format --check && uv run pytest
 
 | Variable | Purpose |
 |---|---|
-| `ANTHROPIC_API_KEY` | Claude API key |
+| `GROQ_API_KEY` | Groq API key; asked first (free plan, paced in code) |
+| `GROQ_MODEL` | default `openai/gpt-oss-120b` |
+| `ANTHROPIC_API_KEY` | Claude API key; fallback when Groq cannot answer |
 | `ANTHROPIC_MODEL` | default `claude-haiku-5-5` |
 | `MONGODB_URI`, `MONGODB_DB` | Atlas `pipeline_rw` user, database `tagnewspaper` |
 | `REVALIDATE_URL`, `REVALIDATE_SECRET` | tells Next.js to refresh after each run |
@@ -36,9 +38,9 @@ uv run ruff check && uv run ruff format --check && uv run pytest
 | `ALPHAVANTAGE_API_KEY` | optional; daily MRT prices (secret, never logged) |
 | `SEC_USER_AGENT` | declared User-Agent for SEC EDGAR; include a contact e-mail |
 
-GitHub Actions secrets: `ANTHROPIC_API_KEY`, `MONGODB_URI`, `REVALIDATE_URL`,
-`REVALIDATE_SECRET`, optional `ALPHAVANTAGE_API_KEY` (optional repository variables
-`ANTHROPIC_MODEL`, `SEC_USER_AGENT`).
+GitHub Actions secrets: `GROQ_API_KEY` and/or `ANTHROPIC_API_KEY`, `MONGODB_URI`,
+`REVALIDATE_URL`, `REVALIDATE_SECRET`, optional `ALPHAVANTAGE_API_KEY` (optional
+repository variables `GROQ_MODEL`, `ANTHROPIC_MODEL`, `SEC_USER_AGENT`).
 
 ## How a run works
 
@@ -51,9 +53,13 @@ GitHub Actions secrets: `ANTHROPIC_API_KEY`, `MONGODB_URI`, `REVALIDATE_URL`,
 3. **Dedupe + cluster**: canonical URLs, Turkish-aware title similarity within 48 h.
 4. **Full text**: only if robots.txt allows; kept in memory, never stored.
 5. **PII scrub** (phone, plate, TC kimlik, e-mail) before and after the LLM.
-6. **Claude** returns structured JSON: relevance, a 2–3 sentence summary in its own
+6. **LLM** returns structured JSON: relevance, a 2–3 sentence summary in its own
    words, category, actors, attributed statements, allegation/risk flags, private
-   persons, dated events, figures.
+   persons, dated events, figures. Groq (`groq_llm.py`, gpt-oss-120b, strict JSON
+   schema) answers first, paced to the free plan (30 requests and 8K tokens a minute,
+   1K requests and 200K tokens a day; article text capped at 8,000 characters). On a
+   daily limit, a 5-minute run budget or repeated errors, Claude (`llm.py`) answers
+   instead. The same order applies to story matching (`stories.py`).
 7. **Guards** (`guards.py`): no copied run of more than 12 words, allegations must use
    attribution language ("…'ya göre", "iddia etti"), no private person names, no PII,
    length limits. A failure gets one rewrite with feedback; if that fails too, or the

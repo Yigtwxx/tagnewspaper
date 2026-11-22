@@ -57,6 +57,9 @@ class MatchResult:
     cluster_id: str | None
     input_tokens: int = 0
     output_tokens: int = 0
+    model: str | None = None
+    # False when the matcher could not answer (as opposed to answering "no story").
+    ok: bool = True
 
 
 class StoryMatcher(Protocol):
@@ -193,7 +196,7 @@ def same_place(new_text: str, story_text: str) -> bool:
     return not new or not story or bool(new & story)
 
 
-def _first_sentence(text: str | None) -> str | None:
+def first_sentence(text: str | None) -> str | None:
     if not text:
         return None
     end = text.find(". ")
@@ -225,7 +228,7 @@ def recent_stories(articles: Sequence[ArticleDoc], now: datetime) -> list[StoryR
             cluster_id=a.cluster_id,
             published_at=a.published_at,
             headline=a.title,
-            summary=_first_sentence(a.summary),
+            summary=first_sentence(a.summary),
         )
         for a in best.values()
     ]
@@ -270,15 +273,65 @@ def resolve_label(label: str | None, labels: dict[str, str]) -> str | None:
     return labels.get(label.strip().upper())
 
 
+def load_match_prompt() -> str:
+    return (
+        resources.files("tagnews.prompts")
+        .joinpath(f"{MATCH_PROMPT}.md")
+        .read_text(encoding="utf-8")
+    )
+
+
+def choose_story(
+    label: str | None,
+    labels: dict[str, str],
+    headline: str,
+    summary: str | None,
+    stories: Sequence[StoryRef],
+) -> str | None:
+    """The cluster the model's label names, unless the two reports are in different
+    provinces (the model sometimes joins protests held in two cities)."""
+    cluster_id = resolve_label(label, labels)
+    if label and cluster_id is None:
+        log.info("story match returned an unknown label")
+    story = next((s for s in stories if s.cluster_id == cluster_id), None)
+    if story is not None and not same_place(
+        f"{headline} {summary or ''}", f"{story.headline} {story.summary or ''}"
+    ):
+        log.info("story match rejected: the two reports name different provinces")
+        return None
+    return cluster_id
+
+
+class FallbackStoryMatcher:
+    """Asks each matcher in turn until one answers; "no story" is an answer."""
+
+    def __init__(self, chain: Sequence[StoryMatcher]) -> None:
+        if not chain:
+            raise ValueError("FallbackStoryMatcher needs at least one matcher")
+        self._chain = list(chain)
+        self.model = self._chain[0].model
+
+    def match(
+        self,
+        headline: str,
+        summary: str | None,
+        published_at: datetime,
+        stories: Sequence[StoryRef],
+    ) -> MatchResult:
+        result = MatchResult(None, ok=False)
+        for matcher in self._chain:
+            result = matcher.match(headline, summary, published_at, stories)
+            if result.ok:
+                return result
+            log.info("story matcher %s failed; trying the next one", matcher.model)
+        return result
+
+
 class AnthropicStoryMatcher:
     def __init__(self, api_key: str, model: str) -> None:
         self.model = model
         self._client = anthropic.Anthropic(api_key=api_key, max_retries=0, timeout=60.0)
-        self._system = (
-            resources.files("tagnews.prompts")
-            .joinpath(f"{MATCH_PROMPT}.md")
-            .read_text(encoding="utf-8")
-        )
+        self._system = load_match_prompt()
 
     @retry(
         retry=retry_if_exception_type(_RETRYABLE),
@@ -306,22 +359,18 @@ class AnthropicStoryMatcher:
         if not stories:
             return MatchResult(None)
         message, labels = build_match_message(
-            headline, _first_sentence(summary), published_at, stories
+            headline, first_sentence(summary), published_at, stories
         )
         try:
             response = self._parse(message)
         except Exception as exc:  # best effort: the title-based cluster stands
             log.warning("story match failed: %s", type(exc).__name__)
-            return MatchResult(None)
+            return MatchResult(None, model=self.model, ok=False)
         usage = response.usage
         choice = response.parsed_output
-        cluster_id = resolve_label(choice.story if choice else None, labels)
-        if choice and choice.story and cluster_id is None:
-            log.info("story match returned an unknown label")
-        story = next((s for s in stories if s.cluster_id == cluster_id), None)
-        if story is not None and not same_place(
-            f"{headline} {summary or ''}", f"{story.headline} {story.summary or ''}"
-        ):
-            log.info("story match rejected: the two reports name different provinces")
-            cluster_id = None
-        return MatchResult(cluster_id, usage.input_tokens, usage.output_tokens)
+        cluster_id = choose_story(
+            choice.story if choice else None, labels, headline, summary, stories
+        )
+        return MatchResult(
+            cluster_id, usage.input_tokens, usage.output_tokens, model=self.model
+        )

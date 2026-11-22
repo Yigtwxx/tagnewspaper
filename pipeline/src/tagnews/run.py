@@ -87,6 +87,18 @@ class ItemOutcome:
     stats: list[StatCandidate] = field(default_factory=list)
     input_tokens: int = 0
     output_tokens: int = 0
+    # None once any call used a model without a known price.
+    cost_usd: float | None = 0.0
+
+
+def add_cost(
+    total: float | None, model: str, input_tokens: int, output_tokens: int
+) -> float | None:
+    """Running cost; each call is priced by the model that answered it."""
+    cost = estimate_cost_usd(model, input_tokens, output_tokens)
+    if total is None or cost is None:
+        return None
+    return total + cost
 
 
 def _base_article(
@@ -206,8 +218,14 @@ def process_item(
 
     def call(feedback: list[str] | None = None) -> LlmResult:
         result = summarizer.enrich(llm_input, feedback)
+        model = result.model or summarizer.model
         outcome.input_tokens += result.input_tokens
         outcome.output_tokens += result.output_tokens
+        outcome.cost_usd = add_cost(
+            outcome.cost_usd, model, result.input_tokens, result.output_tokens
+        )
+        if result.status != "error":
+            article.model = model
         return result
 
     result = call()
@@ -403,12 +421,13 @@ def run_pipeline(
     touched: dict[str, EventDoc] = {}
     stat_candidates: list[StatCandidate] = []
     tokens_in = tokens_out = 0
+    cost: float | None = 0.0
 
     processed: set[str] = set()
 
     def match_story(article: ArticleDoc) -> None:
         """Join the article to an earlier story it reports, if the matcher finds it."""
-        nonlocal tokens_in, tokens_out, recent
+        nonlocal tokens_in, tokens_out, cost, recent
         recent = [a for a in recent if a.id != article.id]
         if (
             deps.matcher is not None
@@ -423,18 +442,29 @@ def run_pipeline(
             )
             tokens_in += result.input_tokens
             tokens_out += result.output_tokens
+            cost = add_cost(
+                cost,
+                result.model or deps.matcher.model,
+                result.input_tokens,
+                result.output_tokens,
+            )
             if result.cluster_id:
                 article.cluster_id = result.cluster_id
         recent.append(article)
 
     def handle(outcome: ItemOutcome) -> None:
-        nonlocal tokens_in, tokens_out
+        nonlocal tokens_in, tokens_out, cost
         processed.add(outcome.article.id)
         match_story(outcome.article)
         store.save_article(outcome.article)
         _count(run, outcome.article)
         tokens_in += outcome.input_tokens
         tokens_out += outcome.output_tokens
+        cost = (
+            None
+            if cost is None or outcome.cost_usd is None
+            else cost + outcome.cost_usd
+        )
         for cand in outcome.events:
             event = merge_event(events, cand)
             touched[event.id] = event
@@ -492,7 +522,7 @@ def run_pipeline(
 
     run.tokens.input, run.tokens.output = tokens_in, tokens_out
     if deps.summarizer is not None:
-        run.cost_usd = estimate_cost_usd(deps.summarizer.model, tokens_in, tokens_out)
+        run.cost_usd = None if cost is None else round(cost, 6)
     run.ok = True
     run.finished_at = deps.now()
     store.save_run(run)
