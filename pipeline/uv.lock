@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [[package]]
@@ -13,7 +13,7 @@ wheels = [
 
 [[package]]
 name = "anthropic"
-version = "2.3.0"
+version = "2.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -25,9 +25,9 @@ dependencies = [
     { name = "sniffio" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3e/ba/4c91947e0d0062d66d371db371597287153f7685fbed512d3294d0cde3c7/anthropic-2.3.0.tar.gz", hash = "sha256:edfdea1e3fa7b3ce25df1511953408b2f03bfa61eb6f6268f766101a9e18ad53", size = 1869656, upload-time = "2026-10-23T23:18:47.649Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bc/68/27309d33b66bf3546d0232cf369561314fda33bc0c4a9a47809dffea6776/anthropic-2.11.0.tar.gz", hash = "sha256:205711189d0bdbee78e5bb45b97944e7b42af3e2dce33ce8dacbf80f9492dc00", size = 2024863, upload-time = "2026-11-19T19:14:58.913Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/29/eb3558ab6bf252a07ac41c76ac5b0ea24a0aa0c23f87a40aaf31a5f8dba4/anthropic-2.3.0-py3-none-any.whl", hash = "sha256:aa6a3984f9276f307933d42dc6f58b6efc821a5ecafbc8d1bb5993a066767622", size = 2216980, upload-time = "2026-10-23T23:18:45.779Z" },
+    { url = "https://files.pythonhosted.org/packages/bd/d7/409430e58fb341e00543a70dacf943333364ba506017f9c07b335a12e0f7/anthropic-2.11.0-py3-none-any.whl", hash = "sha256:9ee1e89ef947b2cedddcbe44694f3d58b3463473bdc7bb98e84942459ad4fefb", size = 2554684, upload-time = "2026-11-19T19:14:57.19Z" },
 ]
 
 [[package]]
@@ -1279,7 +1279,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "anthropic", specifier = ">=2.3,<3" },
+    { name = "anthropic", specifier = ">=2.11.0,<3" },
     { name = "feedparser", specifier = ">=6.0.14" },
     { name = "googlenewsdecoder", specifier = ">=0.2.2" },
     { name = "httpx", specifier = ">=0.28.1" },
